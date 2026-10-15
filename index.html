@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.2 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.3 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -11,6 +11,7 @@
       --emerald: #00FF66;
       --gold: #FFD700;
       --red: #FF3366;
+      --skyblue: #00CCFF;
       --text-main: #F0F4F8;
       --text-muted: #8A99AD;
       --border-color: rgba(0, 255, 102, 0.3);
@@ -138,6 +139,25 @@
       font-weight: bold;
     }
 
+    .tx-display-box {
+      display: none;
+      background: rgba(0, 204, 255, 0.08);
+      border: 1px solid var(--skyblue);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      font-family: monospace;
+      font-size: 0.78rem;
+      word-break: break-all;
+    }
+
+    .tx-link {
+      color: var(--skyblue);
+      text-decoration: underline;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
     .btn-mint {
       width: 100%;
       background: linear-gradient(135deg, var(--emerald) 0%, #00B347 100%);
@@ -181,7 +201,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.2</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.3</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -215,6 +235,12 @@
         <div><span class="dna-key">SID:</span> <span id="dna-sid">berechne...</span></div>
         <div><span class="dna-key">FID:</span> <span id="dna-fid">9999999999</span></div>
       </div>
+
+      <!-- Prominente Transaktions-Hash Anzeige -->
+      <div id="tx-display-box" class="tx-display-box">
+        <div style="color:var(--skyblue); font-weight:bold; margin-bottom:4px;">🔗 Transaktions-Hash (ZSC Explorer):</div>
+        <a id="tx-hash-link" class="tx-link" href="#" target="_blank" rel="noopener">0x...</a>
+      </div>
     </div>
 
     <button id="btn-mint-action" class="btn-mint" disabled onclick="executeMint()">
@@ -223,7 +249,7 @@
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.2 initialisiert. Warte auf Wallet...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.3 initialisiert. Warte auf Wallet...</div>
     </div>
 
     <footer>
@@ -245,6 +271,16 @@
       }
     }
 
+    function showTxHash(txHash) {
+      const box = document.getElementById("tx-display-box");
+      const link = document.getElementById("tx-hash-link");
+      if (box && link) {
+        link.innerText = txHash;
+        link.href = "[suspicious link removed]" + txHash;
+        [verdächtiger Link entfernt].display = "block";
+      }
+    }
+
     function deriveSID(addr) {
       if (!addr || addr.length < 10) return "0000000000";
       const clean = addr.toLowerCase().replace("0x", "");
@@ -263,7 +299,7 @@
         try {
           const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
           if (accs && accs.length > 0) {
-            userAddress = accs[0]; // FIX: Exakter String aus dem Accounts-Array
+            userAddress = accs[0];
             sysLog("Wallet gekoppelt: " + userAddress);
           }
         } catch(e) {
@@ -273,7 +309,6 @@
         sysLog("Kein Web3 Provider gefunden. Aktiviere Demo-Fallback...");
       }
 
-      // Fallback: Falls keine Wallet gekoppelt werden konnte, eine Adresse setzen
       if (!userAddress) {
         userAddress = "0x3ba96a7F5532B9cFdf5483774F7Cbc96d80F22a3";
         sysLog("Standard-Adresse geladen: " + userAddress);
@@ -298,11 +333,11 @@
 
       const btn = document.getElementById("btn-mint-action");
       btn.disabled = false;
-      sysLog("Status OK: Bereit für Prägung mit Gas-Puffer (1.200.000)");
+      sysLog("Status OK: Bereit für Prägung!");
     }
 
     async function waitForReceipt(txHash) {
-      sysLog("⏳ Warte auf Blockbestätigung auf der Blockchain...");
+      sysLog("⏳ Warte auf Blockbestätigung auf der ZENIQ Smart Chain...");
       let attempts = 0;
       
       while (attempts < 30) {
@@ -323,13 +358,13 @@
               
               const btn = document.getElementById("btn-mint-action");
               btn.innerText = "✓ PRÄGUNG ERFOLGREICH";
-              btn.style.backgroundColor = "#00FF66";
+              [verdächtiger Link entfernt].backgroundColor = "#00FF66";
               
-              alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der Blockchain geprägt!");
+              alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der Blockchain geprägt!\n\nTransaktions-Hash:\n" + txHash);
               return true;
             } else {
-              sysLog("❌ TRANSAKTION FEHLGESCHLAGEN (Execution Reverted)!");
-              alert("⚠️ Die Transaktion wurde von der Blockchain abgelehnt.");
+              sysLog("⚠️ TRANSAKTION REVERTED (Contract Revert). TX-Hash bleibt einsehbar!");
+              alert("⚠️ Transaktion auf der Blockchain abgelehnt (Execution Reverted).\n\nTX-Hash im WebOn einsehbar:\n" + txHash);
               
               const btn = document.getElementById("btn-mint-action");
               btn.disabled = false;
@@ -342,7 +377,7 @@
         }
         attempts++;
       }
-      sysLog("⚠️ Bestätigung dauert etwas länger. Prüfen Sie den Status auf ZeniqScan.");
+      sysLog("⏳ Transaktion noch ausstehend. Sie können den Status jederzeit auf ZeniqScan prüfen.");
     }
 
     async function executeMint() {
@@ -355,16 +390,15 @@
       btn.disabled = true;
       btn.innerText = "⏳ PRÄGUNG LÄUFT...";
 
-      sysLog("Sende Transaktion mit erhobenem Gas-Limit (1.200.000)...");
+      sysLog("Sende Transaktion an ScanMe.NFT Contract (0xf0c50...)...");
 
       try {
         const txParams = {
           from: userAddress,
           to: SCANME_NFT_ADDR,
           value: "0x0",
-          data: "0x12488d0d",
-          gas: "0x124F80", // 1.200.000 Gas Limit (Behebt Out-of-Gas)
-          gasPrice: "0x2540BE400" // 10 Gwei
+          data: "0x12488d0d", // mint() selector
+          gas: "0x1E8480"     // 2.000.000 Gas Limit Puffer
         };
 
         const txHash = await window.ethereum.request({
@@ -372,8 +406,11 @@
           params: [txParams]
         });
 
-        sysLog("TX im Mempool platziert: " + txHash);
+        sysLog("✅ TX im Mempool platziert! Hash: " + txHash);
         
+        // TX-Hash sofort prominent im WebOn anzeigen
+        showTxHash(txHash);
+
         // Block-Bestätigung abwarten
         await waitForReceipt(txHash);
 
