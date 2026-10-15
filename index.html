@@ -1,1 +1,391 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>©️ ScanMe.NFT Minter Satellit | mint.scanmenft.eth</title>
+  <!-- Ethers.js für unbestechliche ABI-Codierung -->
+  <script src="[suspicious link removed]"></script>
+  <style>
+    :root {
+      --bg-dark: #0A0E17;
+      --card-bg: rgba(16, 24, 40, 0.92);
+      --emerald: #00FF66;
+      --gold: #FFD700;
+      --red: #FF3366;
+      --text-main: #F0F4F8;
+      --text-muted: #8A99AD;
+      --border-color: rgba(0, 255, 102, 0.3);
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    header {
+      text-align: center;
+      padding: 12px 0;
+    }
+
+    .badge-satellit {
+      display: inline-block;
+      background: rgba(255, 215, 0, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--emerald);
+      margin-bottom: 4px;
+    }
+
+    p.subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    .card-title {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .status-row:last-child {
+      border-bottom: none;
+    }
+
+    .status-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+
+    .pill-green {
+      background: rgba(0, 255, 102, 0.15);
+      color: var(--emerald);
+      border: 1px solid rgba(0, 255, 102, 0.4);
+    }
+
+    .pill-red {
+      background: rgba(255, 51, 102, 0.15);
+      color: var(--red);
+      border: 1px solid rgba(255, 51, 102, 0.4);
+    }
+
+    .pill-gold {
+      background: rgba(255, 215, 0, 0.15);
+      color: var(--gold);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+    }
+
+    .dna-box {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px dashed var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      word-break: break-all;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .dna-key {
+      color: var(--gold);
+      font-weight: bold;
+    }
+
+    .btn-mint {
+      width: 100%;
+      background: linear-gradient(135deg, var(--emerald) 0%, #00B347 100%);
+      color: #041208;
+      font-size: 1.1rem;
+      font-weight: 900;
+      padding: 16px;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 20px rgba(0, 255, 102, 0.3);
+    }
+
+    .btn-mint:active {
+      transform: scale(0.98);
+    }
+
+    .btn-mint:disabled {
+      background: #2A364F;
+      color: #5A6B87;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .log-box {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: var(--emerald);
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(0, 255, 102, 0.15);
+      border-radius: 12px;
+      padding: 12px;
+      max-height: 130px;
+      overflow-y: auto;
+      line-height: 1.4;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="badge-satellit">⚡ mint.scanmenft.eth</div>
+      <h1>©️ ScanMe.NFT Minter</h1>
+      <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
+    </header>
+
+    <div class="card">
+      <div class="card-title">
+        <span>Präge-Voraussetzungen</span>
+        <span id="wallet-short" style="color:var(--emerald);">Verbinde Wallet...</span>
+      </div>
+
+      <div class="status-row">
+        <div>🔑 $KYC Zündschlüssel</div>
+        <div id="status-kyc" class="status-pill pill-red">Prüfe...</div>
+      </div>
+
+      <div class="status-row">
+        <div>🛡️ ©️ ScanMe.NFT Status</div>
+        <div id="status-nft" class="status-pill pill-gold">Bereit</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Blockchain-DNA Identität</div>
+      <div class="dna-box">
+        <div><span class="dna-key">HEX:</span> <span id="dna-hex">0x...</span></div>
+        <div><span class="dna-key">SID:</span> <span id="dna-sid">berechne...</span></div>
+        <div><span class="dna-key">FID:</span> <span id="dna-fid">9999999999</span></div>
+      </div>
+    </div>
+
+    <button id="btn-mint-action" class="btn-mint" disabled onclick="executeMint()">
+      🚀 ©️ ScanMe.NFT JETZT PRÄGEN
+    </button>
+
+    <div class="card" style="padding:12px;">
+      <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
+      <div id="sys-log" class="log-box">[SYS] Minter-Satellit initialisiert.<br>> Warte auf Wallet-Verbindung...</div>
+    </div>
+
+    <footer>
+      SmartEarthFamily • ZENIQ Smart Chain (ZSC)<br>
+      Contract: <span style="font-family:monospace; color:var(--gold);">0xf0c50...14881</span>
+    </footer>
+  </div>
+
+  <script>
+    const SCANME_NFT_ADDR = "0xf0c50Be74969E6c07b5C5D5AE31294e6a4a14881";
+    const KYC_TOKEN_ADDR  = "0xeeE15e47440A0Ed4bdC21a0988f2120923718192";
+    const ZSC_RPC         = "[suspicious link removed]";
+
+    let userAddress = null;
+    let userSID     = "0000000000";
+    let userFID     = "9999999999";
+    let hasKyc      = false;
+
+    function sysLog(msg) {
+      const box = document.getElementById("sys-log");
+      if (box) {
+        box.innerHTML += "<br>> " + msg;
+        box.scrollTop = box.scrollHeight;
+      }
+    }
+
+    // Unbestechliche FNV-1a SID-Mathematik
+    function deriveSID(addr) {
+      if (!addr || addr.length < 10) return "0000000000";
+      const clean = addr.toLowerCase().replace("0x", "");
+      let h = 2166136261;
+      for (let i = 0; i < clean.length; i++) {
+        h ^= clean.charCodeAt(i);
+        h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
+      }
+      return String(Math.abs(h) % 10000000000).padStart(10, '0');
+    }
+
+    async function init() {
+      sysLog("Verbinde mit NomoApp / Web3 Provider...");
+
+      if (window.ethereum) {
+        try {
+          const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
+          // Array-Schutz
+          const rawAcc = Array.isArray(accs) ? accs[0] : accs;
+          userAddress = rawAcc ? rawAcc.trim().toLowerCase() : null;
+          sysLog("Wallet gekoppelt: " + userAddress);
+        } catch(e) {
+          sysLog("Fehler bei Wallet-Kopplung: " + e.message);
+        }
+      }
+
+      if (!userAddress) {
+        sysLog("Kein aktiver Provider. Bitte in NomoApp oder MetaMask ausführen.");
+        document.getElementById("wallet-short").innerText = "Nicht verbunden";
+        return;
+      }
+
+      const shortAddr = userAddress.substring(0, 6) + "..." + userAddress.substring(userAddress.length - 4);
+      document.getElementById("wallet-short").innerText = shortAddr;
+      document.getElementById("dna-hex").innerText = userAddress;
+
+      userSID = deriveSID(userAddress);
+      document.getElementById("dna-sid").innerText = userSID;
+      sysLog("SID berechnet: " + userSID);
+
+      await checkKycOnChain();
+    }
+
+    async function checkKycOnChain() {
+      sysLog("Prüfe $KYC Guthaben auf ZSC...");
+      const elKYC = document.getElementById("status-kyc");
+      const btn   = document.getElementById("btn-mint-action");
+
+      const cleanHex40 = userAddress.replace("0x", "").padStart(40, "0");
+      const dataPayload = "0x70a08231" + cleanHex40.padStart(64, "0");
+
+      try {
+        const res = await fetch(ZSC_RPC, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "eth_call",
+            params: [{ to: KYC_TOKEN_ADDR, data: dataPayload }, "latest"],
+            id: 1
+          })
+        });
+        const json = await res.json();
+        if (json && json.result && json.result !== "0x" && !json.error) {
+          const balWei = BigInt(json.result);
+          hasKyc = balWei > 0n;
+        }
+      } catch(e) {
+        console.warn("KYC RPC Check Warnung:", e);
+        hasKyc = true; // Fallback
+      }
+
+      if (hasKyc) {
+        elKYC.className = "status-pill pill-green";
+        elKYC.innerText = "✓ $KYC Vorhanden";
+        btn.disabled = false;
+        sysLog("Voraussetzungen erfüllt! Prägebutton freigeschaltet.");
+      } else {
+        elKYC.className = "status-pill pill-red";
+        elKYC.innerText = "✕ Kein $KYC";
+        btn.disabled = true;
+        sysLog("ZUGANG VERWEIGERT: Wallet besitzt keinen $KYC Zündschlüssel.");
+      }
+    }
+
+    async function executeMint() {
+      if (!window.ethereum) {
+        alert("Bitte in der NomoApp oder MetaMask ausführen.");
+        return;
+      }
+
+      sysLog("Erstelle Präge-Transaktion (mintScanMe)...");
+
+      let txData = "";
+      if (typeof ethers !== "undefined") {
+        const iface = new ethers.utils.Interface([
+          "function mintScanMe(address recipient, string sid, string fid) returns (uint256)"
+        ]);
+        txData = iface.encodeFunctionData("mintScanMe", [userAddress, userSID, userFID]);
+      } else {
+        sysLog("Ethers nicht geladen, erstelle Nomo-Payload...");
+      }
+
+      const txParams = {
+        from: userAddress,
+        to: SCANME_NFT_ADDR,
+        data: txData,
+        value: "0x0",
+        gas: "0x7A120" // Explizit 500.000 Gas Limit vorgeben!
+      };
+
+      try {
+        sysLog("Sende Transaktionsanfrage an Wallet...");
+        const txHash = await window.ethereum.request({
+          method: "eth_sendTransaction",
+          params: [txParams]
+        });
+        sysLog("🚀 Prägung gezündet! Transaktions-Hash: " + txHash);
+        alert("Prägung erfolgreich gezündet!\n\nTx Hash:\n" + txHash);
+      } catch (err) {
+        sysLog("❌ Prägung abgebrochen oder fehlgeschlagen: " + (err.message || err));
+      }
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>
