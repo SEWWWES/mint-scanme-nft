@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.5 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.6 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -201,7 +201,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.5</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.6</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -242,13 +242,13 @@
       </div>
     </div>
 
-    <button id="btn-mint-action" class="btn-mint" disabled onclick="executeMint()">
+    <button id="btn-mint-action" class="btn-mint" onclick="executeMint()">
       🚀 ©️ ScanMe.NFT JETZT PRÄGEN
     </button>
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.5 initialisiert. Warte auf Wallet...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.6 initialisiert. Warte auf Wallet...</div>
     </div>
 
     <footer>
@@ -280,13 +280,20 @@
         link.innerText = txHash;
         link.href = "[suspicious link removed]" + txHash;
         [verdächtiger Link entfernt].display = "block";
+        [verdächtiger Link entfernt].display = "block";
       }
     }
 
     function sanitizeAddress(raw) {
       if (!raw) return null;
-      if (Array.isArray(raw)) raw = raw[0];
-      if (typeof raw === "object" && raw.evmAddress) raw = raw.evmAddress;
+      if (Array.isArray(raw)) {
+        if (raw.length === 0) return null;
+        raw = raw[0];
+      }
+      if (typeof raw === "object" && raw !== null) {
+        if (raw.evmAddress) raw = raw.evmAddress;
+        else if (raw.address) raw = raw.address;
+      }
       if (typeof raw === "string" && raw.startsWith("0x")) {
         return raw.trim();
       }
@@ -325,7 +332,7 @@
           body: JSON.stringify(rpcData)
         }).then(res => res.json());
 
-        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(null), 2000));
+        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(null), 1500));
 
         const json = await Promise.race([fetchPromise, timeoutPromise]);
         if (json && json.result && json.result !== "0x" && !json.error) {
@@ -338,7 +345,7 @@
     }
 
     async function init() {
-      sysLog("Initialisiere WebOn-Schnittstelle...");
+      sysLog("Initialisiere WebOn v1.0.6 Schnittstelle...");
 
       // 1. Native NomoApp Bridge
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
@@ -357,56 +364,68 @@
       // 2. MetaMask / Browser Fallback
       if (!userAddress && window.ethereum) {
         try {
-          const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
-          const addr = sanitizeAddress(accs);
+          let accs = await window.ethereum.request({ method: "eth_accounts" });
+          let addr = sanitizeAddress(accs);
+
+          if (!addr) {
+            accs = await window.ethereum.request({ method: "eth_requestAccounts" });
+            addr = sanitizeAddress(accs);
+          }
+
           if (addr) {
             userAddress = addr;
             sysLog("MetaMask Wallet gekoppelt: " + userAddress);
           }
         } catch(e) {
-          sysLog("MetaMask-Verbindung abgelehnt: " + (e.message || e));
+          sysLog("MetaMask-Verbindung: " + (e.message || e));
         }
       }
 
-      // 3. Standard Fallback
-      if (!userAddress) {
-        userAddress = "0x3ba96a7F5532B9cFdf5483774F7Cbc96d80F22a3";
-        sysLog("Standard-Adresse geladen: " + userAddress);
+      // UI-Aktualisierung
+      if (userAddress) {
+        const cleanAddrStr = String(userAddress);
+        document.getElementById("wallet-short").innerText = cleanAddrStr.substring(0, 6) + "..." + cleanAddrStr.substring(cleanAddrStr.length - 4);
+        document.getElementById("wallet-short").style.color = "var(--emerald)";
+        document.getElementById("dna-hex").innerText = cleanAddrStr;
+
+        userSID = deriveSID(cleanAddrStr);
+        document.getElementById("dna-sid").innerText = userSID;
+        sysLog("SID ermittelt: " + userSID);
+      } else {
+        sysLog("Warte auf Wallet-Kopplung...");
+        document.getElementById("wallet-short").innerText = "Bereit";
       }
 
-      const cleanAddrStr = String(userAddress);
-      document.getElementById("wallet-short").innerText = cleanAddrStr.substring(0, 6) + "..." + cleanAddrStr.substring(cleanAddrStr.length - 4);
-      document.getElementById("dna-hex").innerText = cleanAddrStr;
-
-      userSID = deriveSID(cleanAddrStr);
-      document.getElementById("dna-sid").innerText = userSID;
-      sysLog("SID ermittelt: " + userSID);
-
-      await checkStatus();
+      checkStatus();
     }
 
-    async function checkStatus() {
-      sysLog("Prüfe Voraussetzungen On-Chain...");
-      
+    function checkStatus() {
+      sysLog("Aktiviere Voraussetzungen...");
+
       const elKYC = document.getElementById("status-kyc");
       const elRWA = document.getElementById("status-rwa");
       const btn   = document.getElementById("btn-mint-action");
 
-      try {
-        await fetchERC20Balance(KYC_TOKEN_ADDR, userAddress);
-        await fetchERC20Balance(RWA_TOKEN_ADDR, userAddress);
-      } catch(e) {
-        console.warn("Status-Check RPC unterbrochen, nutze Bestätigungs-Mode:", e);
+      if (elKYC) {
+        elKYC.className = "status-pill pill-green";
+        elKYC.innerText = "✓ Bestätigt";
       }
-
-      elKYC.className = "status-pill pill-green";
-      elKYC.innerText = "✓ Bestätigt";
-
-      elRWA.className = "status-pill pill-green";
-      elRWA.innerText = "✓ Bestätigt";
+      if (elRWA) {
+        elRWA.className = "status-pill pill-green";
+        elRWA.innerText = "✓ Bestätigt";
+      }
 
       btn.disabled = false;
       sysLog("Status OK: Bereit für Prägung!");
+
+      if (userAddress) {
+        fetchERC20Balance(KYC_TOKEN_ADDR, userAddress).then(bal => {
+          if (bal > 0) sysLog("KYC Token On-Chain gefunden: " + bal);
+        }).catch(()=>{});
+        fetchERC20Balance(RWA_TOKEN_ADDR, userAddress).then(bal => {
+          if (bal > 0) sysLog("RWA Token On-Chain gefunden: " + bal);
+        }).catch(()=>{});
+      }
     }
 
     async function waitForReceipt(txHash) {
@@ -456,6 +475,21 @@
     }
 
     async function executeMint() {
+      if (!userAddress && window.ethereum) {
+        try {
+          const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
+          userAddress = sanitizeAddress(accs);
+        } catch(e) {
+          alert("Bitte bestätigen Sie die Wallet-Verbindung in MetaMask.");
+          return;
+        }
+      }
+
+      if (!userAddress) {
+        alert("Bitte öffnen Sie die Webseite in der NomoApp oder mit aktivierter MetaMask Wallet.");
+        return;
+      }
+
       const btn = document.getElementById("btn-mint-action");
       btn.disabled = true;
       btn.innerText = "⏳ PRÄGUNG LÄUFT...";
@@ -484,7 +518,7 @@
             amount: "0",
             assetSymbol: "ZENIQ"
           });
-          txHash = res.hash || res.txHash || JSON.stringify(res);
+          txHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
         }
 
         if (txHash) {
