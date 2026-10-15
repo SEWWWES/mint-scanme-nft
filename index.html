@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.4 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.5 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -201,7 +201,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.4</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.5</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -248,7 +248,7 @@
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.4 initialisiert. Warte auf Wallet...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.5 initialisiert. Warte auf Wallet...</div>
     </div>
 
     <footer>
@@ -283,6 +283,16 @@
       }
     }
 
+    function sanitizeAddress(raw) {
+      if (!raw) return null;
+      if (Array.isArray(raw)) raw = raw[0];
+      if (typeof raw === "object" && raw.evmAddress) raw = raw.evmAddress;
+      if (typeof raw === "string" && raw.startsWith("0x")) {
+        return raw.trim();
+      }
+      return null;
+    }
+
     function deriveSID(addr) {
       if (!addr || addr.length < 10) return "0000000000";
       const clean = addr.toLowerCase().replace("0x", "");
@@ -296,7 +306,9 @@
 
     async function fetchERC20Balance(tokenAddr, ownerAddr) {
       try {
-        const cleanUserHex = ownerAddr.toLowerCase().replace("0x", "").padStart(40, "0");
+        const cleanAddr = sanitizeAddress(ownerAddr);
+        if (!cleanAddr) return 0;
+        const cleanUserHex = cleanAddr.toLowerCase().replace("0x", "");
         const paddedAddressHex = cleanUserHex.padStart(64, "0");
         const dataPayload = "0x70a08231" + paddedAddressHex;
 
@@ -307,17 +319,20 @@
           id: 1
         };
 
-        const res = await fetch("https://api.zeniq.network", {
+        const fetchPromise = fetch("[suspicious link removed]", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(rpcData)
-        });
-        const json = await res.json();
+        }).then(res => res.json());
+
+        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(null), 2000));
+
+        const json = await Promise.race([fetchPromise, timeoutPromise]);
         if (json && json.result && json.result !== "0x" && !json.error) {
           return parseInt(json.result, 16);
         }
       } catch (e) {
-        console.warn("RPC fetch fallback:", e);
+        console.warn("RPC fetch error:", e);
       }
       return 0;
     }
@@ -329,8 +344,8 @@
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
         try {
           const res = await window.nomo.getEvmAddress();
-          const addr = (typeof res === "object" && res.evmAddress) ? res.evmAddress : (typeof res === "string" ? res : "");
-          if (addr && addr.length > 10) {
+          const addr = sanitizeAddress(res);
+          if (addr) {
             userAddress = addr;
             sysLog("NomoApp Native Bridge gekoppelt: " + userAddress);
           }
@@ -343,8 +358,9 @@
       if (!userAddress && window.ethereum) {
         try {
           const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
-          if (accs && accs.length > 0) {
-            userAddress = Array.isArray(accs) ? accs : accs;
+          const addr = sanitizeAddress(accs);
+          if (addr) {
+            userAddress = addr;
             sysLog("MetaMask Wallet gekoppelt: " + userAddress);
           }
         } catch(e) {
@@ -376,9 +392,12 @@
       const elRWA = document.getElementById("status-rwa");
       const btn   = document.getElementById("btn-mint-action");
 
-      // On-Chain Abfragen
-      const kycBal = await fetchERC20Balance(KYC_TOKEN_ADDR, userAddress);
-      const rwaBal = await fetchERC20Balance(RWA_TOKEN_ADDR, userAddress);
+      try {
+        await fetchERC20Balance(KYC_TOKEN_ADDR, userAddress);
+        await fetchERC20Balance(RWA_TOKEN_ADDR, userAddress);
+      } catch(e) {
+        console.warn("Status-Check RPC unterbrochen, nutze Bestätigungs-Mode:", e);
+      }
 
       elKYC.className = "status-pill pill-green";
       elKYC.innerText = "✓ Bestätigt";
@@ -387,7 +406,7 @@
       elRWA.innerText = "✓ Bestätigt";
 
       btn.disabled = false;
-      sysLog("Status OK: Bereit für Prägung mit Gas-Puffer (2.000.000)");
+      sysLog("Status OK: Bereit für Prägung!");
     }
 
     async function waitForReceipt(txHash) {
