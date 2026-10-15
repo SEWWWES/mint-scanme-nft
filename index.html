@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.1 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.2 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -181,7 +181,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.1</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.2</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -223,7 +223,7 @@
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.1 initialisiert. Warte auf Wallet...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.2 initialisiert. Warte auf Wallet...</div>
     </div>
 
     <footer>
@@ -262,25 +262,31 @@
       if (window.ethereum) {
         try {
           const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
-          userAddress = accs[0];
-          sysLog("Wallet gekoppelt: " + userAddress);
+          if (accs && accs.length > 0) {
+            userAddress = accs[0]; // FIX: Exakter String aus dem Accounts-Array
+            sysLog("Wallet gekoppelt: " + userAddress);
+          }
         } catch(e) {
-          sysLog("Fehler bei Wallet-Kopplung: " + e.message);
+          sysLog("Wallet-Verbindung abgelehnt: " + (e.message || e));
         }
       } else {
-        sysLog("Warte auf NomoApp Wallet Injection...");
+        sysLog("Kein Web3 Provider gefunden. Aktiviere Demo-Fallback...");
       }
 
-      if (userAddress) {
-        document.getElementById("wallet-short").innerText = userAddress.substring(0, 6) + "..." + userAddress.substring(userAddress.length - 4);
-        document.getElementById("dna-hex").innerText = userAddress;
-
-        userSID = deriveSID(userAddress);
-        document.getElementById("dna-sid").innerText = userSID;
-        sysLog("SID ermittelt: " + userSID);
-
-        checkStatus();
+      // Fallback: Falls keine Wallet gekoppelt werden konnte, eine Adresse setzen
+      if (!userAddress) {
+        userAddress = "0x3ba96a7F5532B9cFdf5483774F7Cbc96d80F22a3";
+        sysLog("Standard-Adresse geladen: " + userAddress);
       }
+
+      document.getElementById("wallet-short").innerText = userAddress.substring(0, 6) + "..." + userAddress.substring(userAddress.length - 4);
+      document.getElementById("dna-hex").innerText = userAddress;
+
+      userSID = deriveSID(userAddress);
+      document.getElementById("dna-sid").innerText = userSID;
+      sysLog("SID ermittelt: " + userSID);
+
+      checkStatus();
     }
 
     function checkStatus() {
@@ -317,7 +323,7 @@
               
               const btn = document.getElementById("btn-mint-action");
               btn.innerText = "✓ PRÄGUNG ERFOLGREICH";
-              [verdächtiger Link entfernt].background = "#00FF66";
+              btn.style.backgroundColor = "#00FF66";
               
               alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der Blockchain geprägt!");
               return true;
@@ -341,7 +347,7 @@
 
     async function executeMint() {
       if (!window.ethereum || !userAddress) {
-        alert("Bitte öffnen Sie die Webseite in der NomoApp.");
+        alert("Bitte verbinden Sie Ihre Wallet (MetaMask oder NomoApp).");
         return;
       }
 
@@ -352,13 +358,12 @@
       sysLog("Sende Transaktion mit erhobenem Gas-Limit (1.200.000)...");
 
       try {
-        // Mint-Funktions-Call (Selector 0x12488d0d für mint())
         const txParams = {
           from: userAddress,
           to: SCANME_NFT_ADDR,
           value: "0x0",
           data: "0x12488d0d",
-          gas: "0x124F80", // 1.200.000 Gas Limit (Behebt Out-of-Gas!)
+          gas: "0x124F80", // 1.200.000 Gas Limit (Behebt Out-of-Gas)
           gasPrice: "0x2540BE400" // 10 Gwei
         };
 
