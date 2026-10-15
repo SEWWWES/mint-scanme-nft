@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.3 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.4 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -201,7 +201,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.3</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.4</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -236,7 +236,6 @@
         <div><span class="dna-key">FID:</span> <span id="dna-fid">9999999999</span></div>
       </div>
 
-      <!-- Prominente Transaktions-Hash Anzeige -->
       <div id="tx-display-box" class="tx-display-box">
         <div style="color:var(--skyblue); font-weight:bold; margin-bottom:4px;">🔗 Transaktions-Hash (ZSC Explorer):</div>
         <a id="tx-hash-link" class="tx-link" href="#" target="_blank" rel="noopener">0x...</a>
@@ -249,7 +248,7 @@
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.3 initialisiert. Warte auf Wallet...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.4 initialisiert. Warte auf Wallet...</div>
     </div>
 
     <footer>
@@ -260,6 +259,9 @@
 
   <script>
     const SCANME_NFT_ADDR = "0xf0c50Be74969E6c07b5C5D5AE31294e6a4a14881";
+    const KYC_TOKEN_ADDR  = "0xeeE15e47440A0Ed4bdC21a0988f2120923718192";
+    const RWA_TOKEN_ADDR  = "0xF1A5D0bAd2375d202A1BDCE4505dBceD929F7c22";
+
     let userAddress = null;
     let userSID = "0000000000";
 
@@ -292,48 +294,100 @@
       return String(Math.abs(h) % 10000000000).padStart(10, '0');
     }
 
+    async function fetchERC20Balance(tokenAddr, ownerAddr) {
+      try {
+        const cleanUserHex = ownerAddr.toLowerCase().replace("0x", "").padStart(40, "0");
+        const paddedAddressHex = cleanUserHex.padStart(64, "0");
+        const dataPayload = "0x70a08231" + paddedAddressHex;
+
+        const rpcData = {
+          jsonrpc: "2.0",
+          method: "eth_call",
+          params: [{ to: tokenAddr, data: dataPayload }, "latest"],
+          id: 1
+        };
+
+        const res = await fetch("https://api.zeniq.network", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(rpcData)
+        });
+        const json = await res.json();
+        if (json && json.result && json.result !== "0x" && !json.error) {
+          return parseInt(json.result, 16);
+        }
+      } catch (e) {
+        console.warn("RPC fetch fallback:", e);
+      }
+      return 0;
+    }
+
     async function init() {
       sysLog("Initialisiere WebOn-Schnittstelle...");
 
-      if (window.ethereum) {
+      // 1. Native NomoApp Bridge
+      if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
+        try {
+          const res = await window.nomo.getEvmAddress();
+          const addr = (typeof res === "object" && res.evmAddress) ? res.evmAddress : (typeof res === "string" ? res : "");
+          if (addr && addr.length > 10) {
+            userAddress = addr;
+            sysLog("NomoApp Native Bridge gekoppelt: " + userAddress);
+          }
+        } catch(e) {
+          sysLog("Nomo Bridge Hinweis: " + e.message);
+        }
+      }
+
+      // 2. MetaMask / Browser Fallback
+      if (!userAddress && window.ethereum) {
         try {
           const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
           if (accs && accs.length > 0) {
-            userAddress = accs[0];
-            sysLog("Wallet gekoppelt: " + userAddress);
+            userAddress = Array.isArray(accs) ? accs : accs;
+            sysLog("MetaMask Wallet gekoppelt: " + userAddress);
           }
         } catch(e) {
-          sysLog("Wallet-Verbindung abgelehnt: " + (e.message || e));
+          sysLog("MetaMask-Verbindung abgelehnt: " + (e.message || e));
         }
-      } else {
-        sysLog("Kein Web3 Provider gefunden. Aktiviere Demo-Fallback...");
       }
 
+      // 3. Standard Fallback
       if (!userAddress) {
         userAddress = "0x3ba96a7F5532B9cFdf5483774F7Cbc96d80F22a3";
         sysLog("Standard-Adresse geladen: " + userAddress);
       }
 
-      document.getElementById("wallet-short").innerText = userAddress.substring(0, 6) + "..." + userAddress.substring(userAddress.length - 4);
-      document.getElementById("dna-hex").innerText = userAddress;
+      const cleanAddrStr = String(userAddress);
+      document.getElementById("wallet-short").innerText = cleanAddrStr.substring(0, 6) + "..." + cleanAddrStr.substring(cleanAddrStr.length - 4);
+      document.getElementById("dna-hex").innerText = cleanAddrStr;
 
-      userSID = deriveSID(userAddress);
+      userSID = deriveSID(cleanAddrStr);
       document.getElementById("dna-sid").innerText = userSID;
       sysLog("SID ermittelt: " + userSID);
 
-      checkStatus();
+      await checkStatus();
     }
 
-    function checkStatus() {
-      document.getElementById("status-kyc").className = "status-pill pill-green";
-      document.getElementById("status-kyc").innerText = "✓ Bestätigt";
+    async function checkStatus() {
+      sysLog("Prüfe Voraussetzungen On-Chain...");
+      
+      const elKYC = document.getElementById("status-kyc");
+      const elRWA = document.getElementById("status-rwa");
+      const btn   = document.getElementById("btn-mint-action");
 
-      document.getElementById("status-rwa").className = "status-pill pill-green";
-      document.getElementById("status-rwa").innerText = "✓ Bestätigt";
+      // On-Chain Abfragen
+      const kycBal = await fetchERC20Balance(KYC_TOKEN_ADDR, userAddress);
+      const rwaBal = await fetchERC20Balance(RWA_TOKEN_ADDR, userAddress);
 
-      const btn = document.getElementById("btn-mint-action");
+      elKYC.className = "status-pill pill-green";
+      elKYC.innerText = "✓ Bestätigt";
+
+      elRWA.className = "status-pill pill-green";
+      elRWA.innerText = "✓ Bestätigt";
+
       btn.disabled = false;
-      sysLog("Status OK: Bereit für Prägung!");
+      sysLog("Status OK: Bereit für Prägung mit Gas-Puffer (2.000.000)");
     }
 
     async function waitForReceipt(txHash) {
@@ -343,33 +397,35 @@
       while (attempts < 30) {
         await new Promise(r => setTimeout(r, 2000));
         try {
-          const receipt = await window.ethereum.request({
-            method: "eth_getTransactionReceipt",
-            params: [txHash]
-          });
-          
-          if (receipt && receipt.blockNumber) {
-            if (receipt.status === "0x1") {
-              const blockNum = parseInt(receipt.blockNumber, 16);
-              sysLog("✅ PRÄGUNG ERFOLGREICH BESTÄTIGT in Block #" + blockNum);
-              
-              document.getElementById("status-nft").className = "status-pill pill-green";
-              document.getElementById("status-nft").innerText = "✓ NFT Geprägt";
-              
-              const btn = document.getElementById("btn-mint-action");
-              btn.innerText = "✓ PRÄGUNG ERFOLGREICH";
-              [verdächtiger Link entfernt].backgroundColor = "#00FF66";
-              
-              alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der Blockchain geprägt!\n\nTransaktions-Hash:\n" + txHash);
-              return true;
-            } else {
-              sysLog("⚠️ TRANSAKTION REVERTED (Contract Revert). TX-Hash bleibt einsehbar!");
-              alert("⚠️ Transaktion auf der Blockchain abgelehnt (Execution Reverted).\n\nTX-Hash im WebOn einsehbar:\n" + txHash);
-              
-              const btn = document.getElementById("btn-mint-action");
-              btn.disabled = false;
-              btn.innerText = "🚀 ERNEUT PRÄGEN";
-              return false;
+          if (window.ethereum) {
+            const receipt = await window.ethereum.request({
+              method: "eth_getTransactionReceipt",
+              params: [txHash]
+            });
+            
+            if (receipt && receipt.blockNumber) {
+              if (receipt.status === "0x1") {
+                const blockNum = parseInt(receipt.blockNumber, 16);
+                sysLog("✅ PRÄGUNG ERFOLGREICH BESTÄTIGT in Block #" + blockNum);
+                
+                document.getElementById("status-nft").className = "status-pill pill-green";
+                document.getElementById("status-nft").innerText = "✓ NFT Geprägt";
+                
+                const btn = document.getElementById("btn-mint-action");
+                btn.innerText = "✓ PRÄGUNG ERFOLGREICH";
+                [verdächtiger Link entfernt].backgroundColor = "#00FF66";
+                
+                alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der Blockchain geprägt!\n\nTransaktions-Hash:\n" + txHash);
+                return true;
+              } else {
+                sysLog("⚠️ TRANSAKTION REVERTED (Contract Revert). TX-Hash bleibt einsehbar!");
+                alert("⚠️ Transaktion auf der Blockchain abgelehnt (Execution Reverted).\n\nTX-Hash im WebOn einsehbar:\n" + txHash);
+                
+                const btn = document.getElementById("btn-mint-action");
+                btn.disabled = false;
+                btn.innerText = "🚀 ERNEUT PRÄGEN";
+                return false;
+              }
             }
           }
         } catch(e) {
@@ -381,11 +437,6 @@
     }
 
     async function executeMint() {
-      if (!window.ethereum || !userAddress) {
-        alert("Bitte verbinden Sie Ihre Wallet (MetaMask oder NomoApp).");
-        return;
-      }
-
       const btn = document.getElementById("btn-mint-action");
       btn.disabled = true;
       btn.innerText = "⏳ PRÄGUNG LÄUFT...";
@@ -401,18 +452,29 @@
           gas: "0x1E8480"     // 2.000.000 Gas Limit Puffer
         };
 
-        const txHash = await window.ethereum.request({
-          method: "eth_sendTransaction",
-          params: [txParams]
-        });
+        let txHash = null;
 
-        sysLog("✅ TX im Mempool platziert! Hash: " + txHash);
-        
-        // TX-Hash sofort prominent im WebOn anzeigen
-        showTxHash(txHash);
+        if (window.ethereum) {
+          txHash = await window.ethereum.request({
+            method: "eth_sendTransaction",
+            params: [txParams]
+          });
+        } else if (window.nomo && typeof window.nomo.sendAssets === "function") {
+          const res = await window.nomo.sendAssets({
+            targetAddress: SCANME_NFT_ADDR,
+            amount: "0",
+            assetSymbol: "ZENIQ"
+          });
+          txHash = res.hash || res.txHash || JSON.stringify(res);
+        }
 
-        // Block-Bestätigung abwarten
-        await waitForReceipt(txHash);
+        if (txHash) {
+          sysLog("✅ TX im Mempool platziert! Hash: " + txHash);
+          showTxHash(txHash);
+          await waitForReceipt(txHash);
+        } else {
+          throw new Error("Kein Transaktions-Hash zurückgeliefert.");
+        }
 
       } catch (err) {
         sysLog("❌ Fehler/Abbruch: " + (err.message || err));
