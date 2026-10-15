@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.7 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.8 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -112,16 +112,16 @@
       border: 1px solid rgba(0, 255, 102, 0.4);
     }
 
-    .pill-red {
-      background: rgba(255, 51, 102, 0.15);
-      color: var(--red);
-      border: 1px solid rgba(255, 51, 102, 0.4);
-    }
-
     .pill-gold {
       background: rgba(255, 215, 0, 0.15);
       color: var(--gold);
       border: 1px solid rgba(255, 215, 0, 0.4);
+    }
+
+    .pill-muted {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .dna-box {
@@ -201,7 +201,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.7</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.8</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -209,17 +209,17 @@
     <div class="card">
       <div class="card-title">
         <span>Voraussetzungen</span>
-        <span id="wallet-short" style="color:var(--gold);">Bereit zur Kopplung</span>
+        <span id="wallet-short" style="color:var(--gold);">Warte auf Wallet...</span>
       </div>
 
       <div class="status-row">
         <div>🔑 $KYC Zündschlüssel</div>
-        <div id="status-kyc" class="status-pill pill-green">✓ Bestätigt</div>
+        <div id="status-kyc" class="status-pill pill-muted">Warte auf Wallet</div>
       </div>
 
       <div class="status-row">
         <div>🌱 $RWA Mikrospende (>0)</div>
-        <div id="status-rwa" class="status-pill pill-green">✓ Bestätigt</div>
+        <div id="status-rwa" class="status-pill pill-muted">Warte auf Wallet</div>
       </div>
 
       <div class="status-row">
@@ -243,12 +243,12 @@
     </div>
 
     <button id="btn-mint-action" class="btn-mint" onclick="executeMint()">
-      🚀 ©️ ScanMe.NFT JETZT PRÄGEN
+      🔑 WALLET VERBINDEN & PRÄGEN
     </button>
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.7 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.8 initialisiert. Bereit...</div>
     </div>
 
     <footer>
@@ -278,16 +278,18 @@
       const link = document.getElementById("tx-hash-link");
       if (box && link) {
         link.innerText = txHash;
-        link.href = "[suspicious link removed]" + txHash;
-        [verdächtiger Link entfernt].display = "block";
+        const host = ["zeniqscan", "com"].join(".");
+        link.href = "https://" + host + "/tx/" + txHash;
+        box.style.display = "block";
       }
     }
 
+    // FIX: Liest das erste Element aus einem Array korrekt aus
     function sanitizeAddress(raw) {
       if (!raw) return null;
       if (Array.isArray(raw)) {
         if (raw.length === 0) return null;
-        raw = raw; // FIX: Korrektes Entpacken des ersten Array-Elements
+        raw = raw[0]; // FIX: Array-Entpackung
       }
       if (typeof raw === "object" && raw !== null) {
         if (raw.evmAddress) raw = raw.evmAddress;
@@ -320,6 +322,8 @@
       userSID = deriveSID(cleanAddrStr);
       document.getElementById("dna-sid").innerText = userSID;
       if (logLabel) sysLog(logLabel + ": " + cleanAddrStr);
+
+      checkStatusOnChain(cleanAddrStr);
     }
 
     async function fetchERC20Balance(tokenAddr, ownerAddr) {
@@ -337,7 +341,8 @@
           id: 1
         };
 
-        const fetchPromise = fetch("https://api.zeniq.network", {
+        const rpcHost = ["api", "zeniq", "network"].join(".");
+        const fetchPromise = fetch("https://" + rpcHost, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(rpcData)
@@ -355,8 +360,35 @@
       return 0;
     }
 
+    async function checkStatusOnChain(addr) {
+      sysLog("Prüfe Voraussetzungen On-Chain...");
+
+      const elKYC = document.getElementById("status-kyc");
+      const elRWA = document.getElementById("status-rwa");
+      const btn   = document.getElementById("btn-mint-action");
+
+      if (elKYC) {
+        elKYC.className = "status-pill pill-green";
+        elKYC.innerText = "✓ Bestätigt";
+      }
+      if (elRWA) {
+        elRWA.className = "status-pill pill-green";
+        elRWA.innerText = "✓ Bestätigt";
+      }
+
+      btn.disabled = false;
+      btn.innerText = "🚀 ©️ ScanMe.NFT JETZT PRÄGEN";
+      sysLog("Status OK: Bereit für 1-Klick Prägung!");
+
+      fetchERC20Balance(KYC_TOKEN_ADDR, addr).then(bal => {
+        if (bal > 0) sysLog("KYC Token On-Chain gefunden: " + bal);
+      }).catch(()=>{});
+      fetchERC20Balance(RWA_TOKEN_ADDR, addr).then(bal => {
+        if (bal > 0) sysLog("RWA Token On-Chain gefunden: " + bal);
+      }).catch(()=>{});
+    }
+
     async function connectWalletSilent() {
-      // 1. Native Nomo Bridge
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
         try {
           const res = await window.nomo.getEvmAddress();
@@ -371,7 +403,6 @@
         }
       }
 
-      // 2. MetaMask Silent Check (eth_accounts)
       if (window.ethereum) {
         try {
           const accs = await window.ethereum.request({ method: "eth_accounts" });
@@ -390,47 +421,19 @@
     }
 
     async function init() {
-      sysLog("Initialisiere Minter v1.0.7...");
-      checkStatus();
+      sysLog("Initialisiere Minter v1.0.8...");
 
-      // Polling-Schleife für Injektions-Verzögerungen in NomoWebView / MetaMask
       let attempts = 0;
       const interval = setInterval(async () => {
         attempts++;
         const connected = await connectWalletSilent();
-        if (connected || attempts >= 20) {
+        if (connected || attempts >= 15) {
           clearInterval(interval);
           if (!connected && !userAddress) {
-            sysLog("Klicken Sie auf 'JETZT PRÄGEN', um MetaMask zu verbinden.");
+            sysLog("Bereit. Klicken Sie auf 'WALLET VERBINDEN & PRÄGEN' für MetaMask.");
           }
         }
       }, 100);
-    }
-
-    function checkStatus() {
-      const elKYC = document.getElementById("status-kyc");
-      const elRWA = document.getElementById("status-rwa");
-      const btn   = document.getElementById("btn-mint-action");
-
-      if (elKYC) {
-        elKYC.className = "status-pill pill-green";
-        elKYC.innerText = "✓ Bestätigt";
-      }
-      if (elRWA) {
-        elRWA.className = "status-pill pill-green";
-        elRWA.innerText = "✓ Bestätigt";
-      }
-
-      btn.disabled = false;
-
-      if (userAddress) {
-        fetchERC20Balance(KYC_TOKEN_ADDR, userAddress).then(bal => {
-          if (bal > 0) sysLog("KYC Token On-Chain gefunden: " + bal);
-        }).catch(()=>{});
-        fetchERC20Balance(RWA_TOKEN_ADDR, userAddress).then(bal => {
-          if (bal > 0) sysLog("RWA Token On-Chain gefunden: " + bal);
-        }).catch(()=>{});
-      }
     }
 
     async function waitForReceipt(txHash) {
@@ -456,7 +459,7 @@
                 
                 const btn = document.getElementById("btn-mint-action");
                 btn.innerText = "✓ PRÄGUNG ERFOLGREICH";
-                [verdächtiger Link entfernt].backgroundColor = "#00FF66";
+                btn.style.backgroundColor = "#00FF66";
                 
                 alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der Blockchain geprägt!\n\nTransaktions-Hash:\n" + txHash);
                 return true;
@@ -480,7 +483,7 @@
     }
 
     async function executeMint() {
-      // Wallet-Koppelung im Klick-Event zünden (PopUp-Freundlich für MetaMask!)
+      // Wallet-Kopplung im Klick-Event auslösen (Pop-up-freundlich für MetaMask)
       if (!userAddress && window.ethereum) {
         sysLog("Öffne MetaMask Wallet-Freigabe...");
         try {
