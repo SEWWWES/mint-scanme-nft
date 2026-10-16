@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.9 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.11 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -124,6 +124,14 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
+    .gift-card {
+      background: rgba(255, 215, 0, 0.05);
+      border: 1px solid var(--gold);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.08);
+    }
+
     .dna-box {
       background: rgba(0, 0, 0, 0.4);
       border: 1px dashed var(--border-color);
@@ -221,10 +229,21 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.9</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.11</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
+
+    <!-- 🎁 MARKETING COMMUNITY-INITIATIVE KARTE -->
+    <div class="gift-card">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+        <span style="font-size:1.3rem;">🎁</span>
+        <strong style="color:var(--gold); font-size:0.88rem; letter-spacing:0.5px;">SMARTEARTHFAMILY COMMUNITY-INITIATIVE</strong>
+      </div>
+      <p style="font-size:0.8rem; color:var(--text-main); line-height:1.45;">
+        <strong>Symbolische Sonder-Eigenspende:</strong> Das unbestechliche ©️ ScanMe.NFT Siegel besitzt einen regulären Schöpfungswert von <strong>\$100.00 USD</strong>. Um dezentrale Freiheit, Frieden und unkorrumpierbaren Identitätsschutz für JEDEN Menschen weltweit sofort zugänglich zu machen, ermöglicht die SmartEarthFamily die Prägung gegen eine symbolische <strong>Sonder-Eigenspende von exakt \$1.00 USD</strong>!
+      </p>
+    </div>
 
     <div class="card">
       <div class="card-title">
@@ -260,7 +279,11 @@
           <strong id="live-zeniq-price" style="color:var(--gold);">\$0.001700 USD</strong>
         </div>
         <div class="price-row">
-          <span>Prägegebühr (USD):</span>
+          <span>Regulärer Schöpfungswert:</span>
+          <span style="text-decoration: line-through; color:var(--text-muted);">\$100.00 USD</span>
+        </div>
+        <div class="price-row">
+          <span>Symbolische Sonder-Eigenspende:</span>
           <strong style="color:var(--emerald);">\$1.00 USD</strong>
         </div>
         <div class="price-row" style="border-top: 1px dashed rgba(255,215,0,0.3); padding-top: 4px; margin-top: 4px;">
@@ -290,7 +313,7 @@
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.9 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.11 initialisiert. Bereit...</div>
     </div>
 
     <footer>
@@ -324,20 +347,18 @@
         link.innerText = txHash;
         const host = ["zeniqscan", "com"].join(".");
         link.href = "https://" + host + "/tx/" + txHash;
-        box.style.display = "block";
+        [verdächtiger Link entfernt].display = "block";
       }
     }
 
     function sanitizeAddress(raw) {
       if (!raw) return null;
-      if (Array.isArray(raw)) {
+      while (Array.isArray(raw)) {
         if (raw.length === 0) return null;
-        raw = raw;
+        raw = raw[0];
       }
       if (typeof raw === "object" && raw !== null) {
-        if (raw.evmAddress) raw = raw.evmAddress;
-        else if (raw.ethAddress) raw = raw.ethAddress;
-        else if (raw.address) raw = raw.address;
+        raw = raw.evmAddress || raw.ethAddress || raw.address || raw.hex || null;
       }
       if (typeof raw === "string" && raw.startsWith("0x") && raw.length >= 42) {
         return raw.trim();
@@ -356,12 +377,11 @@
       return String(Math.abs(h) % 10000000000).padStart(10, '0');
     }
 
-    // Wandelt den ZENIQ-Betrag in exakten EVM Hex-Wei-Wert um
     function zeniqAmountToWeiHex(amountFloat) {
       try {
         const strVal = amountFloat.toFixed(6);
         const parts = strVal.split(".");
-        let intPart = parts || "0";
+        let intPart = parts[0] || "0";
         let fracPart = parts[1] || "";
         while (fracPart.length < 18) fracPart += "0";
         fracPart = fracPart.substring(0, 18);
@@ -375,19 +395,17 @@
       }
     }
 
-    // MULTI-ENDPOINT DYNAMISCHER ECHTZEIT KURS-RECHNER (\$1.00 USD)
     async function fetchZeniqLivePrice() {
-      sysLog("Lade echten ZENIQ USD-Kurs via Multi-Endpoint...");
-
+      sysLog("Lade echten ZENIQ USD-Kurs...");
       const fallbackPrice = 0.0017;
 
       const pLBank = new Promise((resolve, reject) => {
         const timer = setTimeout(() => reject(new Error("LBank timeout")), 3500);
-        fetch("https://api.lbank.info/v2/ticker/24hr.do?symbol=zeniq_usdt")
+        fetch("[suspicious link removed]")
           .then(res => { clearTimeout(timer); return res.json(); })
           .then(json => {
-            if (json && [verdächtiger Link entfernt] && [verdächtiger Link entfernt] && [verdächtiger Link entfernt].ticker) {
-              const p = parseFloat([verdächtiger Link entfernt].ticker.latest || [verdächtiger Link entfernt].ticker.price);
+            if (json && [verdächtiger Link entfernt] && [verdächtiger Link entfernt][0] && [verdächtiger Link entfernt][0].ticker) {
+              const p = parseFloat([verdächtiger Link entfernt][0].ticker.latest || [verdächtiger Link entfernt][0].ticker.price);
               if (!isNaN(p) && p > 0) return resolve({ price: p, source: "LBank" });
             }
             reject(new Error("LBank invalid data"));
@@ -396,42 +414,28 @@
 
       const pDex = new Promise((resolve, reject) => {
         const timer = setTimeout(() => reject(new Error("DexScreener timeout")), 3500);
-        fetch("https://api.dexscreener.com/latest/dex/tokens/0x74DC1C4ec10abE9F5C8A3EabF1A90b97cDc3Ead8")
+        fetch("[suspicious link removed]")
           .then(res => { clearTimeout(timer); return res.json(); })
           .then(json => {
-            if (json && json.pairs && json.pairs && json.pairs.priceUsd) {
-              const p = parseFloat(json.pairs.priceUsd);
+            if (json && json.pairs && json.pairs[0] && json.pairs[0].priceUsd) {
+              const p = parseFloat(json.pairs[0].priceUsd);
               if (!isNaN(p) && p > 0) return resolve({ price: p, source: "DexScreener" });
             }
             reject(new Error("DexScreener invalid data"));
           }).catch(e => { clearTimeout(timer); reject(e); });
       });
 
-      const pGecko = new Promise((resolve, reject) => {
-        const timer = setTimeout(() => reject(new Error("CoinGecko timeout")), 3500);
-        fetch("https://api.coingecko.com/v3/simple/price?ids=zeniq&vs_currencies=usd")
-          .then(res => { clearTimeout(timer); return res.json(); })
-          .then(json => {
-            if (json && json.zeniq && json.zeniq.usd && json.zeniq.usd > 0) {
-              return resolve({ price: json.zeniq.usd, source: "CoinGecko" });
-            }
-            reject(new Error("CoinGecko invalid data"));
-          }).catch(e => { clearTimeout(timer); reject(e); });
-      });
-
       try {
-        const result = await Promise.race([pLBank, pDex, pGecko]);
+        const result = await Promise.race([pLBank, pDex]);
         liveZeniqUsdPrice = result.price;
         document.getElementById("price-source-badge").innerText = result.source + " Live";
-        sysLog(`Live-Kurs geladen (${result.source}): $${liveZeniqUsdPrice.toFixed(6)} USD`);
+        sysLog(`Live-Kurs (${result.source}): $${liveZeniqUsdPrice.toFixed(6)} USD`);
       } catch (err) {
         liveZeniqUsdPrice = fallbackPrice;
-        sysLog(`Standard-Kurs geladen: $${liveZeniqUsdPrice.toFixed(6)} USD`);
+        sysLog(`Standard-Kurs: $${liveZeniqUsdPrice.toFixed(6)} USD`);
       }
 
-      // Berechne exakte ZENIQ Coins für \$1.00 USD
       calculatedRequiredZeniq = 1.00 / liveZeniqUsdPrice;
-      
       document.getElementById("live-zeniq-price").innerText = `$${liveZeniqUsdPrice.toFixed(6)} USD`;
       document.getElementById("calc-required-zeniq").innerText = `${calculatedRequiredZeniq.toFixed(2)} ZENIQ`;
       
@@ -455,8 +459,6 @@
     }
 
     async function checkStatusOnChain(addr) {
-      sysLog("Prüfe On-Chain Voraussetzungen...");
-
       const elKYC = document.getElementById("status-kyc");
       const elRWA = document.getElementById("status-rwa");
       const btn   = document.getElementById("btn-mint-action");
@@ -472,7 +474,7 @@
 
       btn.disabled = false;
       btn.innerText = `🚀 ©️ ScanMe.NFT JETZT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ = $1.00 USD)`;
-      sysLog("Status OK: Dynamische \$1.00 USD Prägung bereit!");
+      sysLog("Status OK: Dynamische \$1.00 USD Sonder-Eigenspenden-Prägung bereit!");
     }
 
     async function connectWalletSilent() {
@@ -485,9 +487,7 @@
             updateWalletUI(userAddress, "NomoApp Native Bridge gekoppelt");
             return true;
           }
-        } catch(e) {
-          console.warn("Nomo Bridge:", e);
-        }
+        } catch(e) {}
       }
 
       if (window.ethereum) {
@@ -499,18 +499,14 @@
             updateWalletUI(userAddress, "MetaMask Wallet verbunden");
             return true;
           }
-        } catch(e) {
-          console.warn("MetaMask eth_accounts:", e);
-        }
+        } catch(e) {}
       }
 
       return false;
     }
 
     async function init() {
-      sysLog("Initialisiere Minter v1.0.9 mit \$1.00 USD Kurs-Rechner...");
-      
-      // Lade Live-Kurs
+      sysLog("Initialisiere Minter v1.0.11...");
       await fetchZeniqLivePrice();
 
       let attempts = 0;
@@ -608,17 +604,16 @@
       btn.disabled = true;
       btn.innerText = "⏳ PRÄGUNG LÄUFT...";
 
-      // Berechne den exakten Wei-Wert für \$1.00 USD in ZENIQ
       const valueWeiHex = zeniqAmountToWeiHex(calculatedRequiredZeniq);
-      sysLog(`Sende Prägung mit Value $1.00 USD = ${calculatedRequiredZeniq.toFixed(2)} ZENIQ (${valueWeiHex} Wei)...`);
+      sysLog(`Sende Prägung mit Sonder-Eigenspende $1.00 USD = ${calculatedRequiredZeniq.toFixed(2)} ZENIQ (${valueWeiHex} Wei)...`);
 
       try {
         const txParams = {
           from: userAddress,
           to: SCANME_NFT_ADDR,
-          value: valueWeiHex, // Dynamischer \$1.00 USD Wert in Wei!
-          data: "0x12488d0d", // mint() selector
-          gas: "0x1E8480"     // 2.000.000 Gas Limit Puffer
+          value: valueWeiHex,
+          data: "0x12488d0d",
+          gas: "0x1E8480"
         };
 
         let txHash = null;
