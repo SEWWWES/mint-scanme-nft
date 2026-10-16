@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.28 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.29 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -240,6 +240,31 @@
       transition: all 0.2s ease;
     }
 
+    .btn-copy {
+      background: rgba(0, 204, 255, 0.2);
+      border: 1px solid var(--skyblue);
+      color: var(--skyblue);
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .diag-textarea {
+      width: 100%;
+      height: 130px;
+      background: #000;
+      color: var(--skyblue);
+      border: 1px solid var(--skyblue);
+      border-radius: 8px;
+      padding: 8px;
+      font-family: monospace;
+      font-size: 0.70rem;
+      resize: vertical;
+      margin-top: 8px;
+    }
+
     .btn-mint:disabled, .btn-rwa:disabled, .btn-connect:disabled {
       background: #2A364F;
       color: #5A6B87;
@@ -400,7 +425,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.28 (NOMO NATIVE BRIDGE)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.29 (DIAGNOSTIK & MONITORING)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -498,9 +523,19 @@
       🚀 2. ©️ ScanMe.NFT JETZT PRÄGEN (0.00 ZENIQ)
     </button>
 
-    <div class="card" style="padding:12px;">
-      <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.28 initialisiert. Bereit...</div>
+    <!-- 🔍 INTEGRATED DIAGNOSTIC TOOL & KOPIER-SUITE -->
+    <div class="card" style="padding:14px; border:1px solid var(--skyblue);">
+      <div class="card-title" style="margin-bottom:8px; color:var(--skyblue);">
+        <span>🔍 DIAGNOSTIK & ECHTZEIT-MONITORING</span>
+        <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
+      </div>
+
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.29 initialisiert. Bereit...</div>
+
+      <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
+        Kopierfeld für Entwickler-Analyse:
+      </label>
+      <textarea id="diag-copy-field" class="diag-textarea" readonly placeholder="Lade Diagnostik-Daten..."></textarea>
     </div>
 
     <footer>
@@ -520,12 +555,80 @@
     let hasKycToken = false;
     let hasRwaToken = false;
 
+    let diagLogList = [];
+
+    // GLOBAL EXCEPTION CATCHER (FÄNGT JEDEN LAUFZEITFEHLER IN ECHTZEIT AB)
+    window.onerror = function(msg, url, line, col, error) {
+      const errStr = "[EXCEPTION] " + msg + " (Zeile " + line + ":" + col + ")";
+      sysLog(errStr);
+      updateDiagCopyField();
+      return false;
+    };
+
+    window.onunhandledrejection = function(event) {
+      const reason = event.reason ? (event.reason.message || event.reason) : "Promise Rejection";
+      const errStr = "[UNHANDLED REJECTION] " + reason;
+      sysLog(errStr);
+      updateDiagCopyField();
+    };
+
+    function updateDiagCopyField() {
+      const field = document.getElementById("diag-copy-field");
+      if (!field) return;
+
+      const envInfo = {
+        version: "1.0.29",
+        userAgent: navigator.userAgent,
+        location: window.location.href,
+        isRealNomoApp: typeof window.isRealNomoApp === "function" ? window.isRealNomoApp() : false,
+        hasNomoObj: !!window.nomo,
+        nomoKeys: window.nomo ? Object.keys(window.nomo) : [],
+        hasEthereumObj: !!window.ethereum,
+        isMetaMask: window.ethereum ? !!window.ethereum.isMetaMask : false,
+        userAddress: userAddress,
+        userSID: userSID,
+        hasKycToken: hasKycToken,
+        hasRwaToken: hasRwaToken
+      };
+
+      const fullReport = "=== SEWWWES WEBON v1.0.29 DIAGNOSTIK REPORT ===\n" +
+        "TIMESTAMP: " + new Date().toISOString() + "\n" +
+        "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
+        "\n=== PROTOKOLL-LOGS ===\n" +
+        diagLogList.join("\n");
+
+      field.value = fullReport;
+    }
+
+    function copyDiagnosticReport() {
+      const field = document.getElementById("diag-copy-field");
+      if (!field) return;
+      field.select();
+      field.setSelectionRange(0, 99999);
+
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(field.value);
+        } else {
+          document.execCommand("copy");
+        }
+        alert("📋 Diagnostik-Daten erfolgreich kopiert! Bitte fuegen Sie diese im Chat ein.");
+      } catch (e) {
+        alert("Bitte markieren Sie den Text im Feld manuell und kopieren ihn.");
+      }
+    }
+
     function sysLog(msg) {
+      const timestamp = new Date().toISOString().substring(11, 19);
+      const formatted = "[" + timestamp + "] " + msg;
+      diagLogList.push(formatted);
+
       const box = document.getElementById("sys-log");
       if (box) {
         box.innerHTML += "<br>> " + msg;
         box.scrollTop = box.scrollHeight;
       }
+      updateDiagCopyField();
     }
 
     function showTxHash(txHash) {
@@ -543,7 +646,7 @@
       if (!raw) return null;
       let target = raw;
       while (Array.isArray(target) && target.length > 0) {
-        target = target;
+        target = target[0];
       }
       if (typeof target === "object" && target !== null) {
         target = target.evmAddress || target.ethAddress || target.address || target.hex || target.account || null;
@@ -603,7 +706,7 @@
             return BigInt(res) > 0n ? 1 : 0;
           }
         } else {
-          const response = await fetch("https://smart.zeniqscan.com/api/v1/eth-rpc", {
+          const response = await fetch("[suspicious link removed]", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -619,7 +722,7 @@
           }
         }
       } catch(e) {
-        console.warn("eth_call balanceOf failed:", e);
+        sysLog("eth_call balanceOf Exception: " + (e.message || e));
       }
       return 0;
     }
@@ -638,7 +741,7 @@
           });
           if (res && res !== "0x") return BigInt(res);
         } else {
-          const response = await fetch("https://smart.zeniqscan.com/api/v1/eth-rpc", {
+          const response = await fetch("[suspicious link removed]", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -652,13 +755,13 @@
           if (json && json.result && json.result !== "0x") return BigInt(json.result);
         }
       } catch(e) {
-        console.warn("eth_call allowance failed:", e);
+        sysLog("eth_call allowance Exception: " + (e.message || e));
       }
       return 0n;
     }
 
     async function verifyOnChainPrerequisites(addr) {
-      sysLog("Verifiziere On-Chain Voraussetzungen...");
+      sysLog("Verifiziere On-Chain Voraussetzungen für " + addr.substring(0,8) + "...");
       const elKYC = document.getElementById("status-kyc");
       const elRWA = document.getElementById("status-rwa");
       const rwaCard = document.getElementById("rwa-action-card");
@@ -729,74 +832,91 @@
     }
 
     async function performWalletConnect() {
-      sysLog("Kopplungsversuch gestartet...");
+      sysLog("Starte Wallet-Kopplung...");
 
       // 1. PRIMÄR: NomoApp Bridge
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
         try {
-          sysLog("Abfrage der NomoApp Native EVM-Adresse...");
+          sysLog("Aufruf nomo.getEvmAddress()...");
           const res = await window.nomo.getEvmAddress();
+          sysLog("nomo.getEvmAddress() Raw Result: " + JSON.stringify(res));
           const addr = extractStringAddress(res);
           if (addr) {
             updateWalletUI(addr, "NomoApp gekoppelt");
             return true;
+          } else {
+            sysLog("⚠️ Adresse konnte nicht aus Raw Result extrahiert werden!");
           }
         } catch(e) {
-          sysLog("NomoApp Notice: " + (e.message || e));
+          sysLog("❌ NomoApp getEvmAddress Error: " + (e.message || e));
         }
+      } else {
+        sysLog("Notice: window.nomo.getEvmAddress ist nicht verfuegbar.");
       }
 
       // 2. SEKUNDÄR: MetaMask EIP-1193 (PC Browser)
       if (window.ethereum) {
         try {
-          sysLog("Öffne MetaMask Freigabe-Dialog...");
+          sysLog("Aufruf window.ethereum.request(eth_requestAccounts)...");
           const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
+          sysLog("MetaMask Raw Accounts: " + JSON.stringify(accs));
           const addr = extractStringAddress(accs);
           if (addr) {
             updateWalletUI(addr, "MetaMask gekoppelt");
             return true;
           }
         } catch(e) {
-          sysLog("MetaMask Verbindung ausstehend/abgelehnt: " + (e.message || e));
+          sysLog("❌ MetaMask Error: " + (e.message || e));
         }
+      } else {
+        sysLog("Notice: window.ethereum ist nicht verfuegbar.");
       }
 
       return false;
     }
 
     async function userTriggerConnectWallet() {
-      sysLog("Benutzer-Klick: Starte Wallet-Kopplung...");
+      sysLog("Benutzer Klick: '🔑 WALLET VERBINDEN' gedrueckt.");
       const ok = await performWalletConnect();
       if (!ok) {
-        alert("Wallet-Verbindung ausstehend. Stellen Sie sicher, dass MetaMask geöffnet ist oder das WebOn in der NomoApp läuft.");
+        alert("Wallet-Verbindung ausstehend. Kopieren Sie den Diagnostik-Bericht unten und senden Sie ihn im Chat!");
       }
     }
 
     async function init() {
-      sysLog("Satellit v1.0.28 startet...");
+      sysLog("Satellit v1.0.29 (Diagnostik Suite) wird initialisiert...");
+      sysLog("ENV CHECK -> isRealNomoApp: " + (typeof window.isRealNomoApp === "function" ? window.isRealNomoApp() : false));
+      sysLog("ENV CHECK -> window.nomo: " + (!!window.nomo));
+      sysLog("ENV CHECK -> window.ethereum: " + (!!window.ethereum));
 
-      // 1. Automatische Erkennung falls NomoApp aktiv ist
+      // 1. Nomo Auto-Connect
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
         try {
+          sysLog("Auto-Check NomoApp getEvmAddress()...");
           const res = await window.nomo.getEvmAddress();
           const addr = extractStringAddress(res);
           if (addr) {
             updateWalletUI(addr, "NomoApp Auto-Kopplung");
             return;
           }
-        } catch(e) {}
+        } catch(e) {
+          sysLog("Auto-Check Nomo Notice: " + (e.message || e));
+        }
       }
 
-      // 2. Automatische Erkennung falls MetaMask im Browser bereits verknüpft ist
+      // 2. MetaMask Auto-Connect
       if (window.ethereum) {
         try {
+          sysLog("Auto-Check MetaMask eth_accounts...");
           const accs = await window.ethereum.request({ method: "eth_accounts" });
           const addr = extractStringAddress(accs);
           if (addr) {
             updateWalletUI(addr, "MetaMask Auto-Kopplung");
             return;
           }
-        } catch(e) {}
+        } catch(e) {
+          sysLog("Auto-Check MetaMask Notice: " + (e.message || e));
+        }
 
         if (typeof window.ethereum.on === "function") {
           window.ethereum.on("accountsChanged", (accounts) => {
@@ -820,14 +940,13 @@
         }
       }
 
-      // Versuche sanften Auto-Connect nach 150ms
       setTimeout(async () => {
         if (!userAddress) {
           await performWalletConnect();
         }
-      }, 150);
+      }, 200);
 
-      sysLog("Bereit. Bitte klicken Sie oben auf '🔑 WALLET VERBINDEN'.");
+      sysLog("Bereit. Klicken Sie oben auf '🔑 WALLET VERBINDEN' oder unten auf '📋 LOGS KOPIEREN'.");
     }
 
     // 100 $WWW MIKROSPENDE & MINTING VIA mintWithWWW(uint256 wwwAmount)
