@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.21 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.22 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -256,7 +256,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.21</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.22</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -268,7 +268,7 @@
         <strong style="color:var(--emerald); font-size:0.88rem; letter-spacing:0.5px;">SMARTEARTHFAMILY COMMUNITY-GESCHENK</strong>
       </div>
       <p style="font-size:0.8rem; color:var(--text-main); line-height:1.45;">
-        <strong>Exklusiver Mehrwert & Geschenk:</strong> Das unbestechliche ©️ ScanMe.NFT Siegel besitzt einen regulären Schöpfungswert von <strong>\$100.00 USD</strong>. Als Geschenk der SmartEarthFamily stellen wir das Minter-System <strong>vollständig gebührenfrei (0.00 ZENIQ Prägegebühr)</strong> bereit!
+        <strong>Exklusiver Mehrwert & Geschenk:</strong> Das unbestechliche ©️ ScanMe.NFT Siegel besitzt einen regulären Schöpfungswert von <strong>$100.00 USD</strong>. Als Geschenk der SmartEarthFamily stellen wir das Minter-System <strong>vollständig gebührenfrei (0.00 ZENIQ Prägegebühr)</strong> bereit!
       </p>
     </div>
 
@@ -280,12 +280,12 @@
       </div>
 
       <div class="status-row">
-        <div>🔑 \$KYC Zündschlüssel (>0)</div>
+        <div>🔑 $KYC Zündschlüssel (>0)</div>
         <div id="status-kyc" class="status-pill pill-muted">Prüfe On-Chain...</div>
       </div>
 
       <div class="status-row">
-        <div>🌱 \$RWA Mikrospende (>0)</div>
+        <div>🌱 $RWA Mikrospende (>0)</div>
         <div id="status-rwa" class="status-pill pill-muted">Prüfe On-Chain...</div>
       </div>
 
@@ -295,17 +295,17 @@
       </div>
     </div>
 
-    <!-- 🌱 \$RWA ZÜND-MODULE (DYNAMISCH AKTIV FALLS \$RWA FEHLT) -->
+    <!-- 🌱 $RWA ZÜND-MODULE (DYNAMISCH AKTIV FALLS $RWA FEHLT) -->
     <div id="rwa-action-card" class="rwa-box" style="display:none;">
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
         <span style="font-size:1.2rem;">🌱</span>
-        <strong style="color:var(--gold); font-size:0.88rem;">1. \$RWA MIKROSPENDE ZÜNDEN</strong>
+        <strong style="color:var(--gold); font-size:0.88rem;">1. $RWA MIKROSPENDE ZÜNDEN</strong>
       </div>
       <p style="font-size:0.78rem; color:var(--text-main); line-height:1.4;">
-        Ihre Wallet besitzt noch keine On-Chain \$RWA Mikrospende. Zünden Sie hier direkt eine kleine Spende (0.10 ZENIQ) an den <strong>\$RWA Minter Contract</strong> (<code>0xF1A5...7c22</code>), um das erforderliche Guthaben sofort On-Chain freizuschalten!
+        Ihre Wallet besitzt noch keine On-Chain $RWA Mikrospende. Zünden Sie hier direkt eine kleine Spende (0.10 ZENIQ) an den <strong>$RWA Minter Contract</strong> (<code>0xF1A5...7c22</code>), um das erforderliche Guthaben sofort On-Chain freizuschalten!
       </p>
       <button id="btn-trigger-rwa" class="btn-rwa" onclick="executeRwaDonation()">
-        🌱 \$RWA MIKROSPENDE JETZT ZÜNDEN (0.10 ZENIQ)
+        🌱 $RWA MIKROSPENDE JETZT ZÜNDEN (0.10 ZENIQ)
       </button>
     </div>
 
@@ -318,7 +318,7 @@
       <div class="price-box">
         <div class="price-row">
           <span>Schöpfungswert der Family:</span>
-          <span style="text-decoration: line-through; color:var(--text-muted); font-weight:bold;">\$100.00 USD</span>
+          <span style="text-decoration: line-through; color:var(--text-muted); font-weight:bold;">$100.00 USD</span>
         </div>
         <div class="price-row">
           <span>Community Prägegebühr:</span>
@@ -351,7 +351,7 @@
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.21 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.22 initialisiert. Bereit...</div>
     </div>
 
     <footer>
@@ -394,11 +394,11 @@
       let target = raw;
       if (Array.isArray(target)) {
         if (target.length === 0) return null;
-        target = target;
+        target = target[0];
       }
       if (Array.isArray(target)) {
         if (target.length === 0) return null;
-        target = target;
+        target = target[0];
       }
       if (typeof target === "object" && target !== null) {
         target = target.evmAddress || target.ethAddress || target.address || target.hex || target.account || null;
@@ -479,7 +479,7 @@
           elKYC.innerText = "✓ Bestätigt (Aktiv)";
         } else {
           elKYC.className = "status-pill pill-red";
-          elKYC.innerText = "⚠️ Fehlt (\$KYC Token)";
+          elKYC.innerText = "⚠️ Fehlt ($KYC Token)";
         }
       }
 
@@ -493,12 +493,12 @@
           if (rwaCard) rwaCard.style.display = "none";
         } else {
           elRWA.className = "status-pill pill-gold";
-          elRWA.innerText = "⚠️ Fehlt (\$RWA Spende)";
+          elRWA.innerText = "⚠️ Fehlt ($RWA Spende)";
           if (rwaCard) rwaCard.style.display = "block";
         }
       }
 
-      sysLog(`On-Chain Status: $KYC=${hasKycToken ? "JA" : "NEIN"}, $RWA=${hasRwaToken ? "JA" : "NEIN"}`);
+      sysLog("On-Chain Status: $KYC=" + (hasKycToken ? "JA" : "NEIN") + ", $RWA=" + (hasRwaToken ? "JA" : "NEIN"));
     }
 
     function updateWalletUI(addr, logLabel) {
@@ -527,8 +527,39 @@
       verifyOnChainPrerequisites(addr);
     }
 
+    async function connectWalletProcess() {
+      // 1. NomoApp Bridge
+      if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
+        try {
+          const res = await window.nomo.getEvmAddress();
+          const addr = extractStringAddress(res);
+          if (addr) {
+            updateWalletUI(addr, "NomoApp Bridge gekoppelt");
+            return true;
+          }
+        } catch(e) {}
+      }
+
+      // 2. MetaMask
+      if (window.ethereum) {
+        try {
+          sysLog("Frage MetaMask Wallet-Verbindung an...");
+          const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
+          const addr = extractStringAddress(accs);
+          if (addr) {
+            updateWalletUI(addr, "MetaMask gekoppelt");
+            return true;
+          }
+        } catch(e) {
+          sysLog("MetaMask Verbindung ausstehend/abgelehnt: " + (e.message || e));
+        }
+      }
+
+      return false;
+    }
+
     async function init() {
-      sysLog("Satellit v1.0.21 startet...");
+      sysLog("Satellit v1.0.22 startet...");
 
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
         try {
@@ -542,24 +573,17 @@
       }
 
       if (window.ethereum) {
+        // Stummer Check ohne Prompt
         try {
-          let accs = await window.ethereum.request({ method: "eth_accounts" });
-          let addr = extractStringAddress(accs);
-
-          if (!addr) {
-            sysLog("Frage MetaMask Wallet-Verbindung an...");
-            accs = await window.ethereum.request({ method: "eth_requestAccounts" });
-            addr = extractStringAddress(accs);
-          }
-
+          const accs = await window.ethereum.request({ method: "eth_accounts" });
+          const addr = extractStringAddress(accs);
           if (addr) {
             updateWalletUI(addr, "MetaMask gekoppelt");
             return;
           }
-        } catch(e) {
-          sysLog("MetaMask Verbindung ausstehend: " + (e.message || e));
-        }
+        } catch(e) {}
 
+        // Listener für Konto-Wechsel
         if (typeof window.ethereum.on === "function") {
           window.ethereum.on("accountsChanged", (accounts) => {
             const addr = extractStringAddress(accounts);
@@ -577,29 +601,38 @@
         }
       }
 
+      // Versuche automatische Ankopplung nach 200ms
+      setTimeout(async () => {
+        if (!userAddress) {
+          await connectWalletProcess();
+        }
+      }, 200);
+
       sysLog("Bereit. Klicken Sie auf 'METAMASK VERBINDEN & PRÄGEN'.");
     }
 
-    // \$RWA MIKROSPENDEN-ZÜNDUNG AN DEN \$RWA MINTER CONTRACT (0xF1A5...7c22)
     async function executeRwaDonation() {
       if (!userAddress) {
-        alert("Bitte verbinden Sie zuerst Ihre Wallet.");
-        return;
+        const ok = await connectWalletProcess();
+        if (!ok || !userAddress) {
+          alert("Bitte verbinden Sie zuerst Ihre Wallet.");
+          return;
+        }
       }
 
       const btnRwa = document.getElementById("btn-trigger-rwa");
       if (btnRwa) {
         btnRwa.disabled = true;
-        btnRwa.innerText = "⏳ \$RWA MIKROSPENDE LÄUFT...";
+        btnRwa.innerText = "⏳ $RWA MIKROSPENDE LÄUFT...";
       }
 
-      sysLog("Sende \$RWA Mikrospende (0.10 ZENIQ) an Minter Contract " + RWA_TOKEN_ADDR + "...");
+      sysLog("Sende $RWA Mikrospende (0.10 ZENIQ) an Minter Contract " + RWA_TOKEN_ADDR + "...");
 
       try {
         const txParams = {
           from: userAddress,
           to: RWA_TOKEN_ADDR,
-          value: "0x16345785d8a0000", // 0.10 ZENIQ in Wei
+          value: "0x16345785d8a0000",
           data: "0x",
           gas: "0x1E8480"
         };
@@ -621,24 +654,23 @@
         }
 
         if (txHash) {
-          sysLog("✅ \$RWA Spende platziert! Hash: " + txHash);
+          sysLog("✅ $RWA Spende platziert! Hash: " + txHash);
           showTxHash(txHash);
 
-          // Warte 5 Sekunden und verifiziere On-Chain neu!
           setTimeout(async () => {
             await verifyOnChainPrerequisites(userAddress);
             if (btnRwa) {
               btnRwa.disabled = false;
-              btnRwa.innerText = "✓ \$RWA SPENDE GEZÜNDET";
+              btnRwa.innerText = "✓ $RWA SPENDE GEZÜNDET";
             }
           }, 5000);
         }
       } catch (err) {
-        sysLog("❌ \$RWA Spendenfehler: " + (err.message || err));
+        sysLog("❌ $RWA Spendenfehler: " + (err.message || err));
         alert("Spende abgebrochen: " + (err.message || err));
         if (btnRwa) {
           btnRwa.disabled = false;
-          btnRwa.innerText = "🌱 \$RWA MIKROSPENDE JETZT ZÜNDEN (0.10 ZENIQ)";
+          btnRwa.innerText = "🌱 $RWA MIKROSPENDE JETZT ZÜNDEN (0.10 ZENIQ)";
         }
       }
     }
@@ -673,11 +705,11 @@
                   btn.style.backgroundColor = "#00FF66";
                 }
                 
-                alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der ZENIQ Smart Chain geprägt!\n\nTX Hash:\n" + txHash);
+                alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der ZENIQ Smart Chain geprägt!\\n\\nTX Hash:\\n" + txHash);
                 return true;
               } else {
-                sysLog("⚠️ TRANSAKTION REVERTED (Contract Revert). Prüfen Sie \\(KYC / \\)RWA Token.");
-                alert("⚠️ Transaktion auf der Blockchain abgelehnt (Contract Revert).\n\nStellen Sie sicher, dass Ihre Wallet den \$KYC Zündschlüssel hält.\n\nTX Hash:\n" + txHash);
+                sysLog("⚠️ TRANSAKTION REVERTED (Contract Revert). Prüfen Sie $KYC / $RWA Token.");
+                alert("⚠️ Transaktion auf der Blockchain abgelehnt (Contract Revert).\\n\\nStellen Sie sicher, dass Ihre Wallet den $KYC Zündschlüssel hält.\\n\\nTX Hash:\\n" + txHash);
                 
                 const btn = document.getElementById("btn-mint-action");
                 if (btn) {
@@ -698,35 +730,11 @@
 
     async function executeMint() {
       if (!userAddress) {
-        if (window.ethereum) {
-          sysLog("Öffne MetaMask Freigabe...");
-          try {
-            const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
-            const addr = extractStringAddress(accs);
-            if (addr) {
-              updateWalletUI(addr, "MetaMask gekoppelt");
-            } else {
-              alert("Bitte bestätigen Sie die Wallet-Verbindung in MetaMask.");
-              return;
-            }
-          } catch(e) {
-            alert("MetaMask Verbindung abgelehnt: " + (e.message || e));
-            return;
-          }
-        } else if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
-          try {
-            const res = await window.nomo.getEvmAddress();
-            const addr = extractStringAddress(res);
-            if (addr) {
-              updateWalletUI(addr, "Nomo Bridge gekoppelt");
-            }
-          } catch(e) {}
+        const ok = await connectWalletProcess();
+        if (!ok || !userAddress) {
+          alert("Bitte bestätigen Sie die Wallet-Verbindung in MetaMask.");
+          return;
         }
-      }
-
-      if (!userAddress) {
-        alert("Bitte öffnen Sie die Webseite in der NomoApp oder aktivieren Sie MetaMask.");
-        return;
       }
 
       const btn = document.getElementById("btn-mint-action");
@@ -736,7 +744,7 @@
       }
 
       const calldata = buildMintScanMeCalldata(userAddress, userSID, "9999999999");
-      sysLog(`Sende mintScanMe(recipient, SID=${userSID}, FID=9999999999) [Calldata: ${calldata.substring(0,18)}...], Value: 0x0...`);
+      sysLog("Sende mintScanMe(recipient, SID=" + userSID + ", FID=9999999999) [Calldata: " + calldata.substring(0,18) + "...], Value: 0x0...");
 
       try {
         const txParams = {
