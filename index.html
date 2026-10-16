@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.18 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.19 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -49,9 +49,9 @@
 
     .badge-satellit {
       display: inline-block;
-      background: rgba(0, 204, 255, 0.15);
-      border: 1px solid var(--skyblue);
-      color: var(--skyblue);
+      background: rgba(0, 255, 102, 0.15);
+      border: 1px solid var(--emerald);
+      color: var(--emerald);
       font-size: 0.72rem;
       font-weight: 800;
       padding: 4px 12px;
@@ -118,6 +118,12 @@
       border: 1px solid rgba(255, 215, 0, 0.4);
     }
 
+    .pill-red {
+      background: rgba(255, 51, 102, 0.15);
+      color: #FF6688;
+      border: 1px solid rgba(255, 51, 102, 0.4);
+    }
+
     .pill-muted {
       background: rgba(255, 255, 255, 0.08);
       color: var(--text-muted);
@@ -125,11 +131,11 @@
     }
 
     .gift-card {
-      background: rgba(0, 204, 255, 0.05);
-      border: 1px solid var(--skyblue);
+      background: rgba(0, 255, 102, 0.05);
+      border: 1px solid var(--emerald);
       border-radius: 16px;
       padding: 16px;
-      box-shadow: 0 0 15px rgba(0, 204, 255, 0.1);
+      box-shadow: 0 0 15px rgba(0, 255, 102, 0.1);
     }
 
     .dna-box {
@@ -145,34 +151,6 @@
     .dna-key {
       color: var(--gold);
       font-weight: bold;
-    }
-
-    .price-box {
-      background: rgba(212, 175, 55, 0.08);
-      border: 1px solid var(--gold);
-      border-radius: 12px;
-      padding: 12px;
-      margin-top: 4px;
-      font-family: monospace;
-      font-size: 0.8rem;
-    }
-
-    .price-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 4px;
-    }
-
-    .select-field {
-      width: 100%;
-      background: #000;
-      border: 1px solid var(--gold);
-      color: var(--gold);
-      padding: 8px;
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 0.8rem;
-      margin-top: 6px;
     }
 
     .tx-display-box {
@@ -237,7 +215,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.18 (DIAGNOSTIC ENGINE)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.19 (NATIVE CONTRACT ENGINE)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -246,61 +224,33 @@
     <div class="gift-card">
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
         <span style="font-size:1.3rem;">🎁</span>
-        <strong style="color:var(--skyblue); font-size:0.88rem; letter-spacing:0.5px;">SMARTEARTHFAMILY COMMUNITY-INITIATIVE</strong>
+        <strong style="color:var(--emerald); font-size:0.88rem; letter-spacing:0.5px;">SMARTEARTHFAMILY COMMUNITY-INITIATIVE</strong>
       </div>
       <p style="font-size:0.8rem; color:var(--text-main); line-height:1.45;">
-        <strong>Symbolische Sonder-Eigenspende:</strong> Das unbestechliche ©️ ScanMe.NFT Siegel besitzt einen regulären Schöpfungswert von <strong>$100.00 USD</strong>. Um dezentrale Freiheit, Frieden und unkorrumpierbaren Identitätsschutz für JEDEN Menschen weltweit sofort zugänglich zu machen, ermöglicht die SmartEarthFamily die Prägung gegen eine symbolische <strong>Sonder-Eigenspende von exakt $1.00 USD</strong>!
+        <strong>Symbolische Sonder-Eigenspende:</strong> Das unbestechliche ©️ ScanMe.NFT Siegel besitzt einen regulären Schöpfungswert von <strong>\$100.00 USD</strong>. Um dezentrale Freiheit, Frieden und unkorrumpierbaren Identitätsschutz für JEDEN Menschen weltweit sofort zugänglich zu machen, ermöglicht die SmartEarthFamily die Prägung gegen eine symbolische <strong>Sonder-Eigenspende von exakt \$1.00 USD</strong>!
       </p>
     </div>
 
+    <!-- ON-CHAIN PREREQUISITES VERIFICATION -->
     <div class="card">
       <div class="card-title">
-        <span>Voraussetzungen</span>
+        <span>On-Chain Voraussetzungen</span>
         <span id="wallet-short" style="color:var(--gold);">Verbinde Wallet...</span>
       </div>
 
       <div class="status-row">
-        <div>🔑 $KYC Zündschlüssel</div>
-        <div id="status-kyc" class="status-pill pill-muted">Warte auf Wallet</div>
+        <div>🔑 \$KYC Zündschlüssel (>0)</div>
+        <div id="status-kyc" class="status-pill pill-muted">Prüfe On-Chain...</div>
       </div>
 
       <div class="status-row">
-        <div>🌱 $RWA Mikrospende (>0)</div>
-        <div id="status-rwa" class="status-pill pill-muted">Warte auf Wallet</div>
+        <div>🌱 \$RWA Mikrospende (>0)</div>
+        <div id="status-rwa" class="status-pill pill-muted">Prüfe On-Chain...</div>
       </div>
 
       <div class="status-row">
         <div>🛡️ ©️ ScanMe.NFT Siegel</div>
         <div id="status-nft" class="status-pill pill-gold">Bereit zur Prägung</div>
-      </div>
-    </div>
-
-    <!-- EVM CALLDATA & VALUE TEST-SELECTOR -->
-    <div class="card">
-      <div class="card-title">
-        <span>⚙️ EVM PRÄGE-MODUS & CALLDATA</span>
-        <span style="color:var(--skyblue);">Diagnostics</span>
-      </div>
-      <div class="price-box">
-        <div class="price-row">
-          <span>Präge-Funktion (Calldata):</span>
-        </div>
-        <select id="calldata-mode-select" class="select-field" onchange="updateModeDisplay()">
-          <option value="plain">Mode A: Plain Coin Deposit (data: "0x") [Empfohlen für Contract Deposit]</option>
-          <option value="legacy">Mode B: Legacy Selector (data: "0x12488d0d")</option>
-          <option value="safeMint">Mode C: safeMint(address) (0xa7234c70...)</option>
-          <option value="mint">Mode D: mint() (0xeb76af97...)</option>
-        </select>
-
-        <div class="price-row" style="margin-top:10px;">
-          <span>Präge-Gebühr / Test-Value:</span>
-        </div>
-        <select id="value-amount-select" class="select-field" onchange="updateModeDisplay()">
-          <option value="0.1">0.10 ZENIQ (Test-Modus)</option>
-          <option value="1">1.00 ZENIQ</option>
-          <option value="dynamic">$1.00 USD Live-Kurs (~588 ZENIQ)</option>
-          <option value="0">0.00 ZENIQ (Free Mint Test)</option>
-        </select>
       </div>
     </div>
 
@@ -324,7 +274,7 @@
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.18 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.19 initialisiert. Bereit...</div>
     </div>
 
     <footer>
@@ -340,7 +290,8 @@
 
     let userAddress = null;
     let userSID = "0000000000";
-    let liveZeniqUsdPrice = 0.0017;
+    let hasKycToken = false;
+    let hasRwaToken = false;
 
     function sysLog(msg) {
       const box = document.getElementById("sys-log");
@@ -366,11 +317,11 @@
       let target = raw;
       if (Array.isArray(target)) {
         if (target.length === 0) return null;
-        target = target[0];
+        target = target;
       }
       if (Array.isArray(target)) {
         if (target.length === 0) return null;
-        target = target[0];
+        target = target;
       }
       if (typeof target === "object" && target !== null) {
         target = target.evmAddress || target.ethAddress || target.address || target.hex || target.account || null;
@@ -392,58 +343,85 @@
       return String(Math.abs(h) % 10000000000).padStart(10, '0');
     }
 
-    function zeniqAmountToWeiHex(amountFloat) {
+    // NATIVE ABI CALLDATA BUILDER FÜR mintScanMe(address recipient, string sid, string fid)
+    // Selector = 0x45f77bec
+    function buildMintScanMeCalldata(recipientHex, sidStr, fidStr) {
+      const selector = "45f77bec";
+      const cleanAddr = recipientHex.toLowerCase().replace("0x", "").padStart(64, "0");
+      const offsetSid = "0000000000000000000000000000000000000000000000000000000000000060";
+      const offsetFid = "00000000000000000000000000000000000000000000000000000000000000a0";
+
+      const sidEncoder = new TextEncoder();
+      const sidBytes = sidEncoder.encode(sidStr);
+      const sidLenHex = sidBytes.length.toString(16).padStart(64, "0");
+      let sidDataHex = "";
+      for (let b of sidBytes) sidDataHex += b.toString(16).padStart(2, "0");
+      while (sidDataHex.length < 64) sidDataHex += "0";
+
+      const fidEncoder = new TextEncoder();
+      const fidBytes = fidEncoder.encode(fidStr);
+      const fidLenHex = fidBytes.length.toString(16).padStart(64, "0");
+      let fidDataHex = "";
+      for (let b of fidBytes) fidDataHex += b.toString(16).padStart(2, "0");
+      while (fidDataHex.length < 64) fidDataHex += "0";
+
+      return "0x" + selector + cleanAddr + offsetSid + offsetFid + sidLenHex + sidDataHex + fidLenHex + fidDataHex;
+    }
+
+    // ON-CHAIN ERC-20 BALANCE CHECK VIA RPC eth_call (balanceOf)
+    async function checkErc20BalanceOnChain(tokenAddr, ownerAddr) {
+      if (!window.ethereum && !window.nomo) return 0;
+      const cleanOwner = ownerAddr.toLowerCase().replace("0x", "").padStart(64, "0");
+      const dataPayload = "0x70a08231" + cleanOwner; // balanceOf(address)
+
       try {
-        const strVal = amountFloat.toFixed(6);
-        const parts = strVal.split(".");
-        let intPart = parts[0] || "0";
-        let fracPart = parts[1] || "";
-        while (fracPart.length < 18) fracPart += "0";
-        fracPart = fracPart.substring(0, 18);
-        let combinedStr = (intPart + fracPart).replace(/^0+/, "");
-        if (!combinedStr) combinedStr = "0";
-        const bigWei = BigInt(combinedStr);
-        return "0x" + bigWei.toString(16);
+        if (window.ethereum) {
+          const res = await window.ethereum.request({
+            method: "eth_call",
+            params: [{ to: tokenAddr, data: dataPayload }, "latest"]
+          });
+          if (res && res !== "0x" && res !== "0x0000000000000000000000000000000000000000000000000000000000000000") {
+            return BigInt(res) > 0n ? 1 : 0;
+          }
+        }
       } catch(e) {
-        console.warn("Wei conversion fallback:", e);
-        return "0x0";
+        console.warn("eth_call balanceOf failed:", e);
       }
+      return 0;
     }
 
-    function getSelectedAmount() {
-      const valElem = document.getElementById("value-amount-select");
-      if (!valElem) return 0.1;
-      const valSel = valElem.value;
-      if (valSel === "dynamic") {
-        return 1.00 / liveZeniqUsdPrice;
-      }
-      return parseFloat(valSel) || 0;
-    }
+    async function verifyOnChainPrerequisites(addr) {
+      sysLog("Verifiziere On-Chain \\(KYC & \\)RWA Token-Bestand...");
+      const elKYC = document.getElementById("status-kyc");
+      const elRWA = document.getElementById("status-rwa");
 
-    function getSelectedCalldata() {
-      const modeElem = document.getElementById("calldata-mode-select");
-      if (!modeElem) return "0x";
-      const mode = modeElem.value;
-      if (mode === "plain") {
-        return "0x";
-      } else if (mode === "legacy") {
-        return "0x12488d0d";
-      } else if (mode === "mint") {
-        return "0xeb76af97";
-      } else if (mode === "safeMint") {
-        if (!userAddress) return "0xa7234c70";
-        const cleanHex = userAddress.toLowerCase().replace("0x", "").padStart(64, "0");
-        return "0xa7234c70" + cleanHex;
+      // 1. KYC Check
+      const kycBal = await checkErc20BalanceOnChain(KYC_TOKEN_ADDR, addr);
+      hasKycToken = (kycBal > 0);
+      if (elKYC) {
+        if (hasKycToken) {
+          elKYC.className = "status-pill pill-green";
+          elKYC.innerText = "✓ Bestätigt (Aktiv)";
+        } else {
+          elKYC.className = "status-pill pill-red";
+          elKYC.innerText = "⚠️ Fehlt (\$KYC Zündschlüssel)";
+        }
       }
-      return "0x";
-    }
 
-    function updateModeDisplay() {
-      const btn = document.getElementById("btn-mint-action");
-      const amt = getSelectedAmount();
-      if (btn) {
-        btn.innerText = "🚀 ©️ ScanMe.NFT JETZT PRÄGEN (" + amt.toFixed(2) + " ZENIQ)";
+      // 2. RWA Check
+      const rwaBal = await checkErc20BalanceOnChain(RWA_TOKEN_ADDR, addr);
+      hasRwaToken = (rwaBal > 0);
+      if (elRWA) {
+        if (hasRwaToken) {
+          elRWA.className = "status-pill pill-green";
+          elRWA.innerText = "✓ Bestätigt (Aktiv)";
+        } else {
+          elRWA.className = "status-pill pill-gold";
+          elRWA.innerText = "⚠️ Fehlt (\$RWA Spende)";
+        }
       }
+
+      sysLog(`On-Chain Check: $KYC=${hasKycToken ? "JA" : "NEIN"}, $RWA=${hasRwaToken ? "JA" : "NEIN"}`);
     }
 
     function updateWalletUI(addr, logLabel) {
@@ -463,32 +441,14 @@
       if (elSid) elSid.innerText = userSID;
       if (logLabel) sysLog(logLabel + ": " + addr);
 
-      checkStatusOnChain();
-    }
+      const btn = document.getElementById("btn-mint-action");
+      if (btn) btn.disabled = false;
 
-    function checkStatusOnChain() {
-      const elKYC = document.getElementById("status-kyc");
-      const elRWA = document.getElementById("status-rwa");
-      const btn   = document.getElementById("btn-mint-action");
-
-      if (elKYC) {
-        elKYC.className = "status-pill pill-green";
-        elKYC.innerText = "✓ Bestätigt";
-      }
-      if (elRWA) {
-        elRWA.className = "status-pill pill-green";
-        elRWA.innerText = "✓ Bestätigt";
-      }
-
-      if (btn) {
-        btn.disabled = false;
-        updateModeDisplay();
-      }
-      sysLog("Status OK: Bereit für Prägung!");
+      verifyOnChainPrerequisites(addr);
     }
 
     async function init() {
-      sysLog("Satellit v1.0.18 startet...");
+      sysLog("Satellit v1.0.19 (Native Contract Engine) startet...");
 
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
         try {
@@ -519,7 +479,7 @@
     }
 
     async function waitForReceipt(txHash) {
-      sysLog("⏳ Warte auf Blockbestätigung...");
+      sysLog("⏳ Warte auf Blockbestätigung auf ZSC...");
       let attempts = 0;
       
       while (attempts < 30) {
@@ -534,7 +494,7 @@
             if (receipt && receipt.blockNumber) {
               if (receipt.status === "0x1") {
                 const blockNum = parseInt(receipt.blockNumber, 16);
-                sysLog("✅ PRÄGUNG ERFOLGREICH in Block #" + blockNum);
+                sysLog("🎉 ✅ ©️ ScanMe.NFT ERFOLGREICH GEPRÄGT in Block #" + blockNum);
                 
                 const elNFT = document.getElementById("status-nft");
                 if (elNFT) {
@@ -548,16 +508,16 @@
                   btn.style.backgroundColor = "#00FF66";
                 }
                 
-                alert("🎉 Gratulation! Ihre Prägung wurde erfolgreich auf der Blockchain verankert!\n\nTX Hash:\n" + txHash);
+                alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der ZENIQ Smart Chain geprägt!\n\nTX Hash:\n" + txHash);
                 return true;
               } else {
-                sysLog("⚠️ TRANSAKTION REVERTED (Contract Revert). TX-Hash bleibt einsehbar!");
-                alert("⚠️ Transaktion auf der Blockchain abgelehnt (Execution Reverted).\n\nTX Hash:\n" + txHash);
+                sysLog("⚠️ TRANSAKTION REVERTED (Contract Revert). Prüfen Sie \\(KYC & \\)RWA Guthaben.");
+                alert("⚠️ Transaktion auf der Blockchain abgelehnt (Contract Revert).\n\nBitte stellen Sie sicher, dass Ihre Wallet den \$KYC Zündschlüssel und \$RWA Spende besitzt.\n\nTX Hash:\n" + txHash);
                 
                 const btn = document.getElementById("btn-mint-action");
                 if (btn) {
                   btn.disabled = false;
-                  updateModeDisplay();
+                  btn.innerText = "🚀 ERNEUT PRÄGEN";
                 }
                 return false;
               }
@@ -607,20 +567,18 @@
       const btn = document.getElementById("btn-mint-action");
       if (btn) {
         btn.disabled = true;
-        btn.innerText = "⏳ PRÄGUNG LÄUFT...";
+        btn.innerText = "⏳ MINTING IN PROGRESS...";
       }
 
-      const zeniqAmt = getSelectedAmount();
-      const valueWeiHex = zeniqAmountToWeiHex(zeniqAmt);
-      const calldata = getSelectedCalldata();
-
-      sysLog("Sende Transaktion (" + zeniqAmt.toFixed(2) + " ZENIQ, Calldata: " + calldata + ")...");
+      // BERECHNE NATIVE ABI CALLDATA FÜR mintScanMe(recipient, sid, fid)
+      const calldata = buildMintScanMeCalldata(userAddress, userSID, "9999999999");
+      sysLog(`Sende mintScanMe(recipient, SID=${userSID}, FID=9999999999) [Calldata: ${calldata.substring(0,20)}...], Value: 0x0...`);
 
       try {
         const txParams = {
           from: userAddress,
           to: SCANME_NFT_ADDR,
-          value: valueWeiHex,
+          value: "0x0", // Non-payable contract function verlangt exakt 0x0!
           data: calldata,
           gas: "0x1E8480"
         };
@@ -635,14 +593,14 @@
         } else if (window.nomo && typeof window.nomo.sendAssets === "function") {
           const res = await window.nomo.sendAssets({
             targetAddress: SCANME_NFT_ADDR,
-            amount: zeniqAmt.toString(),
+            amount: "0",
             assetSymbol: "ZENIQ"
           });
           txHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
         }
 
         if (txHash) {
-          sysLog("✅ Transaktion platziert! Hash: " + txHash);
+          sysLog("✅ Transaktion im Mempool platziert! Hash: " + txHash);
           showTxHash(txHash);
           await waitForReceipt(txHash);
         } else {
@@ -654,7 +612,7 @@
         alert("Prägevorgang abgebrochen oder fehlgeschlagen: " + (err.message || err));
         if (btn) {
           btn.disabled = false;
-          updateModeDisplay();
+          btn.innerText = "🚀 ©️ ScanMe.NFT PRÄGEN";
         }
       }
     }
