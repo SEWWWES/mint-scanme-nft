@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.30 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.31 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -426,7 +426,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.30 (STABLE & DIAGNOSTIK)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.31 (USER-CLICK AWAKE FIX)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -531,7 +531,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.30 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.31 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -578,7 +578,7 @@
       if (!field) return;
 
       const envInfo = {
-        version: "1.0.30",
+        version: "1.0.31",
         userAgent: navigator.userAgent,
         location: window.location.href,
         isRealNomoApp: typeof window.isRealNomoApp === "function" ? window.isRealNomoApp() : false,
@@ -592,7 +592,7 @@
         hasRwaToken: hasRwaToken
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.30 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.31 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -643,6 +643,7 @@
       }
     }
 
+    // EXTRAHIERT ADRESSE REKURSIV AUS JSON-STRINGS, ARRAYS UND OBJEKTEN (UNFEHLBAR)
     function extractStringAddress(raw) {
       if (!raw) return null;
       let target = raw;
@@ -650,7 +651,7 @@
         try { target = JSON.parse(target); } catch(e){}
       }
       while (Array.isArray(target) && target.length > 0) {
-        target = target[0];
+        target = target;
       }
       if (typeof target === "object" && target !== null) {
         target = target.evmAddress || target.ethAddress || target.address || target.hex || target.account || null;
@@ -709,25 +710,30 @@
           if (res && res !== "0x" && res !== "0x0000000000000000000000000000000000000000000000000000000000000000") {
             return BigInt(res) > 0n ? 1 : 0;
           }
-        } else {
-          const response = await fetch("[suspicious link removed]", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              jsonrpc: "2.0",
-              method: "eth_call",
-              params: [{ to: tokenAddr, data: dataPayload }, "latest"],
-              id: 1
-            })
-          });
-          const json = await response.json();
-          if (json && json.result && json.result !== "0x" && json.result !== "0x0000000000000000000000000000000000000000000000000000000000000000") {
-            return BigInt(json.result) > 0n ? 1 : 0;
-          }
         }
       } catch(e) {
-        sysLog("eth_call balanceOf Exception: " + (e.message || e));
+        console.warn("eth_call via window.ethereum notice, trying public RPC:", e);
       }
+
+      try {
+        const response = await fetch("https://smart.zeniqscan.com/api/v1/eth-rpc", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "eth_call",
+            params: [{ to: tokenAddr, data: dataPayload }, "latest"],
+            id: 1
+          })
+        });
+        const json = await response.json();
+        if (json && json.result && json.result !== "0x" && json.result !== "0x0000000000000000000000000000000000000000000000000000000000000000") {
+          return BigInt(json.result) > 0n ? 1 : 0;
+        }
+      } catch(e) {
+        sysLog("eth_call balanceOf RPC Notice: " + (e.message || e));
+      }
+
       return 0;
     }
 
@@ -744,23 +750,28 @@
             params: [{ to: tokenAddr, data: dataPayload }, "latest"]
           });
           if (res && res !== "0x") return BigInt(res);
-        } else {
-          const response = await fetch("[suspicious link removed]", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              jsonrpc: "2.0",
-              method: "eth_call",
-              params: [{ to: tokenAddr, data: dataPayload }, "latest"],
-              id: 1
-            })
-          });
-          const json = await response.json();
-          if (json && json.result && json.result !== "0x") return BigInt(json.result);
         }
       } catch(e) {
-        sysLog("eth_call allowance Exception: " + (e.message || e));
+        console.warn("eth_call allowance via window.ethereum notice:", e);
       }
+
+      try {
+        const response = await fetch("https://smart.zeniqscan.com/api/v1/eth-rpc", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "eth_call",
+            params: [{ to: tokenAddr, data: dataPayload }, "latest"],
+            id: 1
+          })
+        });
+        const json = await response.json();
+        if (json && json.result && json.result !== "0x") return BigInt(json.result);
+      } catch(e) {
+        sysLog("eth_call allowance RPC Notice: " + (e.message || e));
+      }
+
       return 0n;
     }
 
@@ -835,6 +846,7 @@
       verifyOnChainPrerequisites(addr);
     }
 
+    // PERFORM WALLET CONNECT (AUSGELÖST DURCH BENUTZER-KLICK FÜR 100% POPUP-FREIGABE)
     async function performWalletConnect() {
       sysLog("Starte Wallet-Kopplung...");
 
@@ -852,7 +864,7 @@
             sysLog("⚠️ Adresse konnte nicht aus Raw Result extrahiert werden!");
           }
         } catch(e) {
-          sysLog("❌ NomoApp getEvmAddress Error: " + (e.message || e));
+          sysLog("Notice: nomo.getEvmAddress Exception: " + (e.message || e));
         }
       } else {
         sysLog("Notice: window.nomo.getEvmAddress ist nicht verfuegbar.");
@@ -888,12 +900,12 @@
     }
 
     async function init() {
-      sysLog("Satellit v1.0.30 (Diagnostik Suite) wird initialisiert...");
+      sysLog("Satellit v1.0.31 (User-Click Awake Fix) wird initialisiert...");
       sysLog("ENV CHECK -> isRealNomoApp: " + (typeof window.isRealNomoApp === "function" ? window.isRealNomoApp() : false));
       sysLog("ENV CHECK -> window.nomo: " + (!!window.nomo));
       sysLog("ENV CHECK -> window.ethereum: " + (!!window.ethereum));
 
-      // 1. Nomo Auto-Connect
+      // 1. Nomo Auto-Connect (stumm, keine Popups)
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
         try {
           sysLog("Auto-Check NomoApp getEvmAddress()...");
@@ -908,10 +920,10 @@
         }
       }
 
-      // 2. MetaMask Auto-Connect
+      // 2. MetaMask Auto-Connect NUR fuer bereits freigegebene Sessions (eth_accounts - KEIN REQUEST POPUP IN BACKGROUND!)
       if (window.ethereum) {
         try {
-          sysLog("Auto-Check MetaMask eth_accounts...");
+          sysLog("Auto-Check MetaMask eth_accounts (stumm)...");
           const accs = await window.ethereum.request({ method: "eth_accounts" });
           const addr = extractStringAddress(accs);
           if (addr) {
@@ -943,12 +955,6 @@
           });
         }
       }
-
-      setTimeout(async () => {
-        if (!userAddress) {
-          await performWalletConnect();
-        }
-      }, 200);
 
       sysLog("Bereit. Klicken Sie oben auf '🔑 WALLET VERBINDEN' oder unten auf '📋 LOGS KOPIEREN'.");
     }
