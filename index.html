@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.8 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.9 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -139,6 +139,26 @@
       font-weight: bold;
     }
 
+    .price-box {
+      background: rgba(212, 175, 55, 0.08);
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 4px;
+      font-family: monospace;
+      font-size: 0.8rem;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .price-row:last-child {
+      margin-bottom: 0;
+    }
+
     .tx-display-box {
       display: none;
       background: rgba(0, 204, 255, 0.08);
@@ -162,7 +182,7 @@
       width: 100%;
       background: linear-gradient(135deg, var(--emerald) 0%, #00B347 100%);
       color: #041208;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 900;
       padding: 16px;
       border: none;
@@ -201,7 +221,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.8</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.9</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -213,18 +233,40 @@
       </div>
 
       <div class="status-row">
-        <div>🔑 $KYC Zündschlüssel</div>
+        <div>🔑 \$KYC Zündschlüssel</div>
         <div id="status-kyc" class="status-pill pill-muted">Warte auf Wallet</div>
       </div>
 
       <div class="status-row">
-        <div>🌱 $RWA Mikrospende (>0)</div>
+        <div>🌱 \$RWA Mikrospende (>0)</div>
         <div id="status-rwa" class="status-pill pill-muted">Warte auf Wallet</div>
       </div>
 
       <div class="status-row">
         <div>🛡️ ©️ ScanMe.NFT Siegel</div>
         <div id="status-nft" class="status-pill pill-gold">Bereit zur Prägung</div>
+      </div>
+    </div>
+
+    <!-- DYNAMISCHER \$1.00 USD LIVE-KURS-RECHNER -->
+    <div class="card">
+      <div class="card-title">
+        <span>📊 Dynamic \$1.00 USD Fee Calculator</span>
+        <span id="price-source-badge" style="color:var(--skyblue);">LBank / DEX Live</span>
+      </div>
+      <div class="price-box">
+        <div class="price-row">
+          <span>Echtzeit ZENIQ-Kurs:</span>
+          <strong id="live-zeniq-price" style="color:var(--gold);">\$0.001700 USD</strong>
+        </div>
+        <div class="price-row">
+          <span>Prägegebühr (USD):</span>
+          <strong style="color:var(--emerald);">\$1.00 USD</strong>
+        </div>
+        <div class="price-row" style="border-top: 1px dashed rgba(255,215,0,0.3); padding-top: 4px; margin-top: 4px;">
+          <span>Erforderlicher Value:</span>
+          <strong id="calc-required-zeniq" style="color:var(--gold);">588.23 ZENIQ</strong>
+        </div>
       </div>
     </div>
 
@@ -243,12 +285,12 @@
     </div>
 
     <button id="btn-mint-action" class="btn-mint" onclick="executeMint()">
-      🔑 WALLET VERBINDEN & PRÄGEN
+      🔑 WALLET VERBINDEN & PRÄGEN (\$1.00 USD)
     </button>
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.8 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.9 initialisiert. Bereit...</div>
     </div>
 
     <footer>
@@ -264,6 +306,8 @@
 
     let userAddress = null;
     let userSID = "0000000000";
+    let liveZeniqUsdPrice = 0.0017;
+    let calculatedRequiredZeniq = 588.23;
 
     function sysLog(msg) {
       const box = document.getElementById("sys-log");
@@ -284,12 +328,11 @@
       }
     }
 
-    // FIX: Liest das erste Element aus einem Array korrekt aus
     function sanitizeAddress(raw) {
       if (!raw) return null;
       if (Array.isArray(raw)) {
         if (raw.length === 0) return null;
-        raw = raw[0]; // FIX: Array-Entpackung
+        raw = raw;
       }
       if (typeof raw === "object" && raw !== null) {
         if (raw.evmAddress) raw = raw.evmAddress;
@@ -313,6 +356,91 @@
       return String(Math.abs(h) % 10000000000).padStart(10, '0');
     }
 
+    // Wandelt den ZENIQ-Betrag in exakten EVM Hex-Wei-Wert um
+    function zeniqAmountToWeiHex(amountFloat) {
+      try {
+        const strVal = amountFloat.toFixed(6);
+        const parts = strVal.split(".");
+        let intPart = parts || "0";
+        let fracPart = parts[1] || "";
+        while (fracPart.length < 18) fracPart += "0";
+        fracPart = fracPart.substring(0, 18);
+        let combinedStr = (intPart + fracPart).replace(/^0+/, "");
+        if (!combinedStr) combinedStr = "0";
+        const bigWei = BigInt(combinedStr);
+        return "0x" + bigWei.toString(16);
+      } catch(e) {
+        console.warn("Wei conversion fallback:", e);
+        return "0x0";
+      }
+    }
+
+    // MULTI-ENDPOINT DYNAMISCHER ECHTZEIT KURS-RECHNER (\$1.00 USD)
+    async function fetchZeniqLivePrice() {
+      sysLog("Lade echten ZENIQ USD-Kurs via Multi-Endpoint...");
+
+      const fallbackPrice = 0.0017;
+
+      const pLBank = new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error("LBank timeout")), 3500);
+        fetch("https://api.lbank.info/v2/ticker/24hr.do?symbol=zeniq_usdt")
+          .then(res => { clearTimeout(timer); return res.json(); })
+          .then(json => {
+            if (json && [verdächtiger Link entfernt] && [verdächtiger Link entfernt] && [verdächtiger Link entfernt].ticker) {
+              const p = parseFloat([verdächtiger Link entfernt].ticker.latest || [verdächtiger Link entfernt].ticker.price);
+              if (!isNaN(p) && p > 0) return resolve({ price: p, source: "LBank" });
+            }
+            reject(new Error("LBank invalid data"));
+          }).catch(e => { clearTimeout(timer); reject(e); });
+      });
+
+      const pDex = new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error("DexScreener timeout")), 3500);
+        fetch("https://api.dexscreener.com/latest/dex/tokens/0x74DC1C4ec10abE9F5C8A3EabF1A90b97cDc3Ead8")
+          .then(res => { clearTimeout(timer); return res.json(); })
+          .then(json => {
+            if (json && json.pairs && json.pairs && json.pairs.priceUsd) {
+              const p = parseFloat(json.pairs.priceUsd);
+              if (!isNaN(p) && p > 0) return resolve({ price: p, source: "DexScreener" });
+            }
+            reject(new Error("DexScreener invalid data"));
+          }).catch(e => { clearTimeout(timer); reject(e); });
+      });
+
+      const pGecko = new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error("CoinGecko timeout")), 3500);
+        fetch("https://api.coingecko.com/v3/simple/price?ids=zeniq&vs_currencies=usd")
+          .then(res => { clearTimeout(timer); return res.json(); })
+          .then(json => {
+            if (json && json.zeniq && json.zeniq.usd && json.zeniq.usd > 0) {
+              return resolve({ price: json.zeniq.usd, source: "CoinGecko" });
+            }
+            reject(new Error("CoinGecko invalid data"));
+          }).catch(e => { clearTimeout(timer); reject(e); });
+      });
+
+      try {
+        const result = await Promise.race([pLBank, pDex, pGecko]);
+        liveZeniqUsdPrice = result.price;
+        document.getElementById("price-source-badge").innerText = result.source + " Live";
+        sysLog(`Live-Kurs geladen (${result.source}): $${liveZeniqUsdPrice.toFixed(6)} USD`);
+      } catch (err) {
+        liveZeniqUsdPrice = fallbackPrice;
+        sysLog(`Standard-Kurs geladen: $${liveZeniqUsdPrice.toFixed(6)} USD`);
+      }
+
+      // Berechne exakte ZENIQ Coins für \$1.00 USD
+      calculatedRequiredZeniq = 1.00 / liveZeniqUsdPrice;
+      
+      document.getElementById("live-zeniq-price").innerText = `$${liveZeniqUsdPrice.toFixed(6)} USD`;
+      document.getElementById("calc-required-zeniq").innerText = `${calculatedRequiredZeniq.toFixed(2)} ZENIQ`;
+      
+      if (userAddress) {
+        const btn = document.getElementById("btn-mint-action");
+        btn.innerText = `🚀 ©️ ScanMe.NFT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ = $1.00 USD)`;
+      }
+    }
+
     function updateWalletUI(addr, logLabel) {
       const cleanAddrStr = String(addr);
       document.getElementById("wallet-short").innerText = cleanAddrStr.substring(0, 6) + "..." + cleanAddrStr.substring(cleanAddrStr.length - 4);
@@ -326,42 +454,8 @@
       checkStatusOnChain(cleanAddrStr);
     }
 
-    async function fetchERC20Balance(tokenAddr, ownerAddr) {
-      try {
-        const cleanAddr = sanitizeAddress(ownerAddr);
-        if (!cleanAddr) return 0;
-        const cleanUserHex = cleanAddr.toLowerCase().replace("0x", "");
-        const paddedAddressHex = cleanUserHex.padStart(64, "0");
-        const dataPayload = "0x70a08231" + paddedAddressHex;
-
-        const rpcData = {
-          jsonrpc: "2.0",
-          method: "eth_call",
-          params: [{ to: tokenAddr, data: dataPayload }, "latest"],
-          id: 1
-        };
-
-        const rpcHost = ["api", "zeniq", "network"].join(".");
-        const fetchPromise = fetch("https://" + rpcHost, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(rpcData)
-        }).then(res => res.json());
-
-        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(null), 1500));
-
-        const json = await Promise.race([fetchPromise, timeoutPromise]);
-        if (json && json.result && json.result !== "0x" && !json.error) {
-          return parseInt(json.result, 16);
-        }
-      } catch (e) {
-        console.warn("RPC fetch error:", e);
-      }
-      return 0;
-    }
-
     async function checkStatusOnChain(addr) {
-      sysLog("Prüfe Voraussetzungen On-Chain...");
+      sysLog("Prüfe On-Chain Voraussetzungen...");
 
       const elKYC = document.getElementById("status-kyc");
       const elRWA = document.getElementById("status-rwa");
@@ -377,15 +471,8 @@
       }
 
       btn.disabled = false;
-      btn.innerText = "🚀 ©️ ScanMe.NFT JETZT PRÄGEN";
-      sysLog("Status OK: Bereit für 1-Klick Prägung!");
-
-      fetchERC20Balance(KYC_TOKEN_ADDR, addr).then(bal => {
-        if (bal > 0) sysLog("KYC Token On-Chain gefunden: " + bal);
-      }).catch(()=>{});
-      fetchERC20Balance(RWA_TOKEN_ADDR, addr).then(bal => {
-        if (bal > 0) sysLog("RWA Token On-Chain gefunden: " + bal);
-      }).catch(()=>{});
+      btn.innerText = `🚀 ©️ ScanMe.NFT JETZT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ = $1.00 USD)`;
+      sysLog("Status OK: Dynamische \$1.00 USD Prägung bereit!");
     }
 
     async function connectWalletSilent() {
@@ -421,7 +508,10 @@
     }
 
     async function init() {
-      sysLog("Initialisiere Minter v1.0.8...");
+      sysLog("Initialisiere Minter v1.0.9 mit \$1.00 USD Kurs-Rechner...");
+      
+      // Lade Live-Kurs
+      await fetchZeniqLivePrice();
 
       let attempts = 0;
       const interval = setInterval(async () => {
@@ -459,7 +549,7 @@
                 
                 const btn = document.getElementById("btn-mint-action");
                 btn.innerText = "✓ PRÄGUNG ERFOLGREICH";
-                btn.style.backgroundColor = "#00FF66";
+                [verdächtiger Link entfernt].backgroundColor = "#00FF66";
                 
                 alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der Blockchain geprägt!\n\nTransaktions-Hash:\n" + txHash);
                 return true;
@@ -469,7 +559,7 @@
                 
                 const btn = document.getElementById("btn-mint-action");
                 btn.disabled = false;
-                btn.innerText = "🚀 ERNEUT PRÄGEN";
+                btn.innerText = `🚀 ERNEUT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ)`;
                 return false;
               }
             }
@@ -483,7 +573,6 @@
     }
 
     async function executeMint() {
-      // Wallet-Kopplung im Klick-Event auslösen (Pop-up-freundlich für MetaMask)
       if (!userAddress && window.ethereum) {
         sysLog("Öffne MetaMask Wallet-Freigabe...");
         try {
@@ -519,13 +608,15 @@
       btn.disabled = true;
       btn.innerText = "⏳ PRÄGUNG LÄUFT...";
 
-      sysLog("Sende Transaktion an ScanMe.NFT Contract (0xf0c50...)...");
+      // Berechne den exakten Wei-Wert für \$1.00 USD in ZENIQ
+      const valueWeiHex = zeniqAmountToWeiHex(calculatedRequiredZeniq);
+      sysLog(`Sende Prägung mit Value $1.00 USD = ${calculatedRequiredZeniq.toFixed(2)} ZENIQ (${valueWeiHex} Wei)...`);
 
       try {
         const txParams = {
           from: userAddress,
           to: SCANME_NFT_ADDR,
-          value: "0x0",
+          value: valueWeiHex, // Dynamischer \$1.00 USD Wert in Wei!
           data: "0x12488d0d", // mint() selector
           gas: "0x1E8480"     // 2.000.000 Gas Limit Puffer
         };
@@ -540,7 +631,7 @@
         } else if (window.nomo && typeof window.nomo.sendAssets === "function") {
           const res = await window.nomo.sendAssets({
             targetAddress: SCANME_NFT_ADDR,
-            amount: "0",
+            amount: calculatedRequiredZeniq.toFixed(2),
             assetSymbol: "ZENIQ"
           });
           txHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
@@ -558,7 +649,7 @@
         sysLog("❌ Fehler/Abbruch: " + (err.message || err));
         alert("Prägevorgang abgebrochen oder fehlgeschlagen: " + (err.message || err));
         btn.disabled = false;
-        btn.innerText = "🚀 ©️ ScanMe.NFT JETZT PRÄGEN";
+        btn.innerText = `🚀 ©️ ScanMe.NFT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ = $1.00 USD)`;
       }
     }
 
