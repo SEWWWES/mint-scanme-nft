@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.14 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.15 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -229,7 +229,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.14</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.15</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -248,7 +248,7 @@
     <div class="card">
       <div class="card-title">
         <span>Voraussetzungen</span>
-        <span id="wallet-short" style="color:var(--gold);">Warte auf Wallet...</span>
+        <span id="wallet-short" style="color:var(--gold);">Verbinde Wallet...</span>
       </div>
 
       <div class="status-row">
@@ -308,12 +308,12 @@
     </div>
 
     <button id="btn-mint-action" class="btn-mint" onclick="executeMint()">
-      🔑 METAMASK VERBINDEN & PRÄGEN (\$1.00 USD)
+      🚀 ©️ ScanMe.NFT JETZT PRÄGEN (\$1.00 USD)
     </button>
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.14 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.15 initialisiert. Bereit...</div>
     </div>
 
     <footer>
@@ -347,22 +347,27 @@
         link.innerText = txHash;
         const host = ["zeniqscan", "com"].join(".");
         link.href = "https://" + host + "/tx/" + txHash;
-        [verdächtiger Link entfernt].display = "block";
+        box.style.display = "block";
       }
     }
 
-    // VOLLSTÄNDIG ENTPACKENDER SANITIZER - LÖST DIE ENDLOSSCHLEIFE
-    function sanitizeAddress(raw) {
+    // SICHERE STRINGS-EXTRAKTION OHNE SCHLEIFEN-GEFAHR
+    function extractStringAddress(raw) {
       if (!raw) return null;
-      while (Array.isArray(raw)) {
-        if (raw.length === 0) return null;
-        raw = raw[0]; // FIX: KORREKTES ARRAY UNPACKING ERFORDERLICH
+      let target = raw;
+      if (Array.isArray(target)) {
+        if (target.length === 0) return null;
+        target = target[0];
       }
-      if (typeof raw === "object" && raw !== null) {
-        raw = raw.evmAddress || raw.ethAddress || raw.address || raw.hex || raw.account || null;
+      if (Array.isArray(target)) {
+        if (target.length === 0) return null;
+        target = target[0];
       }
-      if (typeof raw === "string" && raw.startsWith("0x") && raw.length >= 42) {
-        return raw.trim();
+      if (typeof target === "object" && target !== null) {
+        target = target.evmAddress || target.ethAddress || target.address || target.hex || target.account || null;
+      }
+      if (typeof target === "string" && target.startsWith("0x") && target.length >= 42) {
+        return target.trim();
       }
       return null;
     }
@@ -396,46 +401,52 @@
       }
     }
 
-    async function fetchZeniqLivePrice() {
-      sysLog("Lade echten ZENIQ USD-Kurs...");
+    // VOLLSTÄNDIG ISOLIERTER HINTERGRUND-RECHNER
+    function startLivePriceCalculator() {
+      sysLog("Starte ZENIQ Live-Kurs Rechner...");
       const fallbackPrice = 0.0017;
 
-      try {
-        const urlLBank = "https://" + "api" + "." + "lbank" + ".info/v2/ticker/[verdächtiger Link entfernt]";
-        const urlDex = "https://" + "api" + "." + "dexscreener" + ".com/latest/dex/tokens/0x74DC1C4ec10abE9F5C8A3EabF1A90b97cDc3Ead8";
+      const urlLBank = "https://" + "api" + "." + "lbank" + ".info/v2/ticker/24hr.do?symbol=zeniq_usdt";
+      const urlDex = "https://" + "api" + "." + "dexscreener" + ".com/latest/dex/tokens/0x74DC1C4ec10abE9F5C8A3EabF1A90b97cDc3Ead8";
 
-        const pLBank = fetch(urlLBank)
-          .then(res => res.json())
-          .then(json => {
-            if (json && [verdächtiger Link entfernt] && [verdächtiger Link entfernt][0] && [verdächtiger Link entfernt][0].ticker) {
-              const p = parseFloat([verdächtiger Link entfernt][0].ticker.latest || [verdächtiger Link entfernt][0].ticker.price);
-              if (!isNaN(p) && p > 0) return { price: p, source: "LBank" };
-            }
-            throw new Error("LBank format");
-          });
+      const pLBank = fetch(urlLBank)
+        .then(res => res.json())
+        .then(json => {
+          if (json && json.data && json.data[0] && json.data[0].ticker) {
+            const p = parseFloat(json.data[0].ticker.latest || json.data[0].ticker.price);
+            if (!isNaN(p) && p > 0) return { price: p, source: "LBank" };
+          }
+          throw new Error("LBank format");
+        });
 
-        const pDex = fetch(urlDex)
-          .then(res => res.json())
-          .then(json => {
-            if (json && json.pairs && json.pairs[0] && json.pairs[0].priceUsd) {
-              const p = parseFloat(json.pairs[0].priceUsd);
-              if (!isNaN(p) && p > 0) return { price: p, source: "DexScreener" };
-            }
-            throw new Error("DexScreener format");
-          });
+      const pDex = fetch(urlDex)
+        .then(res => res.json())
+        .then(json => {
+          if (json && json.pairs && json.pairs[0] && json.pairs[0].priceUsd) {
+            const p = parseFloat(json.pairs[0].priceUsd);
+            if (!isNaN(p) && p > 0) return { price: p, source: "DexScreener" };
+          }
+          throw new Error("DexScreener format");
+        });
 
-        const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 2500));
+      const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 2000));
 
-        const result = await Promise.race([pLBank, pDex, timeout]);
-        liveZeniqUsdPrice = result.price;
-        const badge = document.getElementById("price-source-badge");
-        if (badge) badge.innerText = result.source + " Live";
-        sysLog(`Live-Kurs (${result.source}): $${liveZeniqUsdPrice.toFixed(6)} USD`);
-      } catch (err) {
-        liveZeniqUsdPrice = fallbackPrice;
-        sysLog(`Standard-Kurs: $${liveZeniqUsdPrice.toFixed(6)} USD`);
-      }
+      Promise.race([pLBank, pDex, timeout])
+        .then(result => {
+          liveZeniqUsdPrice = result.price;
+          const badge = document.getElementById("price-source-badge");
+          if (badge) badge.innerText = result.source + " Live";
+          sysLog(`Live-Kurs (${result.source}): $${liveZeniqUsdPrice.toFixed(6)} USD`);
+          updatePriceDisplay();
+        })
+        .catch(err => {
+          liveZeniqUsdPrice = fallbackPrice;
+          sysLog(`Standard-Kurs: $${liveZeniqUsdPrice.toFixed(6)} USD`);
+          updatePriceDisplay();
+        });
+    }
 
+    function updatePriceDisplay() {
       calculatedRequiredZeniq = 1.00 / liveZeniqUsdPrice;
       const elPrice = document.getElementById("live-zeniq-price");
       const elReq = document.getElementById("calc-required-zeniq");
@@ -443,31 +454,32 @@
       if (elReq) elReq.innerText = `${calculatedRequiredZeniq.toFixed(2)} ZENIQ`;
       
       const btn = document.getElementById("btn-mint-action");
-      if (btn) {
-        if (userAddress) {
-          btn.innerText = `🚀 ©️ ScanMe.NFT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ = $1.00 USD)`;
-        } else {
-          btn.innerText = `🔑 METAMASK VERBINDEN & PRÄGEN ($1.00 USD)`;
-        }
+      if (btn && !btn.disabled) {
+        btn.innerText = `🚀 ©️ ScanMe.NFT JETZT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ = $1.00 USD)`;
       }
     }
 
     function updateWalletUI(addr, logLabel) {
-      const cleanAddrStr = String(addr);
-      userAddress = cleanAddrStr;
+      userAddress = addr;
       
-      document.getElementById("wallet-short").innerText = cleanAddrStr.substring(0, 6) + "..." + cleanAddrStr.substring(cleanAddrStr.length - 4);
-      document.getElementById("wallet-short").style.color = "var(--emerald)";
-      document.getElementById("dna-hex").innerText = cleanAddrStr;
+      const elShort = document.getElementById("wallet-short");
+      const elHex = document.getElementById("dna-hex");
+      const elSid = document.getElementById("dna-sid");
 
-      userSID = deriveSID(cleanAddrStr);
-      document.getElementById("dna-sid").innerText = userSID;
-      if (logLabel) sysLog(logLabel + ": " + cleanAddrStr);
+      if (elShort) {
+        elShort.innerText = addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
+        elShort.style.color = "var(--emerald)";
+      }
+      if (elHex) elHex.innerText = addr;
 
-      checkStatusOnChain(cleanAddrStr);
+      userSID = deriveSID(addr);
+      if (elSid) elSid.innerText = userSID;
+      if (logLabel) sysLog(logLabel + ": " + addr);
+
+      checkStatusOnChain();
     }
 
-    async function checkStatusOnChain(addr) {
+    function checkStatusOnChain() {
       const elKYC = document.getElementById("status-kyc");
       const elRWA = document.getElementById("status-rwa");
       const btn   = document.getElementById("btn-mint-action");
@@ -485,65 +497,48 @@
         btn.disabled = false;
         btn.innerText = `🚀 ©️ ScanMe.NFT JETZT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ = $1.00 USD)`;
       }
-      sysLog("Status OK: Dynamische \$1.00 USD Sonder-Eigenspenden-Prägung bereit!");
+      sysLog("Status OK: Bereit für 1-Klick Prägung!");
     }
 
-    // SILENT CHECK ON LOAD (PC METAMASK & NOMOAPP)
-    async function checkWalletSilent() {
+    // DIREKTE & SOFORTIGE INITIALISIERUNG BEIM LADE-EVENT (WIE IN VERSION 1.0.0-1.0.4)
+    async function init() {
+      sysLog("Satellit v1.0.15 startet...");
+      
+      // Starte Rechner im Hintergrund
+      startLivePriceCalculator();
+
+      // 1. NomoApp Bridge
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
         try {
           const res = await window.nomo.getEvmAddress();
-          const addr = sanitizeAddress(res);
+          const addr = extractStringAddress(res);
           if (addr) {
-            updateWalletUI(addr, "NomoApp Native Bridge gekoppelt");
-            return true;
+            updateWalletUI(addr, "NomoApp Bridge gekoppelt");
+            return;
           }
         } catch(e) {}
       }
 
+      // 2. MetaMask auf PC: SOFORT DIREKTE ABFRAGE BEIM SEITENSTART!
       if (window.ethereum) {
         try {
-          const accs = await window.ethereum.request({ method: "eth_accounts" });
-          const addr = sanitizeAddress(accs);
+          sysLog("Frage MetaMask Wallet an...");
+          const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
+          const addr = extractStringAddress(accs);
           if (addr) {
-            updateWalletUI(addr, "MetaMask Wallet verbunden");
-            return true;
+            updateWalletUI(addr, "MetaMask gekoppelt");
+            return;
           }
-        } catch(e) {}
+        } catch(e) {
+          sysLog("MetaMask nicht gewährt: " + (e.message || e));
+        }
       }
 
-      return false;
-    }
-
-    async function init() {
-      sysLog("Initialisiere Minter v1.0.14...");
-      
-      fetchZeniqLivePrice();
-
-      const connected = await checkWalletSilent();
-      if (!connected) {
-        sysLog("Bereit. Klicken Sie auf \"METAMASK VERBINDEN & PRÄGEN\" zum Koppeln.");
-      }
-
-      if (window.ethereum && typeof window.ethereum.on === "function") {
-        window.ethereum.on("accountsChanged", (accounts) => {
-          const addr = sanitizeAddress(accounts);
-          if (addr) {
-            updateWalletUI(addr, "MetaMask Wallet gewechselt");
-          } else {
-            userAddress = null;
-            document.getElementById("wallet-short").innerText = "Warte auf Wallet...";
-            document.getElementById("wallet-short").style.color = "var(--gold)";
-            document.getElementById("dna-hex").innerText = "Warte auf Wallet...";
-            document.getElementById("btn-mint-action").innerText = "🔑 METAMASK VERBINDEN & PRÄGEN (\$1.00 USD)";
-            sysLog("MetaMask getrennt.");
-          }
-        });
-      }
+      sysLog("Klicken Sie auf 'JETZT PRÄGEN', um MetaMask zu verbinden.");
     }
 
     async function waitForReceipt(txHash) {
-      sysLog("⏳ Warte auf Blockbestätigung auf der ZENIQ Smart Chain...");
+      sysLog("⏳ Warte auf Blockbestätigung...");
       let attempts = 0;
       
       while (attempts < 30) {
@@ -558,22 +553,25 @@
             if (receipt && receipt.blockNumber) {
               if (receipt.status === "0x1") {
                 const blockNum = parseInt(receipt.blockNumber, 16);
-                sysLog("✅ PRÄGUNG ERFOLGREICH BESTÄTIGT in Block #" + blockNum);
+                sysLog("✅ PRÄGUNG ERFOLGREICH in Block #" + blockNum);
                 
-                document.getElementById("status-nft").className = "status-pill pill-green";
-                document.getElementById("status-nft").innerText = "✓ NFT Geprägt";
+                const elNFT = document.getElementById("status-nft");
+                if (elNFT) {
+                  elNFT.className = "status-pill pill-green";
+                  elNFT.innerText = "✓ NFT Geprägt";
+                }
                 
                 const btn = document.getElementById("btn-mint-action");
                 if (btn) {
                   btn.innerText = "✓ PRÄGUNG ERFOLGREICH";
-                  [verdächtiger Link entfernt].backgroundColor = "#00FF66";
+                  btn.style.backgroundColor = "#00FF66";
                 }
                 
-                alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der Blockchain geprägt!\n\nTransaktions-Hash:\n" + txHash);
+                alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der Blockchain geprägt!\n\nTX Hash:\n" + txHash);
                 return true;
               } else {
-                sysLog("⚠️ TRANSAKTION REVERTED (Contract Revert). TX-Hash bleibt einsehbar!");
-                alert("⚠️ Transaktion auf der Blockchain abgelehnt (Execution Reverted).\n\nTX-Hash im WebOn einsehbar:\n" + txHash);
+                sysLog("⚠️ TRANSAKTION REVERTED.");
+                alert("⚠️ Transaktion auf der Blockchain abgelehnt (Reverted).\n\nTX Hash:\n" + txHash);
                 
                 const btn = document.getElementById("btn-mint-action");
                 if (btn) {
@@ -585,22 +583,23 @@
             }
           }
         } catch(e) {
-          console.log("Polling receipt...", e);
+          console.log("Receipt polling...", e);
         }
         attempts++;
       }
-      sysLog("⏳ Transaktion ausstehend. Prüfen Sie den Status auf ZeniqScan.");
+      sysLog("⏳ Transaktion ausstehend auf ZeniqScan.");
     }
 
+    // DIREKTER KLICK HANDLER OHNE UMWEGE ODER BLOCKADEN
     async function executeMint() {
       if (!userAddress) {
         if (window.ethereum) {
-          sysLog("Öffne MetaMask Wallet-Freigabe...");
+          sysLog("Öffne MetaMask Freigabe...");
           try {
             const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
-            const addr = sanitizeAddress(accs);
+            const addr = extractStringAddress(accs);
             if (addr) {
-              updateWalletUI(addr, "MetaMask Wallet gekoppelt");
+              updateWalletUI(addr, "MetaMask gekoppelt");
             } else {
               alert("Bitte bestätigen Sie die Wallet-Verbindung in MetaMask.");
               return;
@@ -612,7 +611,7 @@
         } else if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
           try {
             const res = await window.nomo.getEvmAddress();
-            const addr = sanitizeAddress(res);
+            const addr = extractStringAddress(res);
             if (addr) {
               updateWalletUI(addr, "Nomo Bridge gekoppelt");
             }
@@ -621,7 +620,7 @@
       }
 
       if (!userAddress) {
-        alert("Bitte öffnen Sie die Webseite in der NomoApp oder aktivieren Sie MetaMask im Browser.");
+        alert("Bitte öffnen Sie die Webseite in der NomoApp oder aktivieren Sie MetaMask.");
         return;
       }
 
@@ -632,7 +631,7 @@
       }
 
       const valueWeiHex = zeniqAmountToWeiHex(calculatedRequiredZeniq);
-      sysLog(`Sende Prägung mit Sonder-Eigenspende $1.00 USD = ${calculatedRequiredZeniq.toFixed(2)} ZENIQ (${valueWeiHex} Wei)...`);
+      sysLog(`Sende Transaktion ($1.00 USD = ${calculatedRequiredZeniq.toFixed(2)} ZENIQ)...`);
 
       try {
         const txParams = {
@@ -660,11 +659,11 @@
         }
 
         if (txHash) {
-          sysLog("✅ TX im Mempool platziert! Hash: " + txHash);
+          sysLog("✅ Transaktion platziert! Hash: " + txHash);
           showTxHash(txHash);
           await waitForReceipt(txHash);
         } else {
-          throw new Error("Kein Transaktions-Hash zurückgeliefert.");
+          throw new Error("Kein Transaktions-Hash erhalten.");
         }
 
       } catch (err) {
