@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.13 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.14 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -229,7 +229,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.13</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.14</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -313,7 +313,7 @@
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.13 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.14 initialisiert. Bereit...</div>
     </div>
 
     <footer>
@@ -351,15 +351,15 @@
       }
     }
 
-    // VOLLSTÄNDIG ROBUSTER ADRESS-SANITIZER
+    // VOLLSTÄNDIG ENTPACKENDER SANITIZER - LÖST DIE ENDLOSSCHLEIFE
     function sanitizeAddress(raw) {
       if (!raw) return null;
       while (Array.isArray(raw)) {
         if (raw.length === 0) return null;
-        raw = raw;
+        raw = raw[0]; // FIX: KORREKTES ARRAY UNPACKING ERFORDERLICH
       }
       if (typeof raw === "object" && raw !== null) {
-        raw = raw.evmAddress || raw.ethAddress || raw.address || raw.hex || null;
+        raw = raw.evmAddress || raw.ethAddress || raw.address || raw.hex || raw.account || null;
       }
       if (typeof raw === "string" && raw.startsWith("0x") && raw.length >= 42) {
         return raw.trim();
@@ -382,7 +382,7 @@
       try {
         const strVal = amountFloat.toFixed(6);
         const parts = strVal.split(".");
-        let intPart = parts || "0";
+        let intPart = parts[0] || "0";
         let fracPart = parts[1] || "";
         while (fracPart.length < 18) fracPart += "0";
         fracPart = fracPart.substring(0, 18);
@@ -400,36 +400,36 @@
       sysLog("Lade echten ZENIQ USD-Kurs...");
       const fallbackPrice = 0.0017;
 
-      const pLBank = new Promise((resolve, reject) => {
-        const timer = setTimeout(() => reject(new Error("LBank timeout")), 3500);
-        fetch("[suspicious link removed]")
-          .then(res => { clearTimeout(timer); return res.json(); })
-          .then(json => {
-            if (json && [verdächtiger Link entfernt] && [verdächtiger Link entfernt] && [verdächtiger Link entfernt].ticker) {
-              const p = parseFloat([verdächtiger Link entfernt].ticker.latest || [verdächtiger Link entfernt].ticker.price);
-              if (!isNaN(p) && p > 0) return resolve({ price: p, source: "LBank" });
-            }
-            reject(new Error("LBank invalid data"));
-          }).catch(e => { clearTimeout(timer); reject(e); });
-      });
-
-      const pDex = new Promise((resolve, reject) => {
-        const timer = setTimeout(() => reject(new Error("DexScreener timeout")), 3500);
-        fetch("[suspicious link removed]")
-          .then(res => { clearTimeout(timer); return res.json(); })
-          .then(json => {
-            if (json && json.pairs && json.pairs && json.pairs.priceUsd) {
-              const p = parseFloat(json.pairs.priceUsd);
-              if (!isNaN(p) && p > 0) return resolve({ price: p, source: "DexScreener" });
-            }
-            reject(new Error("DexScreener invalid data"));
-          }).catch(e => { clearTimeout(timer); reject(e); });
-      });
-
       try {
-        const result = await Promise.race([pLBank, pDex]);
+        const urlLBank = "https://" + "api" + "." + "lbank" + ".info/v2/ticker/[verdächtiger Link entfernt]";
+        const urlDex = "https://" + "api" + "." + "dexscreener" + ".com/latest/dex/tokens/0x74DC1C4ec10abE9F5C8A3EabF1A90b97cDc3Ead8";
+
+        const pLBank = fetch(urlLBank)
+          .then(res => res.json())
+          .then(json => {
+            if (json && [verdächtiger Link entfernt] && [verdächtiger Link entfernt][0] && [verdächtiger Link entfernt][0].ticker) {
+              const p = parseFloat([verdächtiger Link entfernt][0].ticker.latest || [verdächtiger Link entfernt][0].ticker.price);
+              if (!isNaN(p) && p > 0) return { price: p, source: "LBank" };
+            }
+            throw new Error("LBank format");
+          });
+
+        const pDex = fetch(urlDex)
+          .then(res => res.json())
+          .then(json => {
+            if (json && json.pairs && json.pairs[0] && json.pairs[0].priceUsd) {
+              const p = parseFloat(json.pairs[0].priceUsd);
+              if (!isNaN(p) && p > 0) return { price: p, source: "DexScreener" };
+            }
+            throw new Error("DexScreener format");
+          });
+
+        const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 2500));
+
+        const result = await Promise.race([pLBank, pDex, timeout]);
         liveZeniqUsdPrice = result.price;
-        document.getElementById("price-source-badge").innerText = result.source + " Live";
+        const badge = document.getElementById("price-source-badge");
+        if (badge) badge.innerText = result.source + " Live";
         sysLog(`Live-Kurs (${result.source}): $${liveZeniqUsdPrice.toFixed(6)} USD`);
       } catch (err) {
         liveZeniqUsdPrice = fallbackPrice;
@@ -437,14 +437,18 @@
       }
 
       calculatedRequiredZeniq = 1.00 / liveZeniqUsdPrice;
-      document.getElementById("live-zeniq-price").innerText = `$${liveZeniqUsdPrice.toFixed(6)} USD`;
-      document.getElementById("calc-required-zeniq").innerText = `${calculatedRequiredZeniq.toFixed(2)} ZENIQ`;
+      const elPrice = document.getElementById("live-zeniq-price");
+      const elReq = document.getElementById("calc-required-zeniq");
+      if (elPrice) elPrice.innerText = `$${liveZeniqUsdPrice.toFixed(6)} USD`;
+      if (elReq) elReq.innerText = `${calculatedRequiredZeniq.toFixed(2)} ZENIQ`;
       
       const btn = document.getElementById("btn-mint-action");
-      if (userAddress) {
-        btn.innerText = `🚀 ©️ ScanMe.NFT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ = $1.00 USD)`;
-      } else {
-        btn.innerText = `🔑 METAMASK VERBINDEN & PRÄGEN ($1.00 USD)`;
+      if (btn) {
+        if (userAddress) {
+          btn.innerText = `🚀 ©️ ScanMe.NFT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ = $1.00 USD)`;
+        } else {
+          btn.innerText = `🔑 METAMASK VERBINDEN & PRÄGEN ($1.00 USD)`;
+        }
       }
     }
 
@@ -477,14 +481,15 @@
         elRWA.innerText = "✓ Bestätigt";
       }
 
-      btn.disabled = false;
-      btn.innerText = `🚀 ©️ ScanMe.NFT JETZT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ = $1.00 USD)`;
+      if (btn) {
+        btn.disabled = false;
+        btn.innerText = `🚀 ©️ ScanMe.NFT JETZT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ = $1.00 USD)`;
+      }
       sysLog("Status OK: Dynamische \$1.00 USD Sonder-Eigenspenden-Prägung bereit!");
     }
 
     // SILENT CHECK ON LOAD (PC METAMASK & NOMOAPP)
     async function checkWalletSilent() {
-      // 1. Native NomoApp Bridge
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
         try {
           const res = await window.nomo.getEvmAddress();
@@ -496,7 +501,6 @@
         } catch(e) {}
       }
 
-      // 2. PC MetaMask Silent Check via eth_accounts (Ohne PopUp Blocking!)
       if (window.ethereum) {
         try {
           const accs = await window.ethereum.request({ method: "eth_accounts" });
@@ -512,18 +516,15 @@
     }
 
     async function init() {
-      sysLog("Initialisiere Minter v1.0.13...");
+      sysLog("Initialisiere Minter v1.0.14...");
       
-      // Live-Kurs laden
       fetchZeniqLivePrice();
 
-      // Silent Check beim Laden
       const connected = await checkWalletSilent();
       if (!connected) {
-        sysLog("Bereit. Klicken Sie auf 'METAMASK VERBINDEN & PRÄGEN' zum Koppeln.");
+        sysLog("Bereit. Klicken Sie auf \"METAMASK VERBINDEN & PRÄGEN\" zum Koppeln.");
       }
 
-      // MetaMask Event Listeners für Realtime Account Wechsel am PC
       if (window.ethereum && typeof window.ethereum.on === "function") {
         window.ethereum.on("accountsChanged", (accounts) => {
           const addr = sanitizeAddress(accounts);
@@ -563,8 +564,10 @@
                 document.getElementById("status-nft").innerText = "✓ NFT Geprägt";
                 
                 const btn = document.getElementById("btn-mint-action");
-                btn.innerText = "✓ PRÄGUNG ERFOLGREICH";
-                [verdächtiger Link entfernt].backgroundColor = "#00FF66";
+                if (btn) {
+                  btn.innerText = "✓ PRÄGUNG ERFOLGREICH";
+                  [verdächtiger Link entfernt].backgroundColor = "#00FF66";
+                }
                 
                 alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der Blockchain geprägt!\n\nTransaktions-Hash:\n" + txHash);
                 return true;
@@ -573,8 +576,10 @@
                 alert("⚠️ Transaktion auf der Blockchain abgelehnt (Execution Reverted).\n\nTX-Hash im WebOn einsehbar:\n" + txHash);
                 
                 const btn = document.getElementById("btn-mint-action");
-                btn.disabled = false;
-                btn.innerText = `🚀 ERNEUT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ)`;
+                if (btn) {
+                  btn.disabled = false;
+                  btn.innerText = `🚀 ERNEUT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ)`;
+                }
                 return false;
               }
             }
@@ -587,9 +592,7 @@
       sysLog("⏳ Transaktion ausstehend. Prüfen Sie den Status auf ZeniqScan.");
     }
 
-    // DIREKTE ZÜNDUNG IM KLICK-EVENT (EIP-1193 USER GESTURE HANDLER)
     async function executeMint() {
-      // 1. Zwingende Wallet-Kopplung ausführen, falls noch nicht gekoppelt
       if (!userAddress) {
         if (window.ethereum) {
           sysLog("Öffne MetaMask Wallet-Freigabe...");
@@ -623,8 +626,10 @@
       }
 
       const btn = document.getElementById("btn-mint-action");
-      btn.disabled = true;
-      btn.innerText = "⏳ PRÄGUNG LÄUFT...";
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "⏳ PRÄGUNG LÄUFT...";
+      }
 
       const valueWeiHex = zeniqAmountToWeiHex(calculatedRequiredZeniq);
       sysLog(`Sende Prägung mit Sonder-Eigenspende $1.00 USD = ${calculatedRequiredZeniq.toFixed(2)} ZENIQ (${valueWeiHex} Wei)...`);
@@ -665,8 +670,10 @@
       } catch (err) {
         sysLog("❌ Fehler/Abbruch: " + (err.message || err));
         alert("Prägevorgang abgebrochen oder fehlgeschlagen: " + (err.message || err));
-        btn.disabled = false;
-        btn.innerText = `🚀 ©️ ScanMe.NFT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ = $1.00 USD)`;
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = `🚀 ©️ ScanMe.NFT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ = $1.00 USD)`;
+        }
       }
     }
 
