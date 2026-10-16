@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.16 (Test-Modus) | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.17 (Multi-Mode) | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -49,9 +49,9 @@
 
     .badge-satellit {
       display: inline-block;
-      background: rgba(255, 51, 102, 0.2);
-      border: 1px solid var(--red);
-      color: #FF6688;
+      background: rgba(0, 204, 255, 0.15);
+      border: 1px solid var(--skyblue);
+      color: var(--skyblue);
       font-size: 0.72rem;
       font-weight: 800;
       padding: 4px 12px;
@@ -125,11 +125,11 @@
     }
 
     .gift-card {
-      background: rgba(255, 51, 102, 0.08);
-      border: 1px solid var(--red);
+      background: rgba(0, 204, 255, 0.05);
+      border: 1px solid var(--skyblue);
       border-radius: 16px;
       padding: 16px;
-      box-shadow: 0 0 15px rgba(255, 51, 102, 0.15);
+      box-shadow: 0 0 15px rgba(0, 204, 255, 0.1);
     }
 
     .dna-box {
@@ -163,8 +163,16 @@
       margin-bottom: 4px;
     }
 
-    .price-row:last-child {
-      margin-bottom: 0;
+    .select-field {
+      width: 100%;
+      background: #000;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 8px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      margin-top: 6px;
     }
 
     .tx-display-box {
@@ -229,19 +237,19 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">🧪 SATELLITEN-WEBON v1.0.16 (TEST-MODUS)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.17 (MULTI-MODE)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
 
-    <!-- 🧪 TEST-MODUS BANNER -->
+    <!-- 🎁 COMMUNITY INITIATIVE -->
     <div class="gift-card">
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-        <span style="font-size:1.3rem;">🧪</span>
-        <strong style="color:#FF6688; font-size:0.88rem; letter-spacing:0.5px;">ENTWICKLUNGS-TEST-MODUS AKTIV</strong>
+        <span style="font-size:1.3rem;">🎁</span>
+        <strong style="color:var(--skyblue); font-size:0.88rem; letter-spacing:0.5px;">SMARTEARTHFAMILY COMMUNITY-INITIATIVE</strong>
       </div>
       <p style="font-size:0.8rem; color:var(--text-main); line-height:1.45;">
-        <strong>Sonder-Testwert (0.1 ZENIQ):</strong> Für Entwicklungs- und Funktionstests wurde die Prägegebühr vorübergehend auf exakt <strong>0.1 ZENIQ Coins</strong> (~\$0.00017 USD) abgesenkt, um Systemtests ohne unnötigen ZENIQ-Einsatz durchzuführen.
+        <strong>Symbolische Sonder-Eigenspende:</strong> Das unbestechliche ©️ ScanMe.NFT Siegel besitzt einen regulären Schöpfungswert von <strong>$100.00 USD</strong>. Um dezentrale Freiheit, Frieden und unkorrumpierbaren Identitätsschutz für JEDEN Menschen weltweit sofort zugänglich zu machen, ermöglicht die SmartEarthFamily die Prägung gegen eine symbolische <strong>Sonder-Eigenspende von exakt $1.00 USD</strong>!
       </p>
     </div>
 
@@ -252,12 +260,12 @@
       </div>
 
       <div class="status-row">
-        <div>🔑 \$KYC Zündschlüssel</div>
+        <div>🔑 $KYC Zündschlüssel</div>
         <div id="status-kyc" class="status-pill pill-muted">Warte auf Wallet</div>
       </div>
 
       <div class="status-row">
-        <div>🌱 \$RWA Mikrospende (>0)</div>
+        <div>🌱 $RWA Mikrospende (>0)</div>
         <div id="status-rwa" class="status-pill pill-muted">Warte auf Wallet</div>
       </div>
 
@@ -267,25 +275,31 @@
       </div>
     </div>
 
-    <!-- TEST-MODUS VALUE CALCULATOR -->
+    <!-- EVM CALLDATA & VALUE TEST-SELECTOR -->
     <div class="card">
       <div class="card-title">
-        <span>📊 Test-Modus Fee Calculator</span>
-        <span id="price-source-badge" style="color:var(--skyblue);">0.1 ZENIQ Test-Value</span>
+        <span>⚙️ EVM PRÄGE-MODUS & CALLDATA</span>
+        <span style="color:var(--skyblue);">Contract Diagnostics</span>
       </div>
       <div class="price-box">
         <div class="price-row">
-          <span>Modus:</span>
-          <strong style="color:#FF6688;">🧪 Entwicklungs-Test</strong>
+          <span>Präge-Funktion (Calldata):</span>
         </div>
-        <div class="price-row">
-          <span>Standard-Tarif:</span>
-          <span style="text-decoration: line-through; color:var(--text-muted);">\$1.00 USD (~588 ZENIQ)</span>
+        <select id="calldata-mode-select" class="select-field" onchange="updateModeDisplay()">
+          <option value="plain">Mode A: Plain Coin Deposit (data: "0x") [Empfohlen für Nomo/Contract]</option>
+          <option value="safeMint">Mode B: safeMint(address) (0xa7234c70...)</option>
+          <option value="mint">Mode C: mint() (0xeb76af97...)</option>
+        </select>
+
+        <div class="price-row" style="margin-top:10px;">
+          <span>Test-Value (ZENIQ):</span>
         </div>
-        <div class="price-row" style="border-top: 1px dashed rgba(255,215,0,0.3); padding-top: 4px; margin-top: 4px;">
-          <span>Test-Value per Transaktion:</span>
-          <strong id="calc-required-zeniq" style="color:var(--emerald);">0.10 ZENIQ</strong>
-        </div>
+        <select id="value-amount-select" class="select-field" onchange="updateModeDisplay()">
+          <option value="0.1">0.10 ZENIQ (~$0.00017 USD Test)</option>
+          <option value="0">0.00 ZENIQ (Free Mint)</option>
+          <option value="1">1.00 ZENIQ</option>
+          <option value="dynamic">$1.00 USD Live-Kurs (~588 ZENIQ)</option>
+        </select>
       </div>
     </div>
 
@@ -304,12 +318,12 @@
     </div>
 
     <button id="btn-mint-action" class="btn-mint" onclick="executeMint()">
-      🚀 ©️ ScanMe.NFT TEST-PRÄGEN (0.10 ZENIQ)
+      🚀 ©️ ScanMe.NFT JETZT PRÄGEN
     </button>
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.16 (Test-Modus) initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.17 initialisiert. Bereit...</div>
     </div>
 
     <footer>
@@ -325,8 +339,7 @@
 
     let userAddress = null;
     let userSID = "0000000000";
-    // FESTER TEST-WERT: 0.1 ZENIQ
-    const calculatedRequiredZeniq = 0.10;
+    let liveZeniqUsdPrice = 0.0017;
 
     function sysLog(msg) {
       const box = document.getElementById("sys-log");
@@ -352,11 +365,11 @@
       let target = raw;
       if (Array.isArray(target)) {
         if (target.length === 0) return null;
-        target = target[0];
+        target = target;
       }
       if (Array.isArray(target)) {
         if (target.length === 0) return null;
-        target = target[0];
+        target = target;
       }
       if (typeof target === "object" && target !== null) {
         target = target.evmAddress || target.ethAddress || target.address || target.hex || target.account || null;
@@ -382,7 +395,7 @@
       try {
         const strVal = amountFloat.toFixed(6);
         const parts = strVal.split(".");
-        let intPart = parts[0] || "0";
+        let intPart = parts || "0";
         let fracPart = parts[1] || "";
         while (fracPart.length < 18) fracPart += "0";
         fracPart = fracPart.substring(0, 18);
@@ -392,7 +405,37 @@
         return "0x" + bigWei.toString(16);
       } catch(e) {
         console.warn("Wei conversion fallback:", e);
-        return "0x16345785d8a0000"; // 0.1 ZENIQ in Wei
+        return "0x0";
+      }
+    }
+
+    function getSelectedAmount() {
+      const valSel = document.getElementById("value-amount-select").value;
+      if (valSel === "dynamic") {
+        return 1.00 / liveZeniqUsdPrice;
+      }
+      return parseFloat(valSel) || 0;
+    }
+
+    function getSelectedCalldata() {
+      const mode = document.getElementById("calldata-mode-select").value;
+      if (mode === "plain") {
+        return "0x";
+      } else if (mode === "mint") {
+        return "0xeb76af97";
+      } else if (mode === "safeMint") {
+        if (!userAddress) return "0xa7234c70";
+        const cleanHex = userAddress.toLowerCase().replace("0x", "").padStart(64, "0");
+        return "0xa7234c70" + cleanHex;
+      }
+      return "0x";
+    }
+
+    function updateModeDisplay() {
+      const btn = document.getElementById("btn-mint-action");
+      const amt = getSelectedAmount();
+      if (btn) {
+        btn.innerText = "🚀 ©️ ScanMe.NFT JETZT PRÄGEN (" + amt.toFixed(2) + " ZENIQ)";
       }
     }
 
@@ -432,15 +475,14 @@
 
       if (btn) {
         btn.disabled = false;
-        btn.innerText = `🚀 ©️ ScanMe.NFT TEST-PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ)`;
+        updateModeDisplay();
       }
-      sysLog("Status OK: Bereit für Test-Prägung mit 0.1 ZENIQ!");
+      sysLog("Status OK: Bereit für Prägung!");
     }
 
     async function init() {
-      sysLog("Satellit v1.0.16 (0.1 ZENIQ Test-Modus) startet...");
+      sysLog("Satellit v1.0.17 (Multi-Mode Diagnostic) startet...");
 
-      // 1. NomoApp Bridge
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
         try {
           const res = await window.nomo.getEvmAddress();
@@ -452,7 +494,6 @@
         } catch(e) {}
       }
 
-      // 2. MetaMask auf PC
       if (window.ethereum) {
         try {
           sysLog("Frage MetaMask Wallet an...");
@@ -467,7 +508,7 @@
         }
       }
 
-      sysLog("Klicken Sie auf 'TEST-PRÄGEN', um MetaMask zu verbinden.");
+      sysLog("Klicken Sie auf 'JETZT PRÄGEN', um MetaMask zu verbinden.");
     }
 
     async function waitForReceipt(txHash) {
@@ -496,20 +537,20 @@
                 
                 const btn = document.getElementById("btn-mint-action");
                 if (btn) {
-                  btn.innerText = "✓ TEST-PRÄGUNG ERFOLGREICH";
+                  btn.innerText = "✓ PRÄGUNG ERFOLGREICH";
                   btn.style.backgroundColor = "#00FF66";
                 }
                 
-                alert("🎉 Gratulation! Ihre Test-Prägung wurde erfolgreich auf der Blockchain verankert!\n\nTX Hash:\n" + txHash);
+                alert("🎉 Gratulation! Ihre Prägung wurde erfolgreich auf der Blockchain verankert!\n\nTX Hash:\n" + txHash);
                 return true;
               } else {
-                sysLog("⚠️ TRANSAKTION REVERTED.");
-                alert("⚠️ Transaktion auf der Blockchain abgelehnt (Reverted).\n\nTX Hash:\n" + txHash);
+                sysLog("⚠️ TRANSAKTION REVERTED (Contract Revert). TX-Hash bleibt einsehbar!");
+                alert("⚠️ Transaktion auf der Blockchain abgelehnt (Execution Reverted).\n\nTX Hash:\n" + txHash);
                 
                 const btn = document.getElementById("btn-mint-action");
                 if (btn) {
                   btn.disabled = false;
-                  btn.innerText = `🚀 ERNEUT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ)`;
+                  updateModeDisplay();
                 }
                 return false;
               }
@@ -559,18 +600,21 @@
       const btn = document.getElementById("btn-mint-action");
       if (btn) {
         btn.disabled = true;
-        btn.innerText = "⏳ TEST-PRÄGUNG LÄUFT...";
+        btn.innerText = "⏳ PRÄGUNG LÄUFT...";
       }
 
-      const valueWeiHex = zeniqAmountToWeiHex(calculatedRequiredZeniq);
-      sysLog(`Sende Test-Prägung mit ${calculatedRequiredZeniq.toFixed(2)} ZENIQ (${valueWeiHex} Wei)...`);
+      const zeniqAmt = getSelectedAmount();
+      const valueWeiHex = zeniqAmountToWeiHex(zeniqAmt);
+      const calldata = getSelectedCalldata();
+
+      sysLog("Sende Transaktion (" + zeniqAmt.toFixed(2) + " ZENIQ, Calldata: " + calldata + ")...");
 
       try {
         const txParams = {
           from: userAddress,
           to: SCANME_NFT_ADDR,
           value: valueWeiHex,
-          data: "0x12488d0d",
+          data: calldata,
           gas: "0x1E8480"
         };
 
@@ -584,7 +628,7 @@
         } else if (window.nomo && typeof window.nomo.sendAssets === "function") {
           const res = await window.nomo.sendAssets({
             targetAddress: SCANME_NFT_ADDR,
-            amount: calculatedRequiredZeniq.toFixed(2),
+            amount: zeniqAmt.toString(),
             assetSymbol: "ZENIQ"
           });
           txHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
@@ -603,7 +647,7 @@
         alert("Prägevorgang abgebrochen oder fehlgeschlagen: " + (err.message || err));
         if (btn) {
           btn.disabled = false;
-          btn.innerText = `🚀 ©️ ScanMe.NFT TEST-PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ)`;
+          updateModeDisplay();
         }
       }
     }
