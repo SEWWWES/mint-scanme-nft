@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.26 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.27 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -270,7 +270,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.26 (UNIVERSAL HYBRID)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.27 (STABLE SUPREME)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -286,7 +286,7 @@
       </p>
     </div>
 
-    <!-- WALLET KOPPLUNG BUTTON -->
+    <!-- WALLET KOPPLUNG BUTTON (DYNAMISCH) -->
     <button id="btn-connect-wallet" class="btn-connect" onclick="userTriggerConnectWallet()">
       🔑 WALLET VERBINDEN (NomoApp / MetaMask)
     </button>
@@ -370,7 +370,7 @@
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.26 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.27 initialisiert. Bereit...</div>
     </div>
 
     <footer>
@@ -409,12 +409,11 @@
       }
     }
 
-    // EXTRAHIERT ADRESSE REKURSIV AUS ARRAYS, OBJEKTEN ODER STRINGS (ROBUST & UNFEHLBAR)
+    // EXTRAHIERT DIE STR-ADRESSE REKURSIV UND ROBUST (OHNE UNENDLICHES LOOP-PROBLEM)
     function extractStringAddress(raw) {
       if (!raw) return null;
       let target = raw;
-      while (Array.isArray(target)) {
-        if (target.length === 0) return null;
+      while (Array.isArray(target) && target.length > 0) {
         target = target[0];
       }
       if (typeof target === "object" && target !== null) {
@@ -461,6 +460,7 @@
     }
 
     async function checkErc20BalanceOnChain(tokenAddr, ownerAddr) {
+      if (!ownerAddr) return 0;
       const cleanOwner = ownerAddr.toLowerCase().replace("0x", "").padStart(64, "0");
       const dataPayload = "0x70a08231" + cleanOwner;
 
@@ -473,21 +473,6 @@
           if (res && res !== "0x" && res !== "0x0000000000000000000000000000000000000000000000000000000000000000") {
             return BigInt(res) > 0n ? 1 : 0;
           }
-        } else {
-          const response = await fetch("[suspicious link removed]", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              jsonrpc: "2.0",
-              method: "eth_call",
-              params: [{ to: tokenAddr, data: dataPayload }, "latest"],
-              id: 1
-            })
-          });
-          const json = await response.json();
-          if (json && json.result && json.result !== "0x" && json.result !== "0x0000000000000000000000000000000000000000000000000000000000000000") {
-            return BigInt(json.result) > 0n ? 1 : 0;
-          }
         }
       } catch(e) {
         console.warn("eth_call balanceOf failed:", e);
@@ -496,6 +481,7 @@
     }
 
     async function checkAllowanceOnChain(tokenAddr, ownerAddr, spenderAddr) {
+      if (!ownerAddr) return 0n;
       const cleanOwner = ownerAddr.toLowerCase().replace("0x", "").padStart(64, "0");
       const cleanSpender = spenderAddr.toLowerCase().replace("0x", "").padStart(64, "0");
       const dataPayload = "0xdd62ed3e" + cleanOwner + cleanSpender;
@@ -507,19 +493,6 @@
             params: [{ to: tokenAddr, data: dataPayload }, "latest"]
           });
           if (res && res !== "0x") return BigInt(res);
-        } else {
-          const response = await fetch("[suspicious link removed]", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              jsonrpc: "2.0",
-              method: "eth_call",
-              params: [{ to: tokenAddr, data: dataPayload }, "latest"],
-              id: 1
-            })
-          });
-          const json = await response.json();
-          if (json && json.result && json.result !== "0x") return BigInt(json.result);
         }
       } catch(e) {
         console.warn("eth_call allowance failed:", e);
@@ -553,11 +526,11 @@
         if (hasRwaToken) {
           elRWA.className = "status-pill pill-green";
           elRWA.innerText = "✓ Bestätigt (Aktiv)";
-          if (rwaCard) [verdächtiger Link entfernt].display = "none";
+          if (rwaCard) rwaCard.style.display = "none";
         } else {
           elRWA.className = "status-pill pill-gold";
           elRWA.innerText = "⚠️ Fehlt ($RWA Spende)";
-          if (rwaCard) [verdächtiger Link entfernt].display = "block";
+          if (rwaCard) rwaCard.style.display = "block";
         }
       }
 
@@ -574,15 +547,15 @@
 
       if (elShort) {
         elShort.innerText = addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
-        [verdächtiger Link entfernt].color = "var(--emerald)";
+        elShort.style.color = "var(--emerald)";
       }
       if (elHex) elHex.innerText = addr;
 
       if (connBtn) {
         connBtn.innerText = "✓ WALLET GEKOPPELT: " + addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
-        [verdächtiger Link entfernt].background = "rgba(0, 255, 102, 0.15)";
-        [verdächtiger Link entfernt].border = "1px solid var(--emerald)";
-        [verdächtiger Link entfernt].color = "var(--emerald)";
+        connBtn.style.background = "rgba(0, 255, 102, 0.15)";
+        connBtn.style.border = "1px solid var(--emerald)";
+        connBtn.style.color = "var(--emerald)";
       }
 
       userSID = deriveSID(addr);
@@ -599,10 +572,12 @@
     }
 
     async function performWalletConnect() {
-      // 1. Check NomoApp Native Bridge
+      sysLog("Kopplungsversuch gestartet...");
+
+      // 1. PRIMÄR: NomoApp Bridge
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
         try {
-          sysLog("Abfrage der NomoApp EVM-Adresse...");
+          sysLog("Abfrage der NomoApp Native EVM-Adresse...");
           const res = await window.nomo.getEvmAddress();
           const addr = extractStringAddress(res);
           if (addr) {
@@ -614,7 +589,7 @@
         }
       }
 
-      // 2. Check MetaMask EIP-1193
+      // 2. SEKUNDÄR: MetaMask EIP-1193 (PC Browser)
       if (window.ethereum) {
         try {
           sysLog("Öffne MetaMask Freigabe-Dialog...");
@@ -641,7 +616,7 @@
     }
 
     async function init() {
-      sysLog("Satellit v1.0.26 startet...");
+      sysLog("Satellit v1.0.27 startet...");
 
       // 1. Automatische Erkennung falls NomoApp aktiv ist
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
@@ -679,21 +654,14 @@
               const connBtn = document.getElementById("btn-connect-wallet");
               if (connBtn) {
                 connBtn.innerText = "🔑 WALLET VERBINDEN (NomoApp / MetaMask)";
-                [verdächtiger Link entfernt].background = "linear-gradient(135deg, #00CCFF 0%, #0077FF 100%)";
-                [verdächtiger Link entfernt].color = "#FFFFFF";
+                connBtn.style.background = "linear-gradient(135deg, #00CCFF 0%, #0077FF 100%)";
+                connBtn.style.color = "#FFFFFF";
               }
               sysLog("Wallet getrennt.");
             }
           });
         }
       }
-
-      // Versuche sanften Auto-Connect nach 150ms
-      setTimeout(async () => {
-        if (!userAddress) {
-          await performWalletConnect();
-        }
-      }, 150);
 
       sysLog("Bereit. Bitte klicken Sie oben auf '🔑 WALLET VERBINDEN'.");
     }
@@ -835,7 +803,7 @@
                 const btn = document.getElementById("btn-mint-action");
                 if (btn) {
                   btn.innerText = "✓ PRÄGUNG ERFOLGREICH";
-                  [verdächtiger Link entfernt].backgroundColor = "#00FF66";
+                  btn.style.backgroundColor = "#00FF66";
                 }
                 
                 alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der ZENIQ Smart Chain geprägt!\n\nTX Hash:\n" + txHash);
@@ -882,7 +850,7 @@
       try {
         let txHash = null;
 
-        // 1. METAMASK / EIP-1193 PATH
+        // 1. METAMASK / EIP-1193 PATH (PC Browser)
         if (window.ethereum) {
           sysLog("Sende Transaktion über MetaMask...");
           const txParams = {
@@ -897,7 +865,7 @@
             params: [txParams]
           });
         }
-        // 2. NOMOAPP NATIVE PATH
+        // 2. NOMOAPP NATIVE PATH (Mobile)
         else if (window.nomo && typeof window.nomo.sendAssets === "function") {
           sysLog("Sende Transaktion über NomoApp Bridge...");
           const res = await window.nomo.sendAssets({
