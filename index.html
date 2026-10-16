@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.34 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.35 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -292,20 +292,35 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.34) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.35) -->
   <script>
     (function() {
       "use strict";
 
       function getDartBridge() {
         if (typeof window === "undefined") return null;
+
+        // 1. iOS / Standard NOMOJSChannel
         if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.NOMOJSChannel) {
           return function(payload) { window.webkit.messageHandlers.NOMOJSChannel.postMessage(payload); };
-        } else if (window.NOMOJSChannel) {
+        }
+        if (window.NOMOJSChannel && typeof window.NOMOJSChannel.postMessage === "function") {
           return function(payload) { window.NOMOJSChannel.postMessage(payload); };
-        } else if (window.chrome && window.chrome.webview && window.chrome.webview.hostObjects && window.chrome.webview.hostObjects.NOMOJSChannel) {
+        }
+
+        // 2. Android Flutter WebView NOMOJSChannel hostObjects
+        if (window.chrome && window.chrome.webview && window.chrome.webview.hostObjects && window.chrome.webview.hostObjects.NOMOJSChannel) {
           return function(payload) { window.chrome.webview.hostObjects.NOMOJSChannel.postMessage(payload); };
         }
+
+        // 3. Android Flutter WebView standard postMessage (Nur im Mobile/Android/Nomo Kontext)
+        if (window.chrome && window.chrome.webview && typeof window.chrome.webview.postMessage === "function") {
+          var ua = (navigator && navigator.userAgent) ? navigator.userAgent : "";
+          if (/Nomo|WebOn|Android|iPhone|iPad|iPod|Mobile/i.test(ua)) {
+            return function(payload) { window.chrome.webview.postMessage(payload); };
+          }
+        }
+
         return null;
       }
 
@@ -375,6 +390,9 @@
           window.nomoRejectPromises[invocationID] = null;
 
           if (fulfillFunction) {
+            if (typeof result === "string" && (result.startsWith("{") || result.startsWith("["))) {
+              try { result = JSON.parse(result); } catch(e){}
+            }
             fulfillFunction(result);
             return "OK";
           }
@@ -385,7 +403,12 @@
       };
 
       window.isRealNomoApp = function() {
-        return getDartBridge() !== null;
+        if (typeof window === "undefined") return false;
+        if (getDartBridge() !== null) return true;
+        if (window.nomo && typeof window.nomo.getEvmAddress === "function") return true;
+        var ua = (navigator && navigator.userAgent) ? navigator.userAgent : "";
+        if (/Nomo|WebOn/i.test(ua)) return true;
+        return false;
       };
 
       var nomoBridge = {
@@ -393,7 +416,7 @@
           return window.isRealNomoApp();
         },
         getEvmAddress: function() {
-          if (!getDartBridge()) {
+          if (!window.isRealNomoApp()) {
             return Promise.reject("NOT_IN_NOMO_APP");
           }
           return invokeNomoFunction("nomoGetEvmAddress", {}).then(function(res) {
@@ -404,31 +427,31 @@
           });
         },
         sendAssets: function(args) {
-          if (!getDartBridge()) {
+          if (!window.isRealNomoApp()) {
             return Promise.reject("NOT_IN_NOMO_APP");
           }
           return invokeNomoFunction("nomoSendAssets", args || {});
         },
         signEvmTransaction: function(args) {
-          if (!getDartBridge()) {
+          if (!window.isRealNomoApp()) {
             return Promise.reject("NOT_IN_NOMO_APP");
           }
           return invokeNomoFunction("nomoSignEvmTransaction", args || {});
         },
         signAuthMessage: function(args) {
-          if (!getDartBridge()) {
+          if (!window.isRealNomoApp()) {
             return Promise.reject("NOT_IN_NOMO_APP");
           }
           return invokeNomoFunction("nomoSignAuthMessage", args || {});
         },
         addCustomToken: function(args) {
-          if (!getDartBridge()) {
+          if (!window.isRealNomoApp()) {
             return Promise.reject("NOT_IN_NOMO_APP");
           }
           return invokeNomoFunction("nomoAddCustomToken", args || {});
         },
         qrScan: function() {
-          if (!getDartBridge()) {
+          if (!window.isRealNomoApp()) {
             return Promise.reject("NOT_IN_NOMO_APP");
           }
           return invokeNomoFunction("nomoQrScan", {});
@@ -451,7 +474,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.34 (ZERTIFIZIERTE DUAL-ENGINE)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.35 (ACTIVE NFT SHIELD)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -556,7 +579,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.34 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.35 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -580,6 +603,7 @@
     let userSID = "0000000000";
     let hasKycToken = false;
     let hasRwaToken = false;
+    let hasScanMeNft = false;
 
     let diagLogList = [];
 
@@ -610,7 +634,7 @@
       if (!field) return;
 
       const envInfo = {
-        version: "1.0.34",
+        version: "1.0.35",
         mode: isNomoEnvironment() ? "NOMOAPP_NATIVE_WEB3" : "PC_BROWSER_METAMASK",
         userAgent: navigator.userAgent,
         location: window.location.href,
@@ -622,10 +646,11 @@
         userAddress: userAddress,
         userSID: userSID,
         hasKycToken: hasKycToken,
-        hasRwaToken: hasRwaToken
+        hasRwaToken: hasRwaToken,
+        hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.34 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.35 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -809,7 +834,9 @@
       sysLog("Verifiziere On-Chain Voraussetzungen fuer " + addr.substring(0,8) + "...");
       const elKYC = document.getElementById("status-kyc");
       const elRWA = document.getElementById("status-rwa");
+      const elNFT = document.getElementById("status-nft");
       const rwaCard = document.getElementById("rwa-action-card");
+      const btnMint = document.getElementById("btn-mint-action");
 
       // 1. KYC Check
       const kycBal = await checkErc20BalanceOnChain(KYC_TOKEN_ADDR, addr);
@@ -839,7 +866,37 @@
         }
       }
 
-      sysLog("On-Chain Status: $KYC=" + (hasKycToken ? "JA" : "NEIN") + ", $RWA=" + (hasRwaToken ? "JA" : "NEIN"));
+      // 3. SCANME.NFT ON-CHAIN BESITZ CHECK
+      const nftBal = await checkErc20BalanceOnChain(SCANME_NFT_ADDR, addr);
+      hasScanMeNft = (nftBal > 0);
+
+      if (elNFT) {
+        if (hasScanMeNft) {
+          elNFT.className = "status-pill pill-green";
+          elNFT.innerText = "✓ Bestätigt (Bereits Geprägt)";
+        } else {
+          elNFT.className = "status-pill pill-gold";
+          elNFT.innerText = "Bereit zur Prägung";
+        }
+      }
+
+      if (btnMint) {
+        if (hasScanMeNft) {
+          btnMint.disabled = true;
+          btnMint.innerText = "✓ ©️ ScanMe.NFT BEREITS GEPRÄGT (Aktiv in Wallet)";
+          btnMint.style.background = "rgba(0, 255, 102, 0.15)";
+          btnMint.style.border = "1px solid var(--emerald)";
+          btnMint.style.color = "var(--emerald)";
+        } else {
+          btnMint.disabled = false;
+          btnMint.innerText = "🚀 2. ©️ ScanMe.NFT JETZT PRÄGEN (0.00 ZENIQ)";
+          btnMint.style.background = "linear-gradient(135deg, var(--emerald) 0%, #00B347 100%)";
+          btnMint.style.border = "none";
+          btnMint.style.color = "#041208";
+        }
+      }
+
+      sysLog("On-Chain Status: $KYC=" + (hasKycToken ? "JA" : "NEIN") + ", $RWA=" + (hasRwaToken ? "JA" : "NEIN") + ", ScanMe_NFT=" + (hasScanMeNft ? "GEPRÄGT" : "BEREIT"));
     }
 
     function updateWalletUI(addr, logLabel) {
@@ -866,12 +923,6 @@
       userSID = deriveSID(addr);
       if (elSid) elSid.innerText = userSID;
       if (logLabel) sysLog(logLabel + ": " + addr);
-
-      const btn = document.getElementById("btn-mint-action");
-      if (btn) {
-        btn.disabled = false;
-        btn.innerText = "🚀 2. ©️ ScanMe.NFT JETZT PRÄGEN (0.00 ZENIQ)";
-      }
 
       verifyOnChainPrerequisites(addr);
     }
@@ -969,7 +1020,7 @@
     }
 
     async function init() {
-      sysLog("Satellit v1.0.34 (ZERTIFIZIERTE DUAL-ENGINE) initialisiert...");
+      sysLog("Satellit v1.0.35 (ACTIVE NFT SHIELD) initialisiert...");
       
       const isNomo = isNomoEnvironment();
       sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
@@ -1216,6 +1267,11 @@
           alert("Bitte verbinden Sie zuerst Ihre Wallet.");
           return;
         }
+      }
+
+      if (hasScanMeNft) {
+        alert("Ihr ©️ ScanMe.NFT ist auf dieser Wallet-Adresse bereits aktiv geprägt! Eine erneute Prägung ist nicht erforderlich.");
+        return;
       }
 
       const btn = document.getElementById("btn-mint-action");
