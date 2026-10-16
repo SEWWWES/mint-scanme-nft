@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.12 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.13 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -229,7 +229,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.12</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.13</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -248,7 +248,7 @@
     <div class="card">
       <div class="card-title">
         <span>Voraussetzungen</span>
-        <span id="wallet-short" style="color:var(--gold);">Verbinde Wallet...</span>
+        <span id="wallet-short" style="color:var(--gold);">Warte auf Wallet...</span>
       </div>
 
       <div class="status-row">
@@ -308,12 +308,12 @@
     </div>
 
     <button id="btn-mint-action" class="btn-mint" onclick="executeMint()">
-      🚀 ©️ ScanMe.NFT JETZT PRÄGEN (\$1.00 USD)
+      🔑 METAMASK VERBINDEN & PRÄGEN (\$1.00 USD)
     </button>
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.12 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.13 initialisiert. Bereit...</div>
     </div>
 
     <footer>
@@ -347,10 +347,11 @@
         link.innerText = txHash;
         const host = ["zeniqscan", "com"].join(".");
         link.href = "https://" + host + "/tx/" + txHash;
-        box.style.display = "block";
+        [verdächtiger Link entfernt].display = "block";
       }
     }
 
+    // VOLLSTÄNDIG ROBUSTER ADRESS-SANITIZER
     function sanitizeAddress(raw) {
       if (!raw) return null;
       while (Array.isArray(raw)) {
@@ -439,14 +440,18 @@
       document.getElementById("live-zeniq-price").innerText = `$${liveZeniqUsdPrice.toFixed(6)} USD`;
       document.getElementById("calc-required-zeniq").innerText = `${calculatedRequiredZeniq.toFixed(2)} ZENIQ`;
       
+      const btn = document.getElementById("btn-mint-action");
       if (userAddress) {
-        const btn = document.getElementById("btn-mint-action");
         btn.innerText = `🚀 ©️ ScanMe.NFT PRÄGEN (${calculatedRequiredZeniq.toFixed(2)} ZENIQ = $1.00 USD)`;
+      } else {
+        btn.innerText = `🔑 METAMASK VERBINDEN & PRÄGEN ($1.00 USD)`;
       }
     }
 
     function updateWalletUI(addr, logLabel) {
       const cleanAddrStr = String(addr);
+      userAddress = cleanAddrStr;
+      
       document.getElementById("wallet-short").innerText = cleanAddrStr.substring(0, 6) + "..." + cleanAddrStr.substring(cleanAddrStr.length - 4);
       document.getElementById("wallet-short").style.color = "var(--emerald)";
       document.getElementById("dna-hex").innerText = cleanAddrStr;
@@ -477,64 +482,63 @@
       sysLog("Status OK: Dynamische \$1.00 USD Sonder-Eigenspenden-Prägung bereit!");
     }
 
-    // AUTOMATISCHE WALLET-KOPPLUNG AUF JEDER PLATTFORM (PC METAMASK & NOMOAPP)
-    async function connectWalletAuto() {
+    // SILENT CHECK ON LOAD (PC METAMASK & NOMOAPP)
+    async function checkWalletSilent() {
       // 1. Native NomoApp Bridge
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
         try {
           const res = await window.nomo.getEvmAddress();
           const addr = sanitizeAddress(res);
           if (addr) {
-            userAddress = addr;
-            updateWalletUI(userAddress, "NomoApp Native Bridge gekoppelt");
+            updateWalletUI(addr, "NomoApp Native Bridge gekoppelt");
             return true;
           }
         } catch(e) {}
       }
 
-      // 2. PC MetaMask Browser (eth_accounts & eth_requestAccounts Auto-Trigger)
+      // 2. PC MetaMask Silent Check via eth_accounts (Ohne PopUp Blocking!)
       if (window.ethereum) {
         try {
-          let accs = await window.ethereum.request({ method: "eth_accounts" });
-          let addr = sanitizeAddress(accs);
-
-          // Falls noch keine Berechtigung vorliegt, auf PC automatisch Pop-Up triggern!
-          if (!addr) {
-            sysLog("MetaMask auf PC erkannt: Starte automatische Wallet-Verbindung...");
-            accs = await window.ethereum.request({ method: "eth_requestAccounts" });
-            addr = sanitizeAddress(accs);
-          }
-
+          const accs = await window.ethereum.request({ method: "eth_accounts" });
+          const addr = sanitizeAddress(accs);
           if (addr) {
-            userAddress = addr;
-            updateWalletUI(userAddress, "MetaMask Wallet verbunden");
+            updateWalletUI(addr, "MetaMask Wallet verbunden");
             return true;
           }
-        } catch(e) {
-          sysLog("MetaMask Auto-Kopplung Hinweis: " + (e.message || e));
-        }
+        } catch(e) {}
       }
 
       return false;
     }
 
     async function init() {
-      sysLog("Initialisiere Minter v1.0.12 (Parallele Auto-Kopplung)...");
+      sysLog("Initialisiere Minter v1.0.13...");
       
-      // Parallele Ausführung: Live-Kurs & Wallet-Kopplung gleichzeitig starten
+      // Live-Kurs laden
       fetchZeniqLivePrice();
 
-      let attempts = 0;
-      const interval = setInterval(async () => {
-        attempts++;
-        const connected = await connectWalletAuto();
-        if (connected || attempts >= 20) {
-          clearInterval(interval);
-          if (!connected && !userAddress) {
-            sysLog("Bereit. Klicken Sie auf 'JETZT PRÄGEN', um MetaMask manuell zu verbinden.");
+      // Silent Check beim Laden
+      const connected = await checkWalletSilent();
+      if (!connected) {
+        sysLog("Bereit. Klicken Sie auf 'METAMASK VERBINDEN & PRÄGEN' zum Koppeln.");
+      }
+
+      // MetaMask Event Listeners für Realtime Account Wechsel am PC
+      if (window.ethereum && typeof window.ethereum.on === "function") {
+        window.ethereum.on("accountsChanged", (accounts) => {
+          const addr = sanitizeAddress(accounts);
+          if (addr) {
+            updateWalletUI(addr, "MetaMask Wallet gewechselt");
+          } else {
+            userAddress = null;
+            document.getElementById("wallet-short").innerText = "Warte auf Wallet...";
+            document.getElementById("wallet-short").style.color = "var(--gold)";
+            document.getElementById("dna-hex").innerText = "Warte auf Wallet...";
+            document.getElementById("btn-mint-action").innerText = "🔑 METAMASK VERBINDEN & PRÄGEN (\$1.00 USD)";
+            sysLog("MetaMask getrennt.");
           }
-        }
-      }, 150);
+        });
+      }
     }
 
     async function waitForReceipt(txHash) {
@@ -560,7 +564,7 @@
                 
                 const btn = document.getElementById("btn-mint-action");
                 btn.innerText = "✓ PRÄGUNG ERFOLGREICH";
-                btn.style.backgroundColor = "#00FF66";
+                [verdächtiger Link entfernt].backgroundColor = "#00FF66";
                 
                 alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der Blockchain geprägt!\n\nTransaktions-Hash:\n" + txHash);
                 return true;
@@ -583,35 +587,38 @@
       sysLog("⏳ Transaktion ausstehend. Prüfen Sie den Status auf ZeniqScan.");
     }
 
+    // DIREKTE ZÜNDUNG IM KLICK-EVENT (EIP-1193 USER GESTURE HANDLER)
     async function executeMint() {
-      if (!userAddress && window.ethereum) {
-        sysLog("Öffne MetaMask Wallet-Freigabe...");
-        try {
-          const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
-          const addr = sanitizeAddress(accs);
-          if (addr) {
-            userAddress = addr;
-            updateWalletUI(userAddress, "MetaMask Wallet gekoppelt");
+      // 1. Zwingende Wallet-Kopplung ausführen, falls noch nicht gekoppelt
+      if (!userAddress) {
+        if (window.ethereum) {
+          sysLog("Öffne MetaMask Wallet-Freigabe...");
+          try {
+            const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
+            const addr = sanitizeAddress(accs);
+            if (addr) {
+              updateWalletUI(addr, "MetaMask Wallet gekoppelt");
+            } else {
+              alert("Bitte bestätigen Sie die Wallet-Verbindung in MetaMask.");
+              return;
+            }
+          } catch(e) {
+            alert("MetaMask Verbindung abgelehnt: " + (e.message || e));
+            return;
           }
-        } catch(e) {
-          alert("Bitte bestätigen Sie die Wallet-Verbindung in MetaMask.");
-          return;
+        } else if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
+          try {
+            const res = await window.nomo.getEvmAddress();
+            const addr = sanitizeAddress(res);
+            if (addr) {
+              updateWalletUI(addr, "Nomo Bridge gekoppelt");
+            }
+          } catch(e) {}
         }
       }
 
-      if (!userAddress && window.nomo && typeof window.nomo.getEvmAddress === "function") {
-        try {
-          const res = await window.nomo.getEvmAddress();
-          const addr = sanitizeAddress(res);
-          if (addr) {
-            userAddress = addr;
-            updateWalletUI(userAddress, "Nomo Bridge gekoppelt");
-          }
-        } catch(e) {}
-      }
-
       if (!userAddress) {
-        alert("Bitte öffnen Sie die Webseite in der NomoApp oder aktivieren Sie MetaMask.");
+        alert("Bitte öffnen Sie die Webseite in der NomoApp oder aktivieren Sie MetaMask im Browser.");
         return;
       }
 
