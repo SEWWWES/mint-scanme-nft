@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.35 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.36 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -292,7 +292,7 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.35) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (ABSOLUTE ENVIRONMENT ISOLATION v1.0.36) -->
   <script>
     (function() {
       "use strict";
@@ -313,10 +313,10 @@
           return function(payload) { window.chrome.webview.hostObjects.NOMOJSChannel.postMessage(payload); };
         }
 
-        // 3. Android Flutter WebView standard postMessage (Nur im Mobile/Android/Nomo Kontext)
+        // 3. Android Flutter WebView postMessage (Strikt auf Nomo / WebOn UserAgent limitiert)
         if (window.chrome && window.chrome.webview && typeof window.chrome.webview.postMessage === "function") {
           var ua = (navigator && navigator.userAgent) ? navigator.userAgent : "";
-          if (/Nomo|WebOn|Android|iPhone|iPad|iPod|Mobile/i.test(ua)) {
+          if (/Nomo|WebOn/i.test(ua)) {
             return function(payload) { window.chrome.webview.postMessage(payload); };
           }
         }
@@ -402,10 +402,10 @@
         return "FAIL";
       };
 
+      // ABSOLUT UNBESTECHLICHER, NATIV-GEPRÜFTER WÄCHTER
       window.isRealNomoApp = function() {
         if (typeof window === "undefined") return false;
         if (getDartBridge() !== null) return true;
-        if (window.nomo && typeof window.nomo.getEvmAddress === "function") return true;
         var ua = (navigator && navigator.userAgent) ? navigator.userAgent : "";
         if (/Nomo|WebOn/i.test(ua)) return true;
         return false;
@@ -474,7 +474,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.35 (ACTIVE NFT SHIELD)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.36 (ENVIRONMENT ISOLATION)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -579,7 +579,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.35 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.36 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -609,9 +609,7 @@
 
     function isNomoEnvironment() {
       if (typeof window === "undefined") return false;
-      if (typeof window.isRealNomoApp === "function" && window.isRealNomoApp()) return true;
-      if (window.nomo && typeof window.nomo.getEvmAddress === "function" && !window.ethereum) return true;
-      return false;
+      return window.isRealNomoApp();
     }
 
     // GLOBAL EXCEPTION CATCHER
@@ -634,7 +632,7 @@
       if (!field) return;
 
       const envInfo = {
-        version: "1.0.35",
+        version: "1.0.36",
         mode: isNomoEnvironment() ? "NOMOAPP_NATIVE_WEB3" : "PC_BROWSER_METAMASK",
         userAgent: navigator.userAgent,
         location: window.location.href,
@@ -650,7 +648,7 @@
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.35 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.36 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -708,7 +706,7 @@
         try { target = JSON.parse(target); } catch(e){}
       }
       while (Array.isArray(target) && target.length > 0) {
-        target = target[0];
+        target = target;
       }
       if (typeof target === "object" && target !== null) {
         target = target.evmAddress || target.ethAddress || target.address || target.hex || target.account || null;
@@ -1020,7 +1018,7 @@
     }
 
     async function init() {
-      sysLog("Satellit v1.0.35 (ACTIVE NFT SHIELD) initialisiert...");
+      sysLog("Satellit v1.0.36 (ENVIRONMENT ISOLATION) initialisiert...");
       
       const isNomo = isNomoEnvironment();
       sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
