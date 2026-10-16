@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.32 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.33 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -424,7 +424,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.32 (KAUSALITÄTS-REBOOT)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.33 (STRICT DUAL-PATH ROUTING)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -529,7 +529,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.32 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.33 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -556,6 +556,14 @@
 
     let diagLogList = [];
 
+    // STRIKTE UMGEBUNGS-ERKENNUNG (ISOLIERT UNBESTECHLICH)
+    function isNomoEnvironment() {
+      if (typeof window === "undefined") return false;
+      if (typeof window.isRealNomoApp === "function" && window.isRealNomoApp()) return true;
+      if (window.nomo && typeof window.nomo.getEvmAddress === "function" && !window.ethereum) return true;
+      return false;
+    }
+
     // GLOBAL EXCEPTION CATCHER
     window.onerror = function(msg, url, line, col, error) {
       const errStr = "[EXCEPTION] " + msg + " (Zeile " + line + ":" + col + ")";
@@ -576,10 +584,11 @@
       if (!field) return;
 
       const envInfo = {
-        version: "1.0.32",
+        version: "1.0.33",
+        mode: isNomoEnvironment() ? "NOMOAPP_NATIVE_WEB3" : "PC_BROWSER_METAMASK",
         userAgent: navigator.userAgent,
         location: window.location.href,
-        isRealNomoApp: typeof window.isRealNomoApp === "function" ? window.isRealNomoApp() : false,
+        isRealNomoApp: isNomoEnvironment(),
         hasNomoObj: !!window.nomo,
         nomoKeys: window.nomo ? Object.keys(window.nomo) : [],
         hasEthereumObj: !!window.ethereum,
@@ -590,7 +599,7 @@
         hasRwaToken: hasRwaToken
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.32 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.33 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -648,7 +657,7 @@
         try { target = JSON.parse(target); } catch(e){}
       }
       while (Array.isArray(target) && target.length > 0) {
-        target = target[0];
+        target = target;
       }
       if (typeof target === "object" && target !== null) {
         target = target.evmAddress || target.ethAddress || target.address || target.hex || target.account || null;
@@ -698,8 +707,8 @@
       const cleanOwner = ownerAddr.toLowerCase().replace("0x", "").padStart(64, "0");
       const dataPayload = "0x70a08231" + cleanOwner;
 
-      try {
-        if (window.ethereum) {
+      if (!isNomoEnvironment() && window.ethereum) {
+        try {
           const res = await window.ethereum.request({
             method: "eth_call",
             params: [{ to: tokenAddr, data: dataPayload }, "latest"]
@@ -707,9 +716,7 @@
           if (res && res !== "0x" && res !== "0x0000000000000000000000000000000000000000000000000000000000000000") {
             return BigInt(res) > 0n ? 1 : 0;
           }
-        }
-      } catch(e) {
-        console.warn("eth_call via window.ethereum notice, trying public RPC:", e);
+        } catch(e) {}
       }
 
       try {
@@ -740,16 +747,14 @@
       const cleanSpender = spenderAddr.toLowerCase().replace("0x", "").padStart(64, "0");
       const dataPayload = "0xdd62ed3e" + cleanOwner + cleanSpender;
 
-      try {
-        if (window.ethereum) {
+      if (!isNomoEnvironment() && window.ethereum) {
+        try {
           const res = await window.ethereum.request({
             method: "eth_call",
             params: [{ to: tokenAddr, data: dataPayload }, "latest"]
           });
           if (res && res !== "0x") return BigInt(res);
-        }
-      } catch(e) {
-        console.warn("eth_call allowance via window.ethereum notice:", e);
+        } catch(e) {}
       }
 
       try {
@@ -881,29 +886,31 @@
       }
     }
 
+    // UNBESTECHLICHE DUAL-PATH HANDLER GABELUNG (100% NOMO ODER 100% METAMASK)
     async function performWalletConnect() {
-      sysLog("Starte Wallet-Kopplung...");
-
-      // PATH 1: NomoApp Native Bridge (Mobile)
-      if (window.isRealNomoApp() && window.nomo && typeof window.nomo.getEvmAddress === "function") {
+      if (isNomoEnvironment()) {
+        sysLog("👉 [NOMO PFAD] Starte NomoApp Web3 Adressabfrage...");
         try {
-          sysLog("Abfrage NomoApp getEvmAddress()...");
           const res = await window.nomo.getEvmAddress();
           sysLog("NomoApp Raw Result: " + JSON.stringify(res));
           const addr = extractStringAddress(res);
           if (addr) {
             updateWalletUI(addr, "NomoApp gekoppelt");
             return true;
+          } else {
+            sysLog("⚠️ NomoApp Adress-Unboxing fehlgeschlagen.");
           }
         } catch(e) {
-          sysLog("Notice: nomo.getEvmAddress Exception: " + (e.message || e));
+          sysLog("❌ NomoApp Exception: " + (e.message || e));
         }
+        return false;
       }
 
-      // PATH 2: MetaMask / EIP-1193 (PC Browser)
+      // PC / METAMASK PFAD
+      sysLog("👉 [PC METAMASK PFAD] Starte EIP-1193 Verbindung...");
       if (window.ethereum && typeof window.ethereum.request === "function") {
         try {
-          sysLog("Metamask erkannt. Verifiziere ZENIQ Smart Chain (38341)...");
+          sysLog("Verifiziere ZENIQ Smart Chain (38341)...");
           await ensureZSCMetaMask();
 
           sysLog("Aufruf window.ethereum.request(eth_requestAccounts)...");
@@ -915,10 +922,11 @@
             return true;
           }
         } catch(e) {
-          sysLog("❌ MetaMask Fehler/Abbruch: " + (e.message || e));
+          sysLog("❌ MetaMask Fehler: " + (e.message || e));
         }
       } else {
-        sysLog("Notice: Keines der Wallet-Systeme (NomoApp / MetaMask) ist im Browser verfuegbar.");
+        sysLog("Notice: Kein window.ethereum (MetaMask) im PC-Browser vorhanden.");
+        alert("Keine Web3-Wallet (MetaMask) im Browser gefunden! Bitte installieren Sie MetaMask oder oeffnen Sie dieses WebOn in der NomoApp.");
       }
 
       return false;
@@ -933,13 +941,22 @@
     }
 
     async function init() {
-      sysLog("Satellit v1.0.32 (KAUSALITÄTS-REBOOT) wird initialisiert...");
-      sysLog("ENV CHECK -> isRealNomoApp: " + (typeof window.isRealNomoApp === "function" ? window.isRealNomoApp() : false));
-      sysLog("ENV CHECK -> window.nomo: " + (!!window.nomo));
-      sysLog("ENV CHECK -> window.ethereum: " + (!!window.ethereum));
+      sysLog("Satellit v1.0.33 (STRICT DUAL-PATH ROUTING) initialisiert...");
+      
+      const isNomo = isNomoEnvironment();
+      sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
 
-      // 1. Nomo Auto-Connect (stumm)
-      if (window.isRealNomoApp() && window.nomo && typeof window.nomo.getEvmAddress === "function") {
+      const connBtn = document.getElementById("btn-connect-wallet");
+      if (connBtn) {
+        if (isNomo) {
+          connBtn.innerText = "🔑 NOMOAPP WALLET VERBINDEN";
+        } else {
+          connBtn.innerText = "🔑 METAMASK VERBINDEN (PC Browser)";
+        }
+      }
+
+      // PFAD 1: NOMOAPP AUTO-CONNECT
+      if (isNomo) {
         try {
           sysLog("Auto-Check NomoApp getEvmAddress()...");
           const res = await window.nomo.getEvmAddress();
@@ -949,12 +966,12 @@
             return;
           }
         } catch(e) {
-          sysLog("Auto-Check Nomo Notice: " + (e.message || e));
+          sysLog("Nomo Auto-Check Notice: " + (e.message || e));
         }
       }
 
-      // 2. MetaMask Auto-Connect (stumm nur fuer bereits freigegebene Konten via eth_accounts)
-      if (window.ethereum && typeof window.ethereum.request === "function") {
+      // PFAD 2: METAMASK AUTO-CONNECT (STUMM)
+      if (!isNomo && window.ethereum && typeof window.ethereum.request === "function") {
         try {
           sysLog("Auto-Check MetaMask eth_accounts (stumm)...");
           const accs = await window.ethereum.request({ method: "eth_accounts" });
@@ -964,7 +981,7 @@
             return;
           }
         } catch(e) {
-          sysLog("Auto-Check MetaMask Notice: " + (e.message || e));
+          sysLog("MetaMask Auto-Check Notice: " + (e.message || e));
         }
 
         if (typeof window.ethereum.on === "function") {
@@ -977,9 +994,8 @@
               document.getElementById("wallet-short").innerText = "Warte auf Wallet-Kopplung...";
               document.getElementById("wallet-short").style.color = "var(--gold)";
               document.getElementById("dna-hex").innerText = "Warte auf Wallet...";
-              const connBtn = document.getElementById("btn-connect-wallet");
               if (connBtn) {
-                connBtn.innerText = "🔑 WALLET VERBINDEN (NomoApp / MetaMask)";
+                connBtn.innerText = "🔑 METAMASK VERBINDEN (PC Browser)";
                 [verdächtiger Link entfernt].background = "linear-gradient(135deg, #00CCFF 0%, #0077FF 100%)";
                 [verdächtiger Link entfernt].color = "#FFFFFF";
               }
@@ -989,7 +1005,7 @@
         }
       }
 
-      sysLog("Bereit. Klicken Sie oben auf '🔑 WALLET VERBINDEN' oder unten auf '📋 LOGS KOPIEREN'.");
+      sysLog("Bereit.");
     }
 
     // 100 $WWW MIKROSPENDE & MINTING VIA mintWithWWW(uint256 wwwAmount)
@@ -1023,7 +1039,7 @@
 
           let approveTxHash = null;
 
-          if (window.isRealNomoApp() && window.nomo && typeof window.nomo.sendAssets === "function") {
+          if (isNomoEnvironment()) {
             const res = await window.nomo.sendAssets({
               recipient: WWW_TOKEN_ADDR,
               targetAddress: WWW_TOKEN_ADDR,
@@ -1064,7 +1080,7 @@
 
         let mintTxHash = null;
 
-        if (window.isRealNomoApp() && window.nomo && typeof window.nomo.sendAssets === "function") {
+        if (isNomoEnvironment()) {
           const res = await window.nomo.sendAssets({
             recipient: RWA_TOKEN_ADDR,
             targetAddress: RWA_TOKEN_ADDR,
@@ -1186,9 +1202,9 @@
       try {
         let txHash = null;
 
-        // PATH 1: NOMOAPP NATIVE PATH (Mobile)
-        if (window.isRealNomoApp() && window.nomo && typeof window.nomo.sendAssets === "function") {
-          sysLog("Sende Transaktion über NomoApp Bridge...");
+        // NOMOAPP NATIVE PFAD (MOBILE)
+        if (isNomoEnvironment()) {
+          sysLog("👉 [NOMO PFAD] Sende Transaktion über NomoApp Native Bridge...");
           const res = await window.nomo.sendAssets({
             recipient: SCANME_NFT_ADDR,
             targetAddress: SCANME_NFT_ADDR,
@@ -1200,9 +1216,9 @@
           });
           txHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
         }
-        // PATH 2: METAMASK / EIP-1193 PATH (PC Browser)
+        // METAMASK PFAD (PC BROWSER)
         else if (window.ethereum && typeof window.ethereum.request === "function") {
-          sysLog("Prüfe MetaMask Netzwerk-Kopplung (ZSC)...");
+          sysLog("👉 [PC METAMASK PFAD] Prüfe Netzwerk-Kopplung (ZSC 38341)...");
           await ensureZSCMetaMask();
 
           sysLog("Sende Transaktion über MetaMask...");
@@ -1222,9 +1238,13 @@
         if (txHash) {
           sysLog("✅ Transaktion im Mempool platziert! Hash: " + txHash);
           showTxHash(txHash);
-          await waitForReceipt(txHash);
+          if (!isNomoEnvironment()) {
+            await waitForReceipt(txHash);
+          } else {
+            alert("🎉 Transaktion an NomoApp übermittelt!\n\nTx Hash:\n" + txHash);
+          }
         } else {
-          throw new Error("Kein Transaktions-Hash von der Wallet zurückgegeben.");
+          throw new Error("Kein Transaktions-Hash erhalten.");
         }
 
       } catch (err) {
