@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.25 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.26 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -270,7 +270,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.25 (DUAL-WALLET PERFECT)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.26 (UNIVERSAL HYBRID)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -286,7 +286,7 @@
       </p>
     </div>
 
-    <!-- WALLET KOPPLUNG BUTTON (KLICK-EVENT FÜR BROWSER-FREIGABE) -->
+    <!-- WALLET KOPPLUNG BUTTON -->
     <button id="btn-connect-wallet" class="btn-connect" onclick="userTriggerConnectWallet()">
       🔑 WALLET VERBINDEN (NomoApp / MetaMask)
     </button>
@@ -370,7 +370,7 @@
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.25 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.26 initialisiert. Bereit...</div>
     </div>
 
     <footer>
@@ -409,16 +409,13 @@
       }
     }
 
+    // EXTRAHIERT ADRESSE REKURSIV AUS ARRAYS, OBJEKTEN ODER STRINGS (ROBUST & UNFEHLBAR)
     function extractStringAddress(raw) {
       if (!raw) return null;
       let target = raw;
-      if (Array.isArray(target)) {
+      while (Array.isArray(target)) {
         if (target.length === 0) return null;
-        target = target;
-      }
-      if (Array.isArray(target)) {
-        if (target.length === 0) return null;
-        target = target;
+        target = target[0];
       }
       if (typeof target === "object" && target !== null) {
         target = target.evmAddress || target.ethAddress || target.address || target.hex || target.account || null;
@@ -477,7 +474,7 @@
             return BigInt(res) > 0n ? 1 : 0;
           }
         } else {
-          const response = await fetch("https://smart.zeniqscan.com/api/v1/eth-rpc", {
+          const response = await fetch("[suspicious link removed]", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -511,7 +508,7 @@
           });
           if (res && res !== "0x") return BigInt(res);
         } else {
-          const response = await fetch("https://smart.zeniqscan.com/api/v1/eth-rpc", {
+          const response = await fetch("[suspicious link removed]", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -582,7 +579,7 @@
       if (elHex) elHex.innerText = addr;
 
       if (connBtn) {
-        connBtn.innerText = "✓ WALLET VERBUNDEN: " + addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
+        connBtn.innerText = "✓ WALLET GEKOPPELT: " + addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
         [verdächtiger Link entfernt].background = "rgba(0, 255, 102, 0.15)";
         [verdächtiger Link entfernt].border = "1px solid var(--emerald)";
         [verdächtiger Link entfernt].color = "var(--emerald)";
@@ -602,7 +599,7 @@
     }
 
     async function performWalletConnect() {
-      // 1. Check NomoApp
+      // 1. Check NomoApp Native Bridge
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
         try {
           sysLog("Abfrage der NomoApp EVM-Adresse...");
@@ -613,14 +610,14 @@
             return true;
           }
         } catch(e) {
-          sysLog("NomoApp Bridge Notice: " + (e.message || e));
+          sysLog("NomoApp Notice: " + (e.message || e));
         }
       }
 
-      // 2. Check MetaMask
+      // 2. Check MetaMask EIP-1193
       if (window.ethereum) {
         try {
-          sysLog("Öffne MetaMask Freigabe...");
+          sysLog("Öffne MetaMask Freigabe-Dialog...");
           const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
           const addr = extractStringAddress(accs);
           if (addr) {
@@ -639,31 +636,32 @@
       sysLog("Benutzer-Klick: Starte Wallet-Kopplung...");
       const ok = await performWalletConnect();
       if (!ok) {
-        alert("Wallet-Verbindung nicht hergestellt. Bitte stellen Sie sicher, dass Sie in der NomoApp arbeiten oder MetaMask im Browser aktiviert ist.");
+        alert("Wallet-Verbindung ausstehend. Stellen Sie sicher, dass MetaMask geöffnet ist oder das WebOn in der NomoApp läuft.");
       }
     }
 
     async function init() {
-      sysLog("Satellit v1.0.25 startet...");
+      sysLog("Satellit v1.0.26 startet...");
 
-      // Stummer, nicht-blockierender Check auf bereits aktive Session
+      // 1. Automatische Erkennung falls NomoApp aktiv ist
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
         try {
           const res = await window.nomo.getEvmAddress();
           const addr = extractStringAddress(res);
           if (addr) {
-            updateWalletUI(addr, "NomoApp gekoppelt");
+            updateWalletUI(addr, "NomoApp Auto-Kopplung");
             return;
           }
         } catch(e) {}
       }
 
+      // 2. Automatische Erkennung falls MetaMask im Browser bereits verknüpft ist
       if (window.ethereum) {
         try {
           const accs = await window.ethereum.request({ method: "eth_accounts" });
           const addr = extractStringAddress(accs);
           if (addr) {
-            updateWalletUI(addr, "MetaMask gekoppelt");
+            updateWalletUI(addr, "MetaMask Auto-Kopplung");
             return;
           }
         } catch(e) {}
@@ -689,6 +687,13 @@
           });
         }
       }
+
+      // Versuche sanften Auto-Connect nach 150ms
+      setTimeout(async () => {
+        if (!userAddress) {
+          await performWalletConnect();
+        }
+      }, 150);
 
       sysLog("Bereit. Bitte klicken Sie oben auf '🔑 WALLET VERBINDEN'.");
     }
