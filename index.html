@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.29 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.30 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -85,6 +85,7 @@
       margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
+      align-items: center;
     }
 
     .status-row {
@@ -291,7 +292,7 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (SELF-CONTAINED FOR NOMOAPP & METAMASK) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE -->
   <script>
     (function() {
       "use strict";
@@ -425,7 +426,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.29 (DIAGNOSTIK & MONITORING)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.30 (STABLE & DIAGNOSTIK)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -530,7 +531,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.29 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.30 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -557,7 +558,7 @@
 
     let diagLogList = [];
 
-    // GLOBAL EXCEPTION CATCHER (FÄNGT JEDEN LAUFZEITFEHLER IN ECHTZEIT AB)
+    // GLOBAL EXCEPTION CATCHER
     window.onerror = function(msg, url, line, col, error) {
       const errStr = "[EXCEPTION] " + msg + " (Zeile " + line + ":" + col + ")";
       sysLog(errStr);
@@ -577,7 +578,7 @@
       if (!field) return;
 
       const envInfo = {
-        version: "1.0.29",
+        version: "1.0.30",
         userAgent: navigator.userAgent,
         location: window.location.href,
         isRealNomoApp: typeof window.isRealNomoApp === "function" ? window.isRealNomoApp() : false,
@@ -591,7 +592,7 @@
         hasRwaToken: hasRwaToken
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.29 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.30 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -612,9 +613,9 @@
         } else {
           document.execCommand("copy");
         }
-        alert("📋 Diagnostik-Daten erfolgreich kopiert! Bitte fuegen Sie diese im Chat ein.");
+        alert("📋 Diagnostik-Daten kopiert! Bitte im Chat einfuegen.");
       } catch (e) {
-        alert("Bitte markieren Sie den Text im Feld manuell und kopieren ihn.");
+        alert("Text bitte manuell markieren und kopieren.");
       }
     }
 
@@ -645,6 +646,9 @@
     function extractStringAddress(raw) {
       if (!raw) return null;
       let target = raw;
+      if (typeof target === "string" && (target.startsWith("{") || target.startsWith("["))) {
+        try { target = JSON.parse(target); } catch(e){}
+      }
       while (Array.isArray(target) && target.length > 0) {
         target = target[0];
       }
@@ -761,7 +765,7 @@
     }
 
     async function verifyOnChainPrerequisites(addr) {
-      sysLog("Verifiziere On-Chain Voraussetzungen für " + addr.substring(0,8) + "...");
+      sysLog("Verifiziere On-Chain Voraussetzungen fuer " + addr.substring(0,8) + "...");
       const elKYC = document.getElementById("status-kyc");
       const elRWA = document.getElementById("status-rwa");
       const rwaCard = document.getElementById("rwa-action-card");
@@ -884,7 +888,7 @@
     }
 
     async function init() {
-      sysLog("Satellit v1.0.29 (Diagnostik Suite) wird initialisiert...");
+      sysLog("Satellit v1.0.30 (Diagnostik Suite) wird initialisiert...");
       sysLog("ENV CHECK -> isRealNomoApp: " + (typeof window.isRealNomoApp === "function" ? window.isRealNomoApp() : false));
       sysLog("ENV CHECK -> window.nomo: " + (!!window.nomo));
       sysLog("ENV CHECK -> window.ethereum: " + (!!window.ethereum));
@@ -1089,11 +1093,11 @@
                   [verdächtiger Link entfernt].backgroundColor = "#00FF66";
                 }
                 
-                alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der ZENIQ Smart Chain geprägt!\n\nTX Hash:\n" + txHash);
+                alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich gepraegt! TX Hash: " + txHash);
                 return true;
               } else {
                 sysLog("⚠️ TRANSAKTION REVERTED (Contract Revert). Prüfen Sie $KYC / $RWA Token.");
-                alert("⚠️ Transaktion auf der Blockchain abgelehnt (Contract Revert).\n\nStellen Sie sicher, dass Ihre Wallet den $KYC Zündschlüssel hält.\n\nTX Hash:\n" + txHash);
+                alert("⚠️ Transaktion auf der Blockchain abgelehnt (Contract Revert). TX Hash: " + txHash);
                 
                 const btn = document.getElementById("btn-mint-action");
                 if (btn) {
