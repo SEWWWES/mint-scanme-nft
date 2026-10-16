@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.11 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.12 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -229,7 +229,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.11</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.12</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -248,7 +248,7 @@
     <div class="card">
       <div class="card-title">
         <span>Voraussetzungen</span>
-        <span id="wallet-short" style="color:var(--gold);">Warte auf Wallet...</span>
+        <span id="wallet-short" style="color:var(--gold);">Verbinde Wallet...</span>
       </div>
 
       <div class="status-row">
@@ -308,12 +308,12 @@
     </div>
 
     <button id="btn-mint-action" class="btn-mint" onclick="executeMint()">
-      🔑 WALLET VERBINDEN & PRÄGEN (\$1.00 USD)
+      🚀 ©️ ScanMe.NFT JETZT PRÄGEN (\$1.00 USD)
     </button>
 
     <div class="card" style="padding:12px;">
       <div class="card-title" style="margin-bottom:6px;">System Protokoll</div>
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.11 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.12 initialisiert. Bereit...</div>
     </div>
 
     <footer>
@@ -347,7 +347,7 @@
         link.innerText = txHash;
         const host = ["zeniqscan", "com"].join(".");
         link.href = "https://" + host + "/tx/" + txHash;
-        [verdächtiger Link entfernt].display = "block";
+        box.style.display = "block";
       }
     }
 
@@ -355,7 +355,7 @@
       if (!raw) return null;
       while (Array.isArray(raw)) {
         if (raw.length === 0) return null;
-        raw = raw[0];
+        raw = raw;
       }
       if (typeof raw === "object" && raw !== null) {
         raw = raw.evmAddress || raw.ethAddress || raw.address || raw.hex || null;
@@ -381,7 +381,7 @@
       try {
         const strVal = amountFloat.toFixed(6);
         const parts = strVal.split(".");
-        let intPart = parts[0] || "0";
+        let intPart = parts || "0";
         let fracPart = parts[1] || "";
         while (fracPart.length < 18) fracPart += "0";
         fracPart = fracPart.substring(0, 18);
@@ -404,8 +404,8 @@
         fetch("[suspicious link removed]")
           .then(res => { clearTimeout(timer); return res.json(); })
           .then(json => {
-            if (json && [verdächtiger Link entfernt] && [verdächtiger Link entfernt][0] && [verdächtiger Link entfernt][0].ticker) {
-              const p = parseFloat([verdächtiger Link entfernt][0].ticker.latest || [verdächtiger Link entfernt][0].ticker.price);
+            if (json && [verdächtiger Link entfernt] && [verdächtiger Link entfernt] && [verdächtiger Link entfernt].ticker) {
+              const p = parseFloat([verdächtiger Link entfernt].ticker.latest || [verdächtiger Link entfernt].ticker.price);
               if (!isNaN(p) && p > 0) return resolve({ price: p, source: "LBank" });
             }
             reject(new Error("LBank invalid data"));
@@ -417,8 +417,8 @@
         fetch("[suspicious link removed]")
           .then(res => { clearTimeout(timer); return res.json(); })
           .then(json => {
-            if (json && json.pairs && json.pairs[0] && json.pairs[0].priceUsd) {
-              const p = parseFloat(json.pairs[0].priceUsd);
+            if (json && json.pairs && json.pairs && json.pairs.priceUsd) {
+              const p = parseFloat(json.pairs.priceUsd);
               if (!isNaN(p) && p > 0) return resolve({ price: p, source: "DexScreener" });
             }
             reject(new Error("DexScreener invalid data"));
@@ -477,7 +477,9 @@
       sysLog("Status OK: Dynamische \$1.00 USD Sonder-Eigenspenden-Prägung bereit!");
     }
 
-    async function connectWalletSilent() {
+    // AUTOMATISCHE WALLET-KOPPLUNG AUF JEDER PLATTFORM (PC METAMASK & NOMOAPP)
+    async function connectWalletAuto() {
+      // 1. Native NomoApp Bridge
       if (window.nomo && typeof window.nomo.getEvmAddress === "function") {
         try {
           const res = await window.nomo.getEvmAddress();
@@ -490,36 +492,49 @@
         } catch(e) {}
       }
 
+      // 2. PC MetaMask Browser (eth_accounts & eth_requestAccounts Auto-Trigger)
       if (window.ethereum) {
         try {
-          const accs = await window.ethereum.request({ method: "eth_accounts" });
-          const addr = sanitizeAddress(accs);
+          let accs = await window.ethereum.request({ method: "eth_accounts" });
+          let addr = sanitizeAddress(accs);
+
+          // Falls noch keine Berechtigung vorliegt, auf PC automatisch Pop-Up triggern!
+          if (!addr) {
+            sysLog("MetaMask auf PC erkannt: Starte automatische Wallet-Verbindung...");
+            accs = await window.ethereum.request({ method: "eth_requestAccounts" });
+            addr = sanitizeAddress(accs);
+          }
+
           if (addr) {
             userAddress = addr;
             updateWalletUI(userAddress, "MetaMask Wallet verbunden");
             return true;
           }
-        } catch(e) {}
+        } catch(e) {
+          sysLog("MetaMask Auto-Kopplung Hinweis: " + (e.message || e));
+        }
       }
 
       return false;
     }
 
     async function init() {
-      sysLog("Initialisiere Minter v1.0.11...");
-      await fetchZeniqLivePrice();
+      sysLog("Initialisiere Minter v1.0.12 (Parallele Auto-Kopplung)...");
+      
+      // Parallele Ausführung: Live-Kurs & Wallet-Kopplung gleichzeitig starten
+      fetchZeniqLivePrice();
 
       let attempts = 0;
       const interval = setInterval(async () => {
         attempts++;
-        const connected = await connectWalletSilent();
-        if (connected || attempts >= 15) {
+        const connected = await connectWalletAuto();
+        if (connected || attempts >= 20) {
           clearInterval(interval);
           if (!connected && !userAddress) {
-            sysLog("Bereit. Klicken Sie auf 'WALLET VERBINDEN & PRÄGEN' für MetaMask.");
+            sysLog("Bereit. Klicken Sie auf 'JETZT PRÄGEN', um MetaMask manuell zu verbinden.");
           }
         }
-      }, 100);
+      }, 150);
     }
 
     async function waitForReceipt(txHash) {
@@ -545,7 +560,7 @@
                 
                 const btn = document.getElementById("btn-mint-action");
                 btn.innerText = "✓ PRÄGUNG ERFOLGREICH";
-                [verdächtiger Link entfernt].backgroundColor = "#00FF66";
+                btn.style.backgroundColor = "#00FF66";
                 
                 alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich auf der Blockchain geprägt!\n\nTransaktions-Hash:\n" + txHash);
                 return true;
