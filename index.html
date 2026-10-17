@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.51 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.52 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -302,7 +302,7 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.51) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.52) -->
   <script>
     (function() {
       "use strict";
@@ -485,7 +485,7 @@
   <div class="container">
     <header>
       <img src="assets/images/mint-scanme-nft-logo.png" alt="©️ ScanMe.NFT Logo" style="width:88px; height:88px; object-fit:contain; border-radius:18px; margin-bottom:10px;">
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.51 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.52 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -631,7 +631,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.51 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.52 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -719,7 +719,7 @@
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.51 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.52 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -1186,7 +1186,7 @@ async function verifyOnChainPrerequisites(addr) {
     }
 
     async function init() {
-      sysLog("Satellit v1.0.51 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      sysLog("Satellit v1.0.52 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
       
       const isNomo = isNomoEnvironment();
       sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
@@ -1296,7 +1296,25 @@ async function verifyOnChainPrerequisites(addr) {
       }
     }
 
-        async function executeRwaWwwDonation() {
+        
+    function parseToAtomicWei(rawInputStr) {
+      let str = (rawInputStr || "1").toString().replace(",", ".").trim();
+      if (!str || str === ".") return 0n;
+      let parts = str.split(".");
+      let whole = parts[0].replace(/^0+/, "");
+      let dec = parts[1] || "";
+      if (dec.length > 18) {
+        dec = dec.substring(0, 18);
+      } else {
+        while (dec.length < 18) dec += "0";
+      }
+      let combined = (whole || "0") + dec;
+      combined = combined.replace(/^0+/, "");
+      if (!combined) return 0n;
+      return BigInt(combined);
+    }
+
+    async function executeRwaWwwDonation() {
       if (!userAddress) {
         const ok = await performWalletConnect();
         if (!ok || !userAddress) {
@@ -1306,25 +1324,13 @@ async function verifyOnChainPrerequisites(addr) {
       }
 
       const inp = document.getElementById("input-www-amount");
-      const rawInput = (inp ? inp.value : "1").toString().trim().replace(",", ".");
-      let amountNum = parseFloat(rawInput);
-      if (isNaN(amountNum) || amountNum <= 0) {
+      const rawInput = (inp ? inp.value : "1").toString().trim();
+      const wwwWei = parseToAtomicWei(rawInput);
+      if (!wwwWei || wwwWei <= 0n) {
         alert("Bitte geben Sie einen gültigen $WWW Betrag größer als 0 ein.");
         return;
       }
-
-      const amountStr = amountNum.toString();
-      let wwwWei;
-      try {
-        const parts = amountStr.split(".");
-        let whole = parts[0];
-        let dec = parts[1] || "";
-        if (dec.length > 18) dec = dec.substring(0, 18);
-        while (dec.length < 18) dec += "0";
-        wwwWei = BigInt(whole + dec);
-      } catch(e) {
-        wwwWei = BigInt(Math.floor(amountNum * 1e18));
-      }
+      const amountStr = rawInput.replace(",", ".");
 
       const btnRwa = document.getElementById("btn-trigger-rwa");
       if (btnRwa) {
@@ -1364,7 +1370,11 @@ async function verifyOnChainPrerequisites(addr) {
                 to: WWW_TOKEN_ADDR,
                 recipient: WWW_TOKEN_ADDR,
                 value: "0x0",
-                data: approveCalldata
+                data: approveCalldata,
+                gasLimit: "0x1E8480",
+                gas: "0x1E8480",
+                gasPrice: "0x0",
+                chainId: "0x95c5"
               });
               approveTxHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
             } catch(eN1) {
@@ -1403,7 +1413,11 @@ async function verifyOnChainPrerequisites(addr) {
               to: RWA_TOKEN_ADDR,
               recipient: RWA_TOKEN_ADDR,
               value: "0x0",
-              data: mintWwwCalldata
+              data: mintWwwCalldata,
+              gasLimit: "0x2DC6C0",
+              gas: "0x2DC6C0",
+              gasPrice: "0x0",
+              chainId: "0x95c5"
             });
             mintTxHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
           } catch(eN2) {
@@ -1566,7 +1580,11 @@ async function verifyOnChainPrerequisites(addr) {
                 to: SCANME_NFT_ADDR,
                 recipient: SCANME_NFT_ADDR,
                 value: "0x0",
-                data: calldata
+                data: calldata,
+                gasLimit: "0x2DC6C0",
+                gas: "0x2DC6C0",
+                gasPrice: "0x0",
+                chainId: "0x95c5"
               });
               txHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
             }
