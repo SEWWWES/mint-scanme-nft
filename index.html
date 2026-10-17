@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.46 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.47 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -302,7 +302,7 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.46) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.47) -->
   <script>
     (function() {
       "use strict";
@@ -485,7 +485,7 @@
   <div class="container">
     <header>
       <img src="assets/images/mint-scanme-nft-logo.png" alt="©️ ScanMe.NFT Logo" style="width:88px; height:88px; object-fit:contain; border-radius:18px; margin-bottom:10px;">
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.46 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.47 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -608,7 +608,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.46 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.47 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -696,7 +696,7 @@
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.46 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.47 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -1145,7 +1145,7 @@ async function verifyOnChainPrerequisites(addr) {
     }
 
     async function init() {
-      sysLog("Satellit v1.0.46 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      sysLog("Satellit v1.0.47 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
       
       const isNomo = isNomoEnvironment();
       sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
@@ -1271,7 +1271,6 @@ async function verifyOnChainPrerequisites(addr) {
       }
 
       const amountStr = amountNum.toString();
-      // Calculate Wei BigInt dynamically
       let wwwWei;
       try {
         const parts = amountStr.split(".");
@@ -1297,7 +1296,6 @@ async function verifyOnChainPrerequisites(addr) {
         decimals: 18
       };
 
-      // 1. Registriere WWW Token in NomoApp falls noch nicht vorhanden
       if (isNomoEnvironment() && window.nomo && typeof window.nomo.addCustomToken === "function") {
         try {
           window.nomo.addCustomToken(wwwAssetObj).catch(function(e){});
@@ -1305,89 +1303,9 @@ async function verifyOnChainPrerequisites(addr) {
       }
 
       try {
-        if (isNomoEnvironment()) {
-          sysLog("👉 [NOMO PFAD] Starte " + amountStr + " $WWW Eigenspende...");
-          if (btnRwa) btnRwa.innerText = "🚀 " + amountStr + " $WWW SPENDE IN NOMOAPP BESTÄTIGEN...";
-
-          let mintTxHash = null;
-
-          // STAGE 1: Nomo sendAssets mit Atomic Wei & Asset Object
-          try {
-            if (window.nomo && typeof window.nomo.sendAssets === "function") {
-              sysLog("Stage 1: Calling nomo.sendAssets with Atomic Wei (" + wwwWei.toString() + ")...");
-              const res = await window.nomo.sendAssets({
-                recipient: RWA_TOKEN_ADDR,
-                targetAddress: RWA_TOKEN_ADDR,
-                address: RWA_TOKEN_ADDR,
-                to: RWA_TOKEN_ADDR,
-                amount: wwwWei.toString(),
-                amountStr: amountStr,
-                assetSymbol: "WWW",
-                symbol: "WWW",
-                contractAddress: WWW_TOKEN_ADDR,
-                asset: wwwAssetObj
-              });
-              mintTxHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
-            }
-          } catch(e1) {
-            sysLog("Stage 1 Notice: " + (e1.message || e1) + ", versuche Stage 2 (Human Amount)...");
-          }
-
-          // STAGE 2: Nomo sendAssets mit Human String
-          if (!mintTxHash) {
-            try {
-              if (window.nomo && typeof window.nomo.sendAssets === "function") {
-                sysLog("Stage 2: Calling nomo.sendAssets with Human Amount '" + amountStr + "'...");
-                const res = await window.nomo.sendAssets({
-                  recipient: RWA_TOKEN_ADDR,
-                  targetAddress: RWA_TOKEN_ADDR,
-                  address: RWA_TOKEN_ADDR,
-                  to: RWA_TOKEN_ADDR,
-                  amount: amountStr,
-                  assetSymbol: "WWW",
-                  symbol: "WWW",
-                  contractAddress: WWW_TOKEN_ADDR,
-                  asset: wwwAssetObj
-                });
-                mintTxHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
-              }
-            } catch(e2) {
-              sysLog("Stage 2 Notice: " + (e2.message || e2) + ", versuche Stage 3 (Deep-Link Schema)...");
-            }
-          }
-
-          // STAGE 3: Nomo URL Schema Fallback
-          if (!mintTxHash) {
-            sysLog("Stage 3: Triggering nomo://wallet/send Deep-Link Pre-Fill (" + amountStr + " $WWW)...");
-            const schemaUrl = "nomo://wallet/send?address=" + RWA_TOKEN_ADDR + "&amount=" + encodeURIComponent(amountStr) + "&contractAddress=" + WWW_TOKEN_ADDR + "&assetSymbol=WWW";
-            window.location.href = schemaUrl;
-
-            startPrerequisitesPolling(userAddress, 45, 3);
-            setTimeout(async () => {
-              if (btnRwa) {
-                btnRwa.disabled = false;
-                btnRwa.innerText = "🌱 " + amountStr + " $WWW SPENDE & $RWA PRÄGEN (mintWithWWW)";
-              }
-            }, 5000);
-            return;
-          }
-
-          if (mintTxHash) {
-            sysLog("🎉 ✅ $WWW Eigenspende platziert! Hash: " + mintTxHash);
-            showTxHash(mintTxHash);
-
-            startPrerequisitesPolling(userAddress, 45, 3);
-            setTimeout(async () => {
-              if (btnRwa) {
-                btnRwa.disabled = false;
-                btnRwa.innerText = "✓ $RWA ERFOLGREICH GEPRÄGT";
-              }
-            }, 5000);
-          }
-          return;
-        }
-
-        // METAMASK / PC BROWSER PFAD
+        sysLog("👉 Starte " + amountStr + " $WWW Eigenspende & RWA Minter Aufruf...");
+        
+        // Step 1: Check Allowance
         const currentAllowance = await checkAllowanceOnChain(WWW_TOKEN_ADDR, userAddress, RWA_TOKEN_ADDR);
 
         if (currentAllowance < wwwWei) {
@@ -1398,60 +1316,104 @@ async function verifyOnChainPrerequisites(addr) {
           const amountPad = wwwWei.toString(16).padStart(64, "0");
           const approveCalldata = "0x095ea7b3" + cleanSpender + amountPad;
 
-          await ensureZSCMetaMask();
-          const approveTxHash = await window.ethereum.request({
-            method: "eth_sendTransaction",
-            params: [{
-              from: userAddress,
-              to: WWW_TOKEN_ADDR,
-              value: "0x0",
-              data: approveCalldata,
-              gas: "0x1E8480"
-            }]
-          });
+          let approveHash = null;
+          if (window.ethereum && typeof window.ethereum.request === "function") {
+            try {
+              if (typeof ensureZSCMetaMask === "function") await ensureZSCMetaMask();
+              approveHash = await window.ethereum.request({
+                method: "eth_sendTransaction",
+                params: [{
+                  from: userAddress,
+                  to: WWW_TOKEN_ADDR,
+                  value: "0x0",
+                  data: approveCalldata,
+                  gas: "0x1E8480"
+                }]
+              });
+            } catch(eEth) {
+              sysLog("eth_sendTransaction approve notice: " + (eEth.message || eEth));
+            }
+          }
 
-          if (approveTxHash) {
-            sysLog("✅ $WWW Freigabe gesendet! Hash: " + approveTxHash);
-            showTxHash(approveTxHash);
-            sysLog("⏳ Warte 4 Sekunden auf Freigabe-Bestätigung...");
-            await new Promise(r => setTimeout(r, 4000));
+          if (!approveHash && isNomoEnvironment() && window.nomo && typeof window.nomo.sendAssets === "function") {
+            // Nomo sendAssets fallback
+            try {
+              const res = await window.nomo.sendAssets({
+                recipient: RWA_TOKEN_ADDR,
+                amountStr: amountStr,
+                assetSymbol: "WWW",
+                contractAddress: WWW_TOKEN_ADDR
+              });
+              approveHash = res.hash || res.txHash || "NOMO_SENT";
+            } catch(eNomo) {}
+          }
+
+          if (approveHash) {
+            sysLog("✅ $WWW Freigabe/Spende platziert! Hash: " + approveHash);
+            showTxHash(approveHash);
+            sysLog("⏳ Warte 3 Sekunden auf Blockchain-Verarbeitung...");
+            await new Promise(r => setTimeout(r, 3000));
           }
         }
 
-        sysLog("Sende mintWithWWW(" + amountStr + " $WWW) an RWA Minter Contract...");
+        // Step 2: EVM Contract Call mintWithWWW(uint256)
+        sysLog("Sende mintWithWWW(" + amountStr + " $WWW) an $RWA Smart Contract...");
         if (btnRwa) btnRwa.innerText = "🚀 STEP 2: " + amountStr + " $WWW MINTING BESTÄTIGEN...";
 
         const amountPad = wwwWei.toString(16).padStart(64, "0");
         const mintWwwCalldata = "0xdbe97695" + amountPad;
 
-        await ensureZSCMetaMask();
-        const mintTxHash = await window.ethereum.request({
-          method: "eth_sendTransaction",
-          params: [{
-            from: userAddress,
-            to: RWA_TOKEN_ADDR,
-            value: "0x0",
-            data: mintWwwCalldata,
-            gas: "0x2DC6C0"
-          }]
-        });
+        let mintTxHash = null;
+        if (window.ethereum && typeof window.ethereum.request === "function") {
+          try {
+            if (typeof ensureZSCMetaMask === "function") await ensureZSCMetaMask();
+            mintTxHash = await window.ethereum.request({
+              method: "eth_sendTransaction",
+              params: [{
+                from: userAddress,
+                to: RWA_TOKEN_ADDR,
+                value: "0x0",
+                data: mintWwwCalldata,
+                gas: "0x2DC6C0"
+              }]
+            });
+          } catch(eEth2) {
+            sysLog("eth_sendTransaction mintWithWWW notice: " + (eEth2.message || eEth2));
+          }
+        }
+
+        if (!mintTxHash && isNomoEnvironment()) {
+          // If eth_sendTransaction is not present, use Nomo sendAssets as backup
+          try {
+            if (window.nomo && typeof window.nomo.sendAssets === "function") {
+              const res = await window.nomo.sendAssets({
+                recipient: RWA_TOKEN_ADDR,
+                amountStr: amountStr,
+                assetSymbol: "WWW",
+                contractAddress: WWW_TOKEN_ADDR
+              });
+              mintTxHash = res.hash || res.txHash || "NOMO_MINT_SENT";
+            }
+          } catch(eNomo2) {}
+        }
 
         if (mintTxHash) {
           sysLog("🎉 ✅ $WWW Minting platziert! Hash: " + mintTxHash);
           showTxHash(mintTxHash);
-
-          setTimeout(async () => {
-            await verifyOnChainPrerequisites(userAddress);
-            if (btnRwa) {
-              btnRwa.disabled = false;
-              btnRwa.innerText = "✓ $RWA ERFOLGREICH GEPRÄGT";
-            }
-          }, 5000);
         }
+
+        startPrerequisitesPolling(userAddress, 45, 3);
+        setTimeout(async () => {
+          await verifyOnChainPrerequisites(userAddress);
+          if (btnRwa) {
+            btnRwa.disabled = false;
+            btnRwa.innerText = "✓ $RWA PRÜFUNG AKTIV";
+          }
+        }, 4000);
 
       } catch (err) {
         sysLog("❌ $WWW Spendenfehler: " + (err.message || err));
-        alert("Spende abgebrochen: " + (err.message || err));
+        alert("Spenden-Hinweis: " + (err.message || err));
         if (btnRwa) {
           btnRwa.disabled = false;
           btnRwa.innerText = "🌱 " + amountStr + " $WWW SPENDE & $RWA PRÄGEN (mintWithWWW)";
@@ -1459,171 +1421,4 @@ async function verifyOnChainPrerequisites(addr) {
       }
     }
 
-    async function waitForReceipt(txHash) {
-      sysLog("⏳ Warte auf Blockbestätigung auf ZSC...");
-      let attempts = 0;
-      
-      while (attempts < 30) {
-        await new Promise(r => setTimeout(r, 2000));
-        try {
-          if (window.ethereum) {
-            const receipt = await window.ethereum.request({
-              method: "eth_getTransactionReceipt",
-              params: [txHash]
-            });
-            
-            if (receipt && receipt.blockNumber) {
-              if (receipt.status === "0x1") {
-                const blockNum = parseInt(receipt.blockNumber, 16);
-                sysLog("🎉 ✅ ©️ ScanMe.NFT ERFOLGREICH GEPRÄGT in Block #" + blockNum);
-                
-                const elNFT = document.getElementById("status-nft");
-                if (elNFT) {
-                  elNFT.className = "status-pill pill-green";
-                  elNFT.innerText = "✓ NFT Geprägt";
-                }
-                
-                const btn = document.getElementById("btn-mint-action");
-                if (btn) {
-                  btn.innerText = "✓ PRÄGUNG ERFOLGREICH";
-                  btn.style.backgroundColor = "#00FF66";
-                }
-                
-                alert("🎉 Gratulation! Ihr ©️ ScanMe.NFT wurde erfolgreich gepraegt! TX Hash: " + txHash);
-                return true;
-              } else {
-                sysLog("⚠️ TRANSAKTION REVERTED (Contract Revert). Prüfen Sie $KYC / $RWA Token.");
-                alert("⚠️ Transaktion auf der Blockchain abgelehnt (Contract Revert). TX Hash: " + txHash);
-                
-                const btn = document.getElementById("btn-mint-action");
-                if (btn) {
-                  btn.disabled = false;
-                  btn.innerText = "🚀 ERNEUT PRÄGEN";
-                }
-                return false;
-              }
-            }
-          }
-        } catch(e) {
-          console.log("Receipt polling...", e);
-        }
-        attempts++;
-      }
-      sysLog("⏳ Transaktion ausstehend auf ZeniqScan.");
-    }
 
-    async function executeMint() {
-      if (!userAddress) {
-        const ok = await performWalletConnect();
-        if (!ok || !userAddress) {
-          alert("Bitte verbinden Sie zuerst Ihre Wallet.");
-          return;
-        }
-      }
-
-      if (hasScanMeNft) {
-        alert("Ihr ©️ ScanMe.NFT ist auf dieser Wallet-Adresse bereits aktiv geprägt! Eine erneute Prägung ist nicht erforderlich.");
-        return;
-      }
-
-      const btn = document.getElementById("btn-mint-action");
-      if (btn) {
-        btn.disabled = true;
-        btn.innerText = "⏳ MINTING IN PROGRESS...";
-      }
-
-      const calldata = buildMintScanMeCalldata(userAddress, userSID, "9999999999");
-      sysLog("Sende mintScanMe(recipient=" + userAddress + ", SID=" + userSID + ", FID=9999999999)...");
-
-      try {
-        let txHash = null;
-
-        // NOMOAPP NATIVE PFAD (DIRECT EVM SIGNING VIA signEvmTransaction)
-        if (isNomoEnvironment()) {
-          sysLog("👉 [NOMO PFAD] Starte native EVM Contract Prägung (signEvmTransaction)...");
-          try {
-            if (window.nomo && typeof window.nomo.signEvmTransaction === "function") {
-              const res = await window.nomo.signEvmTransaction({
-                to: SCANME_NFT_ADDR,
-                recipient: SCANME_NFT_ADDR,
-                value: "0x0",
-                data: calldata
-              });
-              txHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
-            }
-          } catch(e1) {
-            sysLog("Notice: signEvmTransaction (" + (e1.message || e1) + "), versuche sendAssets Fallback...");
-          }
-
-          if (!txHash && window.nomo && typeof window.nomo.sendAssets === "function") {
-            const res = await window.nomo.sendAssets({
-              recipient: SCANME_NFT_ADDR,
-              targetAddress: SCANME_NFT_ADDR,
-              address: SCANME_NFT_ADDR,
-              to: SCANME_NFT_ADDR,
-              amount: "0",
-              assetSymbol: "ZENIQ",
-              symbol: "ZENIQ",
-              data: calldata
-            });
-            txHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
-          }
-
-          if (!txHash) {
-            sysLog("Stage 3 Fallback: Triggering nomo://wallet/send Deep-Link...");
-            window.location.href = "nomo://wallet/send?address=" + SCANME_NFT_ADDR + "&amount=0&assetSymbol=ZENIQ";
-            setTimeout(async () => {
-              await verifyOnChainPrerequisites(userAddress);
-              if (btn) {
-                btn.disabled = false;
-                btn.innerText = "🚀 2. ©️ ScanMe.NFT JETZT PRÄGEN (0.00 ZENIQ)";
-              }
-            }, 6000);
-            return;
-          }
-        }
-        // METAMASK PFAD (PC BROWSER)
-        else if (window.ethereum && typeof window.ethereum.request === "function") {
-          sysLog("👉 [PC METAMASK PFAD] Prüfe Netzwerk-Kopplung (ZSC 38341)...");
-          await ensureZSCMetaMask();
-
-          sysLog("Sende Transaktion über MetaMask...");
-          const txParams = {
-            from: userAddress,
-            to: SCANME_NFT_ADDR,
-            value: "0x0",
-            data: calldata,
-            gas: "0x1E8480"
-          };
-          txHash = await window.ethereum.request({
-            method: "eth_sendTransaction",
-            params: [txParams]
-          });
-        }
-
-        if (txHash) {
-          sysLog("✅ Transaktion im Mempool platziert! Hash: " + txHash);
-          showTxHash(txHash);
-          if (!isNomoEnvironment()) {
-            await waitForReceipt(txHash);
-          } else {
-            alert("🎉 Transaktion an NomoApp übermittelt!\n\nTx Hash:\n" + txHash);
-          }
-        } else {
-          throw new Error("Kein Transaktions-Hash erhalten.");
-        }
-
-      } catch (err) {
-        sysLog("❌ Prägefehler/Abbruch: " + (err.message || err));
-        alert("Prägevorgang abgebrochen oder fehlgeschlagen: " + (err.message || err));
-        if (btn) {
-          btn.disabled = false;
-          btn.innerText = "🚀 2. ©️ ScanMe.NFT JETZT PRÄGEN (0.00 ZENIQ)";
-        }
-      }
-    }
-
-    window.onload = init;
-  </script>
-</body>
-</html>
