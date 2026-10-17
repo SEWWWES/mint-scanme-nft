@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.44 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.45 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -302,7 +302,7 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.44) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.45) -->
   <script>
     (function() {
       "use strict";
@@ -485,7 +485,7 @@
   <div class="container">
     <header>
       <img src="assets/images/mint-scanme-nft-logo.png" alt="©️ ScanMe.NFT Logo" style="width:88px; height:88px; object-fit:contain; border-radius:18px; margin-bottom:10px;">
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.44 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.45 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -534,36 +534,36 @@
     <div id="rwa-action-card" class="rwa-box" style="display:none;">
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
         <span style="font-size:1.2rem;">🌱</span>
-        <strong style="color:var(--gold); font-size:0.88rem;">1. $RWA MIKROSPENDE ZÜNDEN (100 $WWW)</strong>
+        <strong style="color:var(--gold); font-size:0.88rem;">1. $RWA MIKROSPENDE ZÜNDEN (FREI WÄHLBAR)</strong>
       </div>
-      <p style="font-size:0.78rem; color:var(--text-main); line-height:1.4;">
-        Ihre Wallet besitzt noch kein On-Chain $RWA Guthaben. Übermitteln Sie hier direkt <strong>100 $WWW Tokens</strong> an den <strong>$RWA Software-Minter</strong> (<code>0xF1A5...7c22</code>). Der Minter prägt Ihnen dafür im Gegenzug <strong>1.00 $RWA Token</strong> direkt in Ihre Wallet!
+      <p style="font-size:0.78rem; color:var(--text-main); line-height:1.4; margin-bottom:10px;">
+        Ihre Wallet besitzt noch kein $RWA Guthaben. Wählen Sie eine Mikrospende ab <strong>1 $WWW</strong> (oder tragen Sie einen beliebigen Betrag ein). Der $RWA Minter prägt Ihnen im Gegenzug sofort anteilige $RWA Token!
       </p>
+
+      <!-- PRESET BUTTONS -->
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <button type="button" class="btn-copy" style="flex:1; padding:8px 4px; font-size:0.8rem; background:rgba(255,215,0,0.15); border:1px solid var(--gold); color:var(--gold);" onclick="setWwwAmount('1')">🌱 1 $WWW<br><span style="font-size:0.68rem; opacity:0.8;">(0.01 $RWA)</span></button>
+        <button type="button" class="btn-copy" style="flex:1; padding:8px 4px; font-size:0.8rem; background:rgba(255,215,0,0.15); border:1px solid var(--gold); color:var(--gold);" onclick="setWwwAmount('10')">🌿 10 $WWW<br><span style="font-size:0.68rem; opacity:0.8;">(0.10 $RWA)</span></button>
+        <button type="button" class="btn-copy" style="flex:1; padding:8px 4px; font-size:0.8rem; background:rgba(255,215,0,0.25); border:1px solid var(--gold); color:var(--gold); font-weight:bold;" onclick="setWwwAmount('100')">🌳 100 $WWW<br><span style="font-size:0.68rem; opacity:0.9;">(1.00 $RWA)</span></button>
+      </div>
+
+      <!-- EINGABEFELD & DYNAMISCHE VORSCHAU -->
+      <div style="margin-bottom:10px;">
+        <label style="font-size:0.75rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:4px;">Oder eigenen $WWW Betrag eingeben:</label>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <input type="number" id="input-www-amount" min="0.000001" step="any" value="1" style="flex:1; background:#000; border:1px solid var(--gold); color:var(--gold); padding:10px; border-radius:8px; font-family:monospace; font-size:1.0rem; font-weight:bold;" oninput="updateRwaCalculation()">
+          <span style="font-weight:bold; color:var(--gold); font-size:0.9rem;">$WWW</span>
+        </div>
+      </div>
+
+      <div id="rwa-calc-preview" style="background:rgba(0,0,0,0.4); border:1px dashed var(--gold); border-radius:8px; padding:8px; font-family:monospace; font-size:0.78rem; color:var(--emerald); margin-bottom:10px;">
+        ⚡ Rechner: <strong>1.00 $WWW</strong> ➔ Ertrag: <strong style="color:var(--gold);">0.01 $RWA Token</strong>
+      </div>
+
       <button id="btn-trigger-rwa" class="btn-rwa" onclick="executeRwaWwwDonation()">
-        🌱 1. 100 $WWW SPENDE & $RWA PRÄGEN (mintWithWWW)
+        🌱 1 $WWW SPENDE & $RWA PRÄGEN (mintWithWWW)
       </button>
     </div>
-
-    <!-- TARIF & VALUE UEBERSICHT -->
-    <div class="card">
-      <div class="card-title">
-        <span>📊 Smart Contract Tarif</span>
-        <span style="color:var(--emerald);">0.00 ZENIQ (Kostenfrei)</span>
-      </div>
-      <div class="price-box">
-        <div class="price-row">
-          <span>Schöpfungswert der Family:</span>
-          <span style="text-decoration: line-through; color:var(--text-muted); font-weight:bold;">$100.00 USD</span>
-        </div>
-        <div class="price-row">
-          <span>RWA Minter Norm:</span>
-          <strong style="color:var(--gold);">100 $WWW = 1.00 $RWA</strong>
-        </div>
-        <div class="price-row" style="border-top: 1px dashed rgba(0,255,102,0.3); padding-top: 4px; margin-top: 4px;">
-          <span>ScanMe.NFT Präge-Value:</span>
-          <strong style="color:var(--emerald);">0x0 Wei (Non-Payable Direct Mint)</strong>
-        </div>
-      </div>
     </div>
 
     <div class="card">
@@ -605,7 +605,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.44 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.45 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -693,7 +693,7 @@
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.44 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.45 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -1105,7 +1105,7 @@
     }
 
     async function init() {
-      sysLog("Satellit v1.0.44 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      sysLog("Satellit v1.0.45 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
       
       const isNomo = isNomoEnvironment();
       sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
@@ -1173,6 +1173,33 @@
     }
 
     // 100 $WWW MIKROSPENDE & MINTING VIA mintWithWWW(uint256 wwwAmount)
+    
+    function setWwwAmount(valStr) {
+      const inp = document.getElementById("input-www-amount");
+      if (inp) {
+        inp.value = valStr;
+        updateRwaCalculation();
+      }
+    }
+
+    function updateRwaCalculation() {
+      const inp = document.getElementById("input-www-amount");
+      const prev = document.getElementById("rwa-calc-preview");
+      const btnRwa = document.getElementById("btn-trigger-rwa");
+
+      let val = parseFloat(inp ? inp.value : "1");
+      if (isNaN(val) || val <= 0) val = 1;
+
+      const rwaAmount = (val / 100.0).toFixed(4);
+
+      if (prev) {
+        prev.innerHTML = "⚡ Rechner: <strong>" + val + " $WWW</strong> ➔ Ertrag: <strong style='color:var(--gold);'>" + rwaAmount + " $RWA Token</strong>";
+      }
+      if (btnRwa) {
+        btnRwa.innerText = "🌱 " + val + " $WWW SPENDE & $RWA PRÄGEN (mintWithWWW)";
+      }
+    }
+
     async function executeRwaWwwDonation() {
       if (!userAddress) {
         const ok = await performWalletConnect();
@@ -1182,13 +1209,33 @@
         }
       }
 
+      const inp = document.getElementById("input-www-amount");
+      let amountNum = parseFloat(inp ? inp.value : "1");
+      if (isNaN(amountNum) || amountNum <= 0) {
+        alert("Bitte geben Sie einen gültigen $WWW Betrag größer als 0 ein.");
+        return;
+      }
+
+      const amountStr = amountNum.toString();
+      // Calculate Wei BigInt dynamically
+      let wwwWei;
+      try {
+        const parts = amountStr.split(".");
+        let whole = parts[0];
+        let dec = parts[1] || "";
+        if (dec.length > 18) dec = dec.substring(0, 18);
+        while (dec.length < 18) dec += "0";
+        wwwWei = BigInt(whole + dec);
+      } catch(e) {
+        wwwWei = BigInt(Math.floor(amountNum * 1e18));
+      }
+
       const btnRwa = document.getElementById("btn-trigger-rwa");
       if (btnRwa) {
         btnRwa.disabled = true;
         btnRwa.innerText = "⏳ PRÜFE $WWW FREIGABE (ALLOWANCE)...";
       }
 
-      const wwwWei = 100000000000000000000n;
       const wwwAssetObj = {
         symbol: "WWW",
         name: "WWW",
@@ -1196,7 +1243,7 @@
         decimals: 18
       };
 
-      // 1. registriere WWW Token in NomoApp falls noch nicht vorhanden
+      // 1. Registriere WWW Token in NomoApp falls noch nicht vorhanden
       if (isNomoEnvironment() && window.nomo && typeof window.nomo.addCustomToken === "function") {
         try {
           window.nomo.addCustomToken(wwwAssetObj).catch(function(e){});
@@ -1205,22 +1252,22 @@
 
       try {
         if (isNomoEnvironment()) {
-          sysLog("👉 [NOMO PFAD] Starte 100 $WWW Eigenspende (3-Stufen Pre-Fill auf Schritt 4/4)...");
-          if (btnRwa) btnRwa.innerText = "🚀 100 $WWW SPENDE IN NOMOAPP BESTÄTIGEN...";
+          sysLog("👉 [NOMO PFAD] Starte " + amountStr + " $WWW Eigenspende...");
+          if (btnRwa) btnRwa.innerText = "🚀 " + amountStr + " $WWW SPENDE IN NOMOAPP BESTÄTIGEN...";
 
           let mintTxHash = null;
 
           // STAGE 1: Nomo sendAssets mit Atomic Wei & Asset Object
           try {
             if (window.nomo && typeof window.nomo.sendAssets === "function") {
-              sysLog("Stage 1: Calling nomo.sendAssets with Atomic Wei...");
+              sysLog("Stage 1: Calling nomo.sendAssets with Atomic Wei (" + wwwWei.toString() + ")...");
               const res = await window.nomo.sendAssets({
                 recipient: RWA_TOKEN_ADDR,
                 targetAddress: RWA_TOKEN_ADDR,
                 address: RWA_TOKEN_ADDR,
                 to: RWA_TOKEN_ADDR,
                 amount: wwwWei.toString(),
-                amountStr: "100",
+                amountStr: amountStr,
                 assetSymbol: "WWW",
                 symbol: "WWW",
                 contractAddress: WWW_TOKEN_ADDR,
@@ -1232,17 +1279,17 @@
             sysLog("Stage 1 Notice: " + (e1.message || e1) + ", versuche Stage 2 (Human Amount)...");
           }
 
-          // STAGE 2: Nomo sendAssets mit Human String "100"
+          // STAGE 2: Nomo sendAssets mit Human String
           if (!mintTxHash) {
             try {
               if (window.nomo && typeof window.nomo.sendAssets === "function") {
-                sysLog("Stage 2: Calling nomo.sendAssets with Human Amount '100'...");
+                sysLog("Stage 2: Calling nomo.sendAssets with Human Amount '" + amountStr + "'...");
                 const res = await window.nomo.sendAssets({
                   recipient: RWA_TOKEN_ADDR,
                   targetAddress: RWA_TOKEN_ADDR,
                   address: RWA_TOKEN_ADDR,
                   to: RWA_TOKEN_ADDR,
-                  amount: "100",
+                  amount: amountStr,
                   assetSymbol: "WWW",
                   symbol: "WWW",
                   contractAddress: WWW_TOKEN_ADDR,
@@ -1255,17 +1302,17 @@
             }
           }
 
-          // STAGE 3: Nomo URL Schema Fallback (Zwingt NomoApp direkt auf Schritt 4/4)
+          // STAGE 3: Nomo URL Schema Fallback
           if (!mintTxHash) {
-            sysLog("Stage 3: Triggering nomo://wallet/send Deep-Link Pre-Fill...");
-            const schemaUrl = "nomo://wallet/send?address=" + RWA_TOKEN_ADDR + "&amount=100&contractAddress=" + WWW_TOKEN_ADDR + "&assetSymbol=WWW";
+            sysLog("Stage 3: Triggering nomo://wallet/send Deep-Link Pre-Fill (" + amountStr + " $WWW)...");
+            const schemaUrl = "nomo://wallet/send?address=" + RWA_TOKEN_ADDR + "&amount=" + encodeURIComponent(amountStr) + "&contractAddress=" + WWW_TOKEN_ADDR + "&assetSymbol=WWW";
             window.location.href = schemaUrl;
-            
+
             setTimeout(async () => {
               await verifyOnChainPrerequisites(userAddress);
               if (btnRwa) {
                 btnRwa.disabled = false;
-                btnRwa.innerText = "🌱 1. 100 $WWW SPENDE & $RWA PRÄGEN (mintWithWWW)";
+                btnRwa.innerText = "🌱 " + amountStr + " $WWW SPENDE & $RWA PRÄGEN (mintWithWWW)";
               }
             }, 6000);
             return;
@@ -1279,7 +1326,7 @@
               await verifyOnChainPrerequisites(userAddress);
               if (btnRwa) {
                 btnRwa.disabled = false;
-                btnRwa.innerText = "✓ 1.00 $RWA ERFOLGREICH GEPRÄGT";
+                btnRwa.innerText = "✓ $RWA ERFOLGREICH GEPRÄGT";
               }
             }, 5000);
           }
@@ -1288,10 +1335,10 @@
 
         // METAMASK / PC BROWSER PFAD
         const currentAllowance = await checkAllowanceOnChain(WWW_TOKEN_ADDR, userAddress, RWA_TOKEN_ADDR);
-        
+
         if (currentAllowance < wwwWei) {
-          sysLog("Sende $WWW Freigabe (approve) an Minter Contract...");
-          if (btnRwa) btnRwa.innerText = "🔑 STEP 1: $WWW FREIGABE BESTÄTIGEN...";
+          sysLog("Sende $WWW Freigabe (approve) für " + amountStr + " $WWW an Minter Contract...");
+          if (btnRwa) btnRwa.innerText = "🔑 STEP 1: " + amountStr + " $WWW FREIGABE BESTÄTIGEN...";
 
           const cleanSpender = RWA_TOKEN_ADDR.toLowerCase().replace("0x", "").padStart(64, "0");
           const amountPad = wwwWei.toString(16).padStart(64, "0");
@@ -1317,8 +1364,8 @@
           }
         }
 
-        sysLog("Sende mintWithWWW(100 $WWW) an RWA Minter Contract...");
-        if (btnRwa) btnRwa.innerText = "🚀 STEP 2: 100 $WWW MINTING BESTÄTIGEN...";
+        sysLog("Sende mintWithWWW(" + amountStr + " $WWW) an RWA Minter Contract...");
+        if (btnRwa) btnRwa.innerText = "🚀 STEP 2: " + amountStr + " $WWW MINTING BESTÄTIGEN...";
 
         const amountPad = wwwWei.toString(16).padStart(64, "0");
         const mintWwwCalldata = "0xdbe97695" + amountPad;
@@ -1343,7 +1390,7 @@
             await verifyOnChainPrerequisites(userAddress);
             if (btnRwa) {
               btnRwa.disabled = false;
-              btnRwa.innerText = "✓ 1.00 $RWA ERFOLGREICH GEPRÄGT";
+              btnRwa.innerText = "✓ $RWA ERFOLGREICH GEPRÄGT";
             }
           }, 5000);
         }
@@ -1353,7 +1400,7 @@
         alert("Spende abgebrochen: " + (err.message || err));
         if (btnRwa) {
           btnRwa.disabled = false;
-          btnRwa.innerText = "🌱 1. 100 $WWW SPENDE & $RWA PRÄGEN (mintWithWWW)";
+          btnRwa.innerText = "🌱 " + amountStr + " $WWW SPENDE & $RWA PRÄGEN (mintWithWWW)";
         }
       }
     }
