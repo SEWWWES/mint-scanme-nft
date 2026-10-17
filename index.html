@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.36 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.37 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -292,7 +292,7 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (ABSOLUTE ENVIRONMENT ISOLATION v1.0.36) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.37) -->
   <script>
     (function() {
       "use strict";
@@ -313,10 +313,10 @@
           return function(payload) { window.chrome.webview.hostObjects.NOMOJSChannel.postMessage(payload); };
         }
 
-        // 3. Android Flutter WebView postMessage (Strikt auf Nomo / WebOn UserAgent limitiert)
+        // 3. Android Flutter WebView standard postMessage (Nur im Mobile/Android/Nomo Kontext)
         if (window.chrome && window.chrome.webview && typeof window.chrome.webview.postMessage === "function") {
           var ua = (navigator && navigator.userAgent) ? navigator.userAgent : "";
-          if (/Nomo|WebOn/i.test(ua)) {
+          if (/Nomo|WebOn|Android|iPhone|iPad|iPod|Mobile/i.test(ua)) {
             return function(payload) { window.chrome.webview.postMessage(payload); };
           }
         }
@@ -402,10 +402,10 @@
         return "FAIL";
       };
 
-      // ABSOLUT UNBESTECHLICHER, NATIV-GEPRÜFTER WÄCHTER
       window.isRealNomoApp = function() {
         if (typeof window === "undefined") return false;
         if (getDartBridge() !== null) return true;
+        if (window.nomo && typeof window.nomo.getEvmAddress === "function") return true;
         var ua = (navigator && navigator.userAgent) ? navigator.userAgent : "";
         if (/Nomo|WebOn/i.test(ua)) return true;
         return false;
@@ -474,7 +474,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.36 (ENVIRONMENT ISOLATION)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.37 (MULTI-RPC & DIRECT EVM MINT)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -579,7 +579,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.36 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.37 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -609,7 +609,9 @@
 
     function isNomoEnvironment() {
       if (typeof window === "undefined") return false;
-      return window.isRealNomoApp();
+      if (typeof window.isRealNomoApp === "function" && window.isRealNomoApp()) return true;
+      if (window.nomo && typeof window.nomo.getEvmAddress === "function" && !window.ethereum) return true;
+      return false;
     }
 
     // GLOBAL EXCEPTION CATCHER
@@ -632,7 +634,7 @@
       if (!field) return;
 
       const envInfo = {
-        version: "1.0.36",
+        version: "1.0.35",
         mode: isNomoEnvironment() ? "NOMOAPP_NATIVE_WEB3" : "PC_BROWSER_METAMASK",
         userAgent: navigator.userAgent,
         location: window.location.href,
@@ -648,7 +650,7 @@
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.36 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.37 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -706,7 +708,7 @@
         try { target = JSON.parse(target); } catch(e){}
       }
       while (Array.isArray(target) && target.length > 0) {
-        target = target;
+        target = target[0];
       }
       if (typeof target === "object" && target !== null) {
         target = target.evmAddress || target.ethAddress || target.address || target.hex || target.account || null;
@@ -768,25 +770,57 @@
         } catch(e) {}
       }
 
-      try {
-        const rpcHost = ["smart", "zeniqscan", "com"].join(".");
-        const response = await fetch("https://" + rpcHost + "/api/v1/eth-rpc", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            jsonrpc: "2.0",
-            method: "eth_call",
-            params: [{ to: tokenAddr, data: dataPayload }, "latest"],
-            id: 1
-          })
-        });
-        const json = await response.json();
-        if (json && json.result && json.result !== "0x" && json.result !== "0x0000000000000000000000000000000000000000000000000000000000000000") {
-          return BigInt(json.result) > 0n ? 1 : 0;
+      const rpcEndpoints = [
+        "https://api.zeniq.network",
+        "https://zsc.nomo.rest",
+        "https://smart.zeniqscan.com/api/v1/eth-rpc",
+        "https://smart.zeniqscan.com/rpc"
+      ];
+
+      for (let i = 0; i < rpcEndpoints.length; i++) {
+        const rpcUrl = rpcEndpoints[i];
+        try {
+          const response = await fetch(rpcUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              jsonrpc: "2.0",
+              method: "eth_call",
+              params: [{ to: tokenAddr, data: dataPayload }, "latest"],
+              id: 1
+            })
+          });
+          if (response.ok) {
+            const json = await response.json();
+            if (json && json.result && json.result !== "0x" && json.result !== "0x0000000000000000000000000000000000000000000000000000000000000000" && !json.error) {
+              return BigInt(json.result) > 0n ? 1 : 0;
+            }
+          }
+        } catch(e) {
+          sysLog("RPC Notice (" + rpcUrl + "): " + (e.message || e));
         }
-      } catch(e) {
-        sysLog("eth_call balanceOf RPC Notice: " + (e.message || e));
       }
+
+      // Blockscout Explorer Fallback
+      try {
+        const expUrl = "https://zeniqscan.com/api/v2/addresses/0x" + cleanOwner + "/tokens";
+        const resp = await fetch(expUrl);
+        if (resp.ok) {
+          const data = await resp.json();
+          const list = Array.isArray(data) ? data : (data.items || data.data || []);
+          const cleanToken = tokenAddr.toLowerCase();
+          for (let k = 0; k < list.length; k++) {
+            let item = list[k];
+            let addr = "";
+            if (item && item.token) addr = (item.token.address || item.token.contractAddress || "").toLowerCase();
+            else if (item && item.contractAddress) addr = item.contractAddress.toLowerCase();
+            if (addr === cleanToken) {
+              let val = item.value || (item.token ? item.token.value : "0");
+              if (BigInt(val) > 0n) return 1;
+            }
+          }
+        }
+      } catch(e) {}
 
       return 0;
     }
@@ -807,22 +841,32 @@
         } catch(e) {}
       }
 
-      try {
-        const rpcHost = ["smart", "zeniqscan", "com"].join(".");
-        const response = await fetch("https://" + rpcHost + "/api/v1/eth-rpc", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            jsonrpc: "2.0",
-            method: "eth_call",
-            params: [{ to: tokenAddr, data: dataPayload }, "latest"],
-            id: 1
-          })
-        });
-        const json = await response.json();
-        if (json && json.result && json.result !== "0x") return BigInt(json.result);
-      } catch(e) {
-        sysLog("eth_call allowance RPC Notice: " + (e.message || e));
+      const rpcEndpoints = [
+        "https://api.zeniq.network",
+        "https://zsc.nomo.rest",
+        "https://smart.zeniqscan.com/api/v1/eth-rpc"
+      ];
+
+      for (let i = 0; i < rpcEndpoints.length; i++) {
+        const rpcUrl = rpcEndpoints[i];
+        try {
+          const response = await fetch(rpcUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              jsonrpc: "2.0",
+              method: "eth_call",
+              params: [{ to: tokenAddr, data: dataPayload }, "latest"],
+              id: 1
+            })
+          });
+          if (response.ok) {
+            const json = await response.json();
+            if (json && json.result && json.result !== "0x" && !json.error) {
+              return BigInt(json.result);
+            }
+          }
+        } catch(e) {}
       }
 
       return 0n;
@@ -1018,7 +1062,7 @@
     }
 
     async function init() {
-      sysLog("Satellit v1.0.36 (ENVIRONMENT ISOLATION) initialisiert...");
+      sysLog("Satellit v1.0.37 (MULTI-RPC & DIRECT EVM MINT) initialisiert...");
       
       const isNomo = isNomoEnvironment();
       sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
@@ -1098,7 +1142,7 @@
       const btnRwa = document.getElementById("btn-trigger-rwa");
       if (btnRwa) {
         btnRwa.disabled = true;
-        btnRwa.innerText = "⏳ PRÜFE $WWW FREIGABE (ALLOWANCE)...";
+        btnRwa.innerText = "⏳ PRÜFE  FREIGABE (ALLOWANCE)...";
       }
 
       const wwwWei = 100000000000000000000n;
@@ -1107,8 +1151,8 @@
         const currentAllowance = await checkAllowanceOnChain(WWW_TOKEN_ADDR, userAddress, RWA_TOKEN_ADDR);
         
         if (currentAllowance < wwwWei) {
-          sysLog("Sende $WWW Freigabe (approve) an Minter Contract...");
-          if (btnRwa) btnRwa.innerText = "🔑 STEP 1: $WWW FREIGABE BESTÄTIGEN...";
+          sysLog("Sende  Freigabe (approve) an Minter Contract...");
+          if (btnRwa) btnRwa.innerText = "🔑 STEP 1:  FREIGABE BESTÄTIGEN...";
 
           const cleanSpender = RWA_TOKEN_ADDR.toLowerCase().replace("0x", "").padStart(64, "0");
           const amountPad = wwwWei.toString(16).padStart(64, "0");
@@ -1117,16 +1161,31 @@
           let approveTxHash = null;
 
           if (isNomoEnvironment()) {
-            const res = await window.nomo.sendAssets({
-              recipient: WWW_TOKEN_ADDR,
-              targetAddress: WWW_TOKEN_ADDR,
-              address: WWW_TOKEN_ADDR,
-              to: WWW_TOKEN_ADDR,
-              amount: "100",
-              assetSymbol: "WWW",
-              symbol: "WWW"
-            });
-            approveTxHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
+            try {
+              if (window.nomo && typeof window.nomo.signEvmTransaction === "function") {
+                const res = await window.nomo.signEvmTransaction({
+                  to: WWW_TOKEN_ADDR,
+                  recipient: WWW_TOKEN_ADDR,
+                  value: "0x0",
+                  data: approveCalldata
+                });
+                approveTxHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
+              }
+            } catch(e1) {}
+
+            if (!approveTxHash && window.nomo && typeof window.nomo.sendAssets === "function") {
+              const res = await window.nomo.sendAssets({
+                recipient: WWW_TOKEN_ADDR,
+                targetAddress: WWW_TOKEN_ADDR,
+                address: WWW_TOKEN_ADDR,
+                to: WWW_TOKEN_ADDR,
+                amount: "100",
+                assetSymbol: "WWW",
+                symbol: "WWW",
+                data: approveCalldata
+              });
+              approveTxHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
+            }
           } else if (window.ethereum && typeof window.ethereum.request === "function") {
             await ensureZSCMetaMask();
             approveTxHash = await window.ethereum.request({
@@ -1142,15 +1201,15 @@
           }
 
           if (approveTxHash) {
-            sysLog("✅ $WWW Freigabe gesendet! Hash: " + approveTxHash);
+            sysLog("✅  Freigabe gesendet! Hash: " + approveTxHash);
             showTxHash(approveTxHash);
             sysLog("⏳ Warte 4 Sekunden auf Freigabe-Bestätigung...");
             await new Promise(r => setTimeout(r, 4000));
           }
         }
 
-        sysLog("Sende mintWithWWW(100 $WWW) an RWA Minter Contract...");
-        if (btnRwa) btnRwa.innerText = "🚀 STEP 2: 100 $WWW MINTING BESTÄTIGEN...";
+        sysLog("Sende mintWithWWW(100 ) an RWA Minter Contract...");
+        if (btnRwa) btnRwa.innerText = "🚀 STEP 2: 100  MINTING BESTÄTIGEN...";
 
         const amountPad = wwwWei.toString(16).padStart(64, "0");
         const mintWwwCalldata = "0xdbe97695" + amountPad;
@@ -1158,16 +1217,31 @@
         let mintTxHash = null;
 
         if (isNomoEnvironment()) {
-          const res = await window.nomo.sendAssets({
-            recipient: RWA_TOKEN_ADDR,
-            targetAddress: RWA_TOKEN_ADDR,
-            address: RWA_TOKEN_ADDR,
-            to: RWA_TOKEN_ADDR,
-            amount: "100",
-            assetSymbol: "WWW",
-            symbol: "WWW"
-          });
-          mintTxHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
+          try {
+            if (window.nomo && typeof window.nomo.signEvmTransaction === "function") {
+              const res = await window.nomo.signEvmTransaction({
+                to: RWA_TOKEN_ADDR,
+                recipient: RWA_TOKEN_ADDR,
+                value: "0x0",
+                data: mintWwwCalldata
+              });
+              mintTxHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
+            }
+          } catch(e2) {}
+
+          if (!mintTxHash && window.nomo && typeof window.nomo.sendAssets === "function") {
+            const res = await window.nomo.sendAssets({
+              recipient: RWA_TOKEN_ADDR,
+              targetAddress: RWA_TOKEN_ADDR,
+              address: RWA_TOKEN_ADDR,
+              to: RWA_TOKEN_ADDR,
+              amount: "100",
+              assetSymbol: "WWW",
+              symbol: "WWW",
+              data: mintWwwCalldata
+            });
+            mintTxHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
+          }
         } else if (window.ethereum && typeof window.ethereum.request === "function") {
           await ensureZSCMetaMask();
           mintTxHash = await window.ethereum.request({
@@ -1183,24 +1257,24 @@
         }
 
         if (mintTxHash) {
-          sysLog("🎉 ✅ $WWW Minting platziert! Hash: " + mintTxHash);
+          sysLog("🎉 ✅  Minting platziert! Hash: " + mintTxHash);
           showTxHash(mintTxHash);
 
           setTimeout(async () => {
             await verifyOnChainPrerequisites(userAddress);
             if (btnRwa) {
               btnRwa.disabled = false;
-              btnRwa.innerText = "✓ 1.00 $RWA ERFOLGREICH GEPRÄGT";
+              btnRwa.innerText = "✓ 1.00  ERFOLGREICH GEPRÄGT";
             }
           }, 5000);
         }
 
       } catch (err) {
-        sysLog("❌ $WWW Spendenfehler: " + (err.message || err));
+        sysLog("❌  Spendenfehler: " + (err.message || err));
         alert("Spende abgebrochen: " + (err.message || err));
         if (btnRwa) {
           btnRwa.disabled = false;
-          btnRwa.innerText = "🌱 1. 100 $WWW SPENDE & $RWA PRÄGEN (mintWithWWW)";
+          btnRwa.innerText = "🌱 1. 100  SPENDE &  PRÄGEN (mintWithWWW)";
         }
       }
     }
@@ -1286,17 +1360,34 @@
 
         // NOMOAPP NATIVE PFAD (MOBILE)
         if (isNomoEnvironment()) {
-          sysLog("👉 [NOMO PFAD] Sende Transaktion über NomoApp Native Bridge...");
-          const res = await window.nomo.sendAssets({
-            recipient: SCANME_NFT_ADDR,
-            targetAddress: SCANME_NFT_ADDR,
-            address: SCANME_NFT_ADDR,
-            to: SCANME_NFT_ADDR,
-            amount: "0",
-            assetSymbol: "ZENIQ",
-            symbol: "ZENIQ"
-          });
-          txHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
+          sysLog("👉 [NOMO PFAD] Starte native EVM Contract Prägung (signEvmTransaction)..." );
+          try {
+            if (window.nomo && typeof window.nomo.signEvmTransaction === "function") {
+              const res = await window.nomo.signEvmTransaction({
+                to: SCANME_NFT_ADDR,
+                recipient: SCANME_NFT_ADDR,
+                value: "0x0",
+                data: calldata
+              });
+              txHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
+            }
+          } catch(e1) {
+            sysLog("Notice: signEvmTransaction (" + (e1.message || e1) + "), versuche sendAssets Fallback...");
+          }
+
+          if (!txHash && window.nomo && typeof window.nomo.sendAssets === "function") {
+            const res = await window.nomo.sendAssets({
+              recipient: SCANME_NFT_ADDR,
+              targetAddress: SCANME_NFT_ADDR,
+              address: SCANME_NFT_ADDR,
+              to: SCANME_NFT_ADDR,
+              amount: "0",
+              assetSymbol: "ZENIQ",
+              symbol: "ZENIQ",
+              data: calldata
+            });
+            txHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
+          }
         }
         // METAMASK PFAD (PC BROWSER)
         else if (window.ethereum && typeof window.ethereum.request === "function") {
@@ -1323,7 +1414,7 @@
           if (!isNomoEnvironment()) {
             await waitForReceipt(txHash);
           } else {
-            alert("🎉 Transaktion an NomoApp übermittelt!\\n\\nTx Hash:\\n" + txHash);
+            alert("🎉 Transaktion an NomoApp übermittelt!\n\nTx Hash:\n" + txHash);
           }
         } else {
           throw new Error("Kein Transaktions-Hash erhalten.");
