@@ -2,8 +2,13 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
+  <!-- ⚡ CACHE BUSTING META TAGS -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.42 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.43 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -297,13 +302,14 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.42) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.43) -->
   <script>
     (function() {
       "use strict";
 
       function getDartBridge() {
         if (typeof window === "undefined") return null;
+        if (!window.isRealNomoApp()) return null;
 
         // 1. iOS / Standard NOMOJSChannel
         if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.NOMOJSChannel) {
@@ -480,7 +486,7 @@
   <div class="container">
     <header>
       <img src="assets/images/mint-scanme-nft-logo.png" alt="©️ ScanMe.NFT Logo" style="width:88px; height:88px; object-fit:contain; border-radius:18px; margin-bottom:10px;">
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.42 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.43 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -600,7 +606,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.42 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.43 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -688,7 +694,7 @@
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.42 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.43 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -1100,7 +1106,7 @@
     }
 
     async function init() {
-      sysLog("Satellit v1.0.42 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      sysLog("Satellit v1.0.43 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
       
       const isNomo = isNomoEnvironment();
       sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
