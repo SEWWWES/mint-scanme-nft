@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.41 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.42 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -297,7 +297,7 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.41) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.42) -->
   <script>
     (function() {
       "use strict";
@@ -480,22 +480,11 @@
   <div class="container">
     <header>
       <img src="assets/images/mint-scanme-nft-logo.png" alt="©️ ScanMe.NFT Logo" style="width:88px; height:88px; object-fit:contain; border-radius:18px; margin-bottom:10px;">
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.41 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.42 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
-    <div class="card" style="border:1px solid var(--skyblue); background:rgba(0, 204, 255, 0.05);">
-      <div class="card-title" style="color:var(--skyblue);">
-        <span>🌐 HAUPT-WEBON & MASTER GATEWAY</span>
-        <span style="font-size:0.72rem; color:var(--emerald); font-weight:bold;">smartearthworld.znq</span>
-      </div>
-      <p style="font-size:0.78rem; color:var(--text-main); line-height:1.45; margin-bottom:10px;">
-        Öffnen Sie das globale Hauptportal der <strong>SmartEarthFamily</strong> auf sewwwes.net für ZNS Namensauflösung & P2P ScanToChat:
-      </p>
-      <button class="btn-connect" style="background:linear-gradient(135deg, #00CCFF 0%, #0055FF 100%); margin-bottom:0;" onclick="openMasterGateway()">
-        🚀 SMARTEARTHFAMILY MASTER GATEWAY ÖFFNEN
-      </button>
-    </div>
+
 
     <!-- 🎁 COMMUNITY GESCHENK BANNER -->
     <div class="gift-card">
@@ -590,6 +579,20 @@
       🚀 2. ©️ ScanMe.NFT JETZT PRÄGEN (0.00 ZENIQ)
     </button>
 
+    <!-- 🌐 SMARTEARTHFAMILY MASTER GATEWAY (OPTIONALER SEWWWES.NET VERWEIS) -->
+    <div class="card" style="border:1px solid rgba(0, 204, 255, 0.3); background:rgba(0, 204, 255, 0.05);">
+      <div class="card-title" style="color:var(--skyblue);">
+        <span>🌐 OPTIONAL: HAUPT-WEBON & MASTER GATEWAY</span>
+        <span style="font-size:0.72rem; color:var(--emerald); font-weight:bold;">smartearthworld.znq</span>
+      </div>
+      <p style="font-size:0.78rem; color:var(--text-main); line-height:1.45; margin-bottom:10px;">
+        Verbindung zum globalen Portal der <strong>SmartEarthFamily</strong> auf sewwwes.net (ZNS Name Service & P2P ScanToChat):
+      </p>
+      <button class="btn-connect" style="background:linear-gradient(135deg, #00CCFF 0%, #0055FF 100%); margin-bottom:0;" onclick="openMasterGateway()">
+        🚀 SMARTEARTHFAMILY MASTER GATEWAY ÖFFNEN
+      </button>
+    </div>
+
     <!-- 🔍 INTEGRATED DIAGNOSTIC TOOL & KOPIER-SUITE -->
     <div class="card" style="padding:14px; border:1px solid var(--skyblue);">
       <div class="card-title" style="margin-bottom:8px; color:var(--skyblue);">
@@ -597,7 +600,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.41 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.42 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -685,7 +688,7 @@
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.41 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.42 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -1097,7 +1100,7 @@
     }
 
     async function init() {
-      sysLog("Satellit v1.0.41 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      sysLog("Satellit v1.0.42 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
       
       const isNomo = isNomoEnvironment();
       sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
