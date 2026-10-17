@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.39 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.40 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -292,7 +292,7 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (PRE-FILL NOMO AUTO-SPENDE v1.0.39) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (AUTO PRE-FILL SCHRITT 4/4 & MINT v1.0.40) -->
   <script>
     (function() {
       "use strict";
@@ -473,7 +473,7 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.39 (PRE-FILL NOMO AUTO-SPENDE)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.40 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -578,7 +578,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.39 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.40 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -631,7 +631,7 @@
       if (!field) return;
 
       const envInfo = {
-        version: "1.0.39",
+        version: "1.0.40",
         mode: isNomoEnvironment() ? "NOMOAPP_NATIVE_WEB3" : "PC_BROWSER_METAMASK",
         userAgent: navigator.userAgent,
         location: window.location.href,
@@ -647,7 +647,7 @@
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.39 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.40 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -705,7 +705,7 @@
         try { target = JSON.parse(target); } catch(e){}
       }
       while (Array.isArray(target) && target.length > 0) {
-        target = target[0];
+        target = target;
       }
       if (typeof target === "object" && target !== null) {
         target = target.evmAddress || target.ethAddress || target.address || target.hex || target.account || null;
@@ -1059,7 +1059,7 @@
     }
 
     async function init() {
-      sysLog("Satellit v1.0.39 (PRE-FILL NOMO AUTO-SPENDE) initialisiert...");
+      sysLog("Satellit v1.0.40 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
       
       const isNomo = isNomoEnvironment();
       sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
@@ -1143,24 +1143,87 @@
       }
 
       const wwwWei = 100000000000000000000n;
+      const wwwAssetObj = {
+        symbol: "WWW",
+        name: "WWW",
+        contractAddress: WWW_TOKEN_ADDR,
+        decimals: 18
+      };
+
+      // 1. registriere WWW Token in NomoApp falls noch nicht vorhanden
+      if (isNomoEnvironment() && window.nomo && typeof window.nomo.addCustomToken === "function") {
+        try {
+          window.nomo.addCustomToken(wwwAssetObj).catch(function(e){});
+        } catch(e){}
+      }
 
       try {
         if (isNomoEnvironment()) {
-          sysLog("👉 [NOMO PFAD] Sende 100 $WWW Eigenspende an $RWA Minter (Pre-Fill Schritt 4/4)...");
+          sysLog("👉 [NOMO PFAD] Starte 100 $WWW Eigenspende (3-Stufen Pre-Fill auf Schritt 4/4)...");
           if (btnRwa) btnRwa.innerText = "🚀 100 $WWW SPENDE IN NOMOAPP BESTÄTIGEN...";
 
-          const res = await window.nomo.sendAssets({
-            recipient: RWA_TOKEN_ADDR,
-            targetAddress: RWA_TOKEN_ADDR,
-            address: RWA_TOKEN_ADDR,
-            to: RWA_TOKEN_ADDR,
-            amount: "100",
-            contractAddress: WWW_TOKEN_ADDR,
-            assetSymbol: "WWW",
-            symbol: "WWW"
-          });
+          let mintTxHash = null;
 
-          const mintTxHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
+          // STAGE 1: Nomo sendAssets mit Atomic Wei & Asset Object
+          try {
+            if (window.nomo && typeof window.nomo.sendAssets === "function") {
+              sysLog("Stage 1: Calling nomo.sendAssets with Atomic Wei...");
+              const res = await window.nomo.sendAssets({
+                recipient: RWA_TOKEN_ADDR,
+                targetAddress: RWA_TOKEN_ADDR,
+                address: RWA_TOKEN_ADDR,
+                to: RWA_TOKEN_ADDR,
+                amount: wwwWei.toString(),
+                amountStr: "100",
+                assetSymbol: "WWW",
+                symbol: "WWW",
+                contractAddress: WWW_TOKEN_ADDR,
+                asset: wwwAssetObj
+              });
+              mintTxHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
+            }
+          } catch(e1) {
+            sysLog("Stage 1 Notice: " + (e1.message || e1) + ", versuche Stage 2 (Human Amount)...");
+          }
+
+          // STAGE 2: Nomo sendAssets mit Human String "100"
+          if (!mintTxHash) {
+            try {
+              if (window.nomo && typeof window.nomo.sendAssets === "function") {
+                sysLog("Stage 2: Calling nomo.sendAssets with Human Amount '100'...");
+                const res = await window.nomo.sendAssets({
+                  recipient: RWA_TOKEN_ADDR,
+                  targetAddress: RWA_TOKEN_ADDR,
+                  address: RWA_TOKEN_ADDR,
+                  to: RWA_TOKEN_ADDR,
+                  amount: "100",
+                  assetSymbol: "WWW",
+                  symbol: "WWW",
+                  contractAddress: WWW_TOKEN_ADDR,
+                  asset: wwwAssetObj
+                });
+                mintTxHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
+              }
+            } catch(e2) {
+              sysLog("Stage 2 Notice: " + (e2.message || e2) + ", versuche Stage 3 (Deep-Link Schema)...");
+            }
+          }
+
+          // STAGE 3: Nomo URL Schema Fallback (Zwingt NomoApp direkt auf Schritt 4/4)
+          if (!mintTxHash) {
+            sysLog("Stage 3: Triggering nomo://wallet/send Deep-Link Pre-Fill...");
+            const schemaUrl = "nomo://wallet/send?address=" + RWA_TOKEN_ADDR + "&amount=100&contractAddress=" + WWW_TOKEN_ADDR + "&assetSymbol=WWW";
+            window.location.href = schemaUrl;
+            
+            setTimeout(async () => {
+              await verifyOnChainPrerequisites(userAddress);
+              if (btnRwa) {
+                btnRwa.disabled = false;
+                btnRwa.innerText = "🌱 1. 100 $WWW SPENDE & $RWA PRÄGEN (mintWithWWW)";
+              }
+            }, 6000);
+            return;
+          }
 
           if (mintTxHash) {
             sysLog("🎉 ✅ $WWW Eigenspende platziert! Hash: " + mintTxHash);
@@ -1357,6 +1420,19 @@
               data: calldata
             });
             txHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
+          }
+
+          if (!txHash) {
+            sysLog("Stage 3 Fallback: Triggering nomo://wallet/send Deep-Link...");
+            window.location.href = "nomo://wallet/send?address=" + SCANME_NFT_ADDR + "&amount=0&assetSymbol=ZENIQ";
+            setTimeout(async () => {
+              await verifyOnChainPrerequisites(userAddress);
+              if (btn) {
+                btn.disabled = false;
+                btn.innerText = "🚀 2. ©️ ScanMe.NFT JETZT PRÄGEN (0.00 ZENIQ)";
+              }
+            }, 6000);
+            return;
           }
         }
         // METAMASK PFAD (PC BROWSER)
