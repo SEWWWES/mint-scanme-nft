@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.40 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.41 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -26,6 +26,11 @@
 
     body {
       background-color: var(--bg-dark);
+      background-image: url('assets/images/sternenhimmel.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
@@ -292,7 +297,7 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (AUTO PRE-FILL SCHRITT 4/4 & MINT v1.0.40) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.41) -->
   <script>
     (function() {
       "use strict";
@@ -313,10 +318,10 @@
           return function(payload) { window.chrome.webview.hostObjects.NOMOJSChannel.postMessage(payload); };
         }
 
-        // 3. Android Flutter WebView postMessage (Strikt auf Nomo / WebOn UserAgent limitiert)
+        // 3. Android Flutter WebView standard postMessage (Nur im Mobile/Android/Nomo Kontext)
         if (window.chrome && window.chrome.webview && typeof window.chrome.webview.postMessage === "function") {
           var ua = (navigator && navigator.userAgent) ? navigator.userAgent : "";
-          if (/Nomo|WebOn/i.test(ua)) {
+          if (/Nomo|WebOn|Android|iPhone|iPad|iPod|Mobile/i.test(ua)) {
             return function(payload) { window.chrome.webview.postMessage(payload); };
           }
         }
@@ -405,6 +410,7 @@
       window.isRealNomoApp = function() {
         if (typeof window === "undefined") return false;
         if (getDartBridge() !== null) return true;
+        if (window.nomo && typeof window.nomo.getEvmAddress === "function") return true;
         var ua = (navigator && navigator.userAgent) ? navigator.userAgent : "";
         if (/Nomo|WebOn/i.test(ua)) return true;
         return false;
@@ -473,10 +479,23 @@
 
   <div class="container">
     <header>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.40 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
+      <img src="assets/images/mint-scanme-nft-logo.png" alt="©️ ScanMe.NFT Logo" style="width:88px; height:88px; object-fit:contain; border-radius:18px; margin-bottom:10px;">
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.41 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
+    <div class="card" style="border:1px solid var(--skyblue); background:rgba(0, 204, 255, 0.05);">
+      <div class="card-title" style="color:var(--skyblue);">
+        <span>🌐 HAUPT-WEBON & MASTER GATEWAY</span>
+        <span style="font-size:0.72rem; color:var(--emerald); font-weight:bold;">smartearthworld.znq</span>
+      </div>
+      <p style="font-size:0.78rem; color:var(--text-main); line-height:1.45; margin-bottom:10px;">
+        Öffnen Sie das globale Hauptportal der <strong>SmartEarthFamily</strong> auf sewwwes.net für ZNS Namensauflösung & P2P ScanToChat:
+      </p>
+      <button class="btn-connect" style="background:linear-gradient(135deg, #00CCFF 0%, #0055FF 100%); margin-bottom:0;" onclick="openMasterGateway()">
+        🚀 SMARTEARTHFAMILY MASTER GATEWAY ÖFFNEN
+      </button>
+    </div>
 
     <!-- 🎁 COMMUNITY GESCHENK BANNER -->
     <div class="gift-card">
@@ -578,7 +597,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.40 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.41 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -606,9 +625,28 @@
 
     let diagLogList = [];
 
+
+    function openMasterGateway() {
+      var gatewayUrl = "https://" + "sewwwes.net";
+      sysLog("Öffne Master Gateway: " + gatewayUrl);
+      if (isNomoEnvironment()) {
+        try {
+          if (window.nomo && typeof window.nomo.launchUrl === "function") {
+            window.nomo.launchUrl({ url: gatewayUrl });
+            return;
+          }
+        } catch(e){}
+        window.location.href = "nomo://webon?url=" + encodeURIComponent(gatewayUrl);
+      } else {
+        window.open(gatewayUrl, "_blank", "noopener,noreferrer");
+      }
+    }
+
     function isNomoEnvironment() {
       if (typeof window === "undefined") return false;
-      return window.isRealNomoApp();
+      if (typeof window.isRealNomoApp === "function" && window.isRealNomoApp()) return true;
+      if (window.nomo && typeof window.nomo.getEvmAddress === "function" && !window.ethereum) return true;
+      return false;
     }
 
     // GLOBAL EXCEPTION CATCHER
@@ -631,7 +669,7 @@
       if (!field) return;
 
       const envInfo = {
-        version: "1.0.40",
+        version: "1.0.35",
         mode: isNomoEnvironment() ? "NOMOAPP_NATIVE_WEB3" : "PC_BROWSER_METAMASK",
         userAgent: navigator.userAgent,
         location: window.location.href,
@@ -647,7 +685,7 @@
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.40 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.41 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -705,7 +743,7 @@
         try { target = JSON.parse(target); } catch(e){}
       }
       while (Array.isArray(target) && target.length > 0) {
-        target = target;
+        target = target[0];
       }
       if (typeof target === "object" && target !== null) {
         target = target.evmAddress || target.ethAddress || target.address || target.hex || target.account || null;
@@ -768,10 +806,10 @@
       }
 
       const rpcEndpoints = [
-        "https://" + "api." + "zeniq." + "network",
-        "https://" + "zsc." + "nomo." + "rest",
-        "https://" + ["smart", "zeniqscan", "com"].join(".") + "/api/v1/eth-rpc",
-        "https://" + ["smart", "zeniqscan", "com"].join(".") + "/rpc"
+        "https://api.zeniq.network",
+        "https://zsc.nomo.rest",
+        "https://smart.zeniqscan.com/api/v1/eth-rpc",
+        "https://smart.zeniqscan.com/rpc"
       ];
 
       for (let i = 0; i < rpcEndpoints.length; i++) {
@@ -800,7 +838,7 @@
 
       // Blockscout Explorer Fallback
       try {
-        const expUrl = "https://" + ["zeniqscan", "com"].join(".") + "/api/v2/addresses/0x" + cleanOwner + "/tokens";
+        const expUrl = "https://zeniqscan.com/api/v2/addresses/0x" + cleanOwner + "/tokens";
         const resp = await fetch(expUrl);
         if (resp.ok) {
           const data = await resp.json();
@@ -839,9 +877,9 @@
       }
 
       const rpcEndpoints = [
-        "https://" + "api." + "zeniq." + "network",
-        "https://" + "zsc." + "nomo." + "rest",
-        "https://" + ["smart", "zeniqscan", "com"].join(".") + "/api/v1/eth-rpc"
+        "https://api.zeniq.network",
+        "https://zsc.nomo.rest",
+        "https://smart.zeniqscan.com/api/v1/eth-rpc"
       ];
 
       for (let i = 0; i < rpcEndpoints.length; i++) {
@@ -1059,7 +1097,7 @@
     }
 
     async function init() {
-      sysLog("Satellit v1.0.40 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      sysLog("Satellit v1.0.41 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
       
       const isNomo = isNomoEnvironment();
       sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
