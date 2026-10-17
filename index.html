@@ -587,6 +587,29 @@
       🚀 2. ©️ ScanMe.NFT JETZT PRÄGEN (0.00 ZENIQ)
     </button>
 
+    
+    <!-- 📞 DEZENTRALER P2P CALL MODULE (NFT-GATED) -->
+    <div class="card" id="p2p-call-card" style="border:1px solid var(--emerald); background:rgba(0,30,20,0.6); margin-top:14px;">
+      <div class="card-title">
+        <span>📞 Dezentraler NFT-P2P Call</span>
+        <span id="call-gate-status" style="color:var(--emerald); font-weight:bold;">🛡️ NFT Gated</span>
+      </div>
+      <p style="font-size:0.78rem; color:var(--text-main); line-height:1.4; margin-bottom:10px;">
+        Starten Sie einen vertraulichen, Ende-zu-Ende verschlüsselten P2P-Anruf über das Nomo Messenger Protokoll. <strong>Zugangsvoraussetzung:</strong> Inhaberschaft des ©️ ScanMe.NFT oder $KYC Zündschlüssels.
+      </p>
+      
+      <div style="margin-bottom:10px;">
+        <label style="font-size:0.75rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:4px;">🎯 Ziel-HEX-Adresse (0x...) oder 10-stellige SID:</label>
+        <input type="text" id="input-call-target" placeholder="z.B. 0x... oder 7829104736" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:rgba(0,0,0,0.4); color:#fff; font-family:monospace; font-size:0.88rem; box-sizing:border-box;">
+      </div>
+
+      <button id="btn-trigger-p2p-call" class="btn-action" style="background:linear-gradient(135deg, #00b0ff, #00e676); border:none; color:#000; font-weight:bold; width:100%; padding:12px; border-radius:8px; font-size:0.9rem; cursor:pointer;" onclick="executeNomoP2PCall()">
+        📞 1-KLICK DEZENTRALEN P2P ANRUF STARTEN
+      </button>
+      <div id="call-log" style="font-size:0.72rem; color:var(--gold); margin-top:6px; font-family:monospace;"></div>
+    </div>
+
+
     <!-- 🌐 SMARTEARTHFAMILY MASTER GATEWAY (OPTIONALER SEWWWES.NET VERWEIS) -->
     <div class="card" style="border:1px solid rgba(0, 204, 255, 0.3); background:rgba(0, 204, 255, 0.05);">
       <div class="card-title" style="color:var(--skyblue);">
@@ -1423,6 +1446,70 @@ async function verifyOnChainPrerequisites(addr) {
         }
       }
     }
+
+    
+    // 📞 DEZENTRALER P2P MESSENGER CALL (NFT-GATED)
+    async function executeNomoP2PCall() {
+      const targetInput = document.getElementById("input-call-target");
+      const targetVal = targetInput ? targetInput.value.trim() : "";
+      const logDiv = document.getElementById("call-log");
+
+      if (!targetVal) {
+        alert("Bitte geben Sie eine Ziel-HEX-Adresse (0x...) oder eine 10-stellige SID ein.");
+        return;
+      }
+
+      // 1. NFT / KYC Zugangsprüfung (On-Chain Gating)
+      if (!hasScanMeNft && kycBal <= 0) {
+        alert("🛡️ ZUGANG VERWEIGERT: Ein dezentraler P2P-Anruf erfordert mindestens 1 $KYC Token oder ein geprägtes ©️ ScanMe.NFT in Ihrer Wallet!");
+        if (logDiv) logDiv.innerText = "❌ Abbruch: Kein $KYC / ScanMe.NFT vorhanden.";
+        return;
+      }
+
+      // 2. Zieladresse formatieren
+      let cleanTarget = targetVal;
+      if (!cleanTarget.startsWith("0x") && cleanTarget.length === 10 && /^\d+$/.test(cleanTarget)) {
+        sysLog("Anruf-Ziel als 10-stellige SID erkannt: " + cleanTarget);
+      }
+
+      sysLog("📞 Starte dezentralen P2P Call zu Ziel: " + cleanTarget);
+      if (logDiv) logDiv.innerText = "⏳ Verbinde Nomo Messenger Call zu " + cleanTarget + "...";
+
+      try {
+        if (isNomoEnvironment()) {
+          // Native Nomo Messenger Call Trigger
+          let callSuccess = false;
+
+          // Versuche native Bridge falls verfügbar
+          if (window.nomo && typeof window.nomo.messengerCall === "function") {
+            try {
+              await window.nomo.messengerCall({ address: cleanTarget, recipient: cleanTarget });
+              callSuccess = true;
+            } catch(e) {
+              sysLog("Notice (messengerCall): " + (e.message || e));
+            }
+          }
+
+          // Fallback zu Nomo URL Schema Protocol
+          if (!callSuccess) {
+            const schemaUrl = "nomo://messenger/call?address=" + encodeURIComponent(cleanTarget) + "&target=" + encodeURIComponent(cleanTarget);
+            sysLog("Löse Nomo Call Deep-Link Schema aus: " + schemaUrl);
+            window.location.href = schemaUrl;
+          }
+
+          if (logDiv) logDiv.innerText = "🚀 P2P Anruf-Signal an Nomo Messenger übermittelt!";
+        } else {
+          // PC / Browser Fallback
+          sysLog("PC Browser Modus: P2P Call erfordert die NomoApp.");
+          alert("📞 Dezentrale P2P-Telefonie ist direkt in das dezentrale NomoApp Messenger-Protokoll integriert. Bitte öffnen Sie diesen Link in der NomoApp!");
+          if (logDiv) logDiv.innerText = "ℹ️ Bitte im NomoApp Mobile Browser öffnen.";
+        }
+      } catch (err) {
+        sysLog("❌ Fehler beim Call-Start: " + (err.message || err));
+        if (logDiv) logDiv.innerText = "❌ Fehler: " + (err.message || err);
+      }
+    }
+
 
     async function executeMint() {
       if (!userAddress) {
