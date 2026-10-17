@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.45 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.46 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -302,7 +302,7 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.45) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.46) -->
   <script>
     (function() {
       "use strict";
@@ -485,7 +485,7 @@
   <div class="container">
     <header>
       <img src="assets/images/mint-scanme-nft-logo.png" alt="©️ ScanMe.NFT Logo" style="width:88px; height:88px; object-fit:contain; border-radius:18px; margin-bottom:10px;">
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.45 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.46 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -511,7 +511,10 @@
     <div class="card">
       <div class="card-title">
         <span>Voraussetzungen & Guthaben</span>
-        <span id="wallet-short" style="color:var(--gold);">Warte auf Wallet-Kopplung...</span>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <button class="btn-copy" style="font-size:0.72rem; padding:3px 8px;" onclick="userManualRefreshStatus()">🔄 PRÜFEN</button>
+          <span id="wallet-short" style="color:var(--gold);">Warte auf Wallet-Kopplung...</span>
+        </div>
       </div>
 
       <div class="status-row">
@@ -605,7 +608,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.45 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.46 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -693,7 +696,7 @@
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.45 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.46 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -915,7 +918,44 @@
       return 0n;
     }
 
-    async function verifyOnChainPrerequisites(addr) {
+        let prereqPollingTimer = null;
+
+    function userManualRefreshStatus() {
+      sysLog("Benutzer Klick: '🔄 STATUS PRÜFEN' gedrueckt.");
+      if (userAddress) {
+        verifyOnChainPrerequisites(userAddress);
+        startPrerequisitesPolling(userAddress, 15, 3);
+      } else {
+        alert("Bitte verbinden Sie zuerst Ihre Wallet.");
+      }
+    }
+
+    function startPrerequisitesPolling(addr, durationSec = 30, intervalSec = 3) {
+      if (!addr) return;
+      if (prereqPollingTimer) clearInterval(prereqPollingTimer);
+
+      sysLog("⚡ Starte On-Chain Polling (" + durationSec + "s, Intervall " + intervalSec + "s)...");
+      let attempts = 0;
+      const maxAttempts = Math.ceil(durationSec / intervalSec);
+
+      prereqPollingTimer = setInterval(async () => {
+        attempts++;
+        sysLog("🔄 Polling-Check " + attempts + "/" + maxAttempts + " fuer " + addr.substring(0,8) + "...");
+        await verifyOnChainPrerequisites(addr);
+
+        if (hasRwaToken || attempts >= maxAttempts) {
+          clearInterval(prereqPollingTimer);
+          prereqPollingTimer = null;
+          if (hasRwaToken) {
+            sysLog("🎉 ✅ Polling erfolgreich: $RWA Token On-Chain gefunden!");
+          } else {
+            sysLog("Notice: Polling-Zeitfenster beendet.");
+          }
+        }
+      }, intervalSec * 1000);
+    }
+
+async function verifyOnChainPrerequisites(addr) {
       sysLog("Verifiziere On-Chain Voraussetzungen fuer " + addr.substring(0,8) + "...");
       const elKYC = document.getElementById("status-kyc");
       const elRWA = document.getElementById("status-rwa");
@@ -1105,7 +1145,7 @@
     }
 
     async function init() {
-      sysLog("Satellit v1.0.45 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      sysLog("Satellit v1.0.46 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
       
       const isNomo = isNomoEnvironment();
       sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
@@ -1168,6 +1208,20 @@
           });
         }
       }
+
+      document.addEventListener("visibilitychange", function() {
+        if (document.visibilityState === "visible" && userAddress) {
+          sysLog("📱 WebOn wieder im Vordergrund (visibilitychange). Prüfe On-Chain Status...");
+          startPrerequisitesPolling(userAddress, 18, 3);
+        }
+      });
+
+      window.addEventListener("focus", function() {
+        if (userAddress) {
+          sysLog("📱 WebOn Fokus erhalten (focus). Prüfe On-Chain Status...");
+          verifyOnChainPrerequisites(userAddress);
+        }
+      });
 
       sysLog("Bereit.");
     }
@@ -1308,13 +1362,13 @@
             const schemaUrl = "nomo://wallet/send?address=" + RWA_TOKEN_ADDR + "&amount=" + encodeURIComponent(amountStr) + "&contractAddress=" + WWW_TOKEN_ADDR + "&assetSymbol=WWW";
             window.location.href = schemaUrl;
 
+            startPrerequisitesPolling(userAddress, 45, 3);
             setTimeout(async () => {
-              await verifyOnChainPrerequisites(userAddress);
               if (btnRwa) {
                 btnRwa.disabled = false;
                 btnRwa.innerText = "🌱 " + amountStr + " $WWW SPENDE & $RWA PRÄGEN (mintWithWWW)";
               }
-            }, 6000);
+            }, 5000);
             return;
           }
 
@@ -1322,8 +1376,8 @@
             sysLog("🎉 ✅ $WWW Eigenspende platziert! Hash: " + mintTxHash);
             showTxHash(mintTxHash);
 
+            startPrerequisitesPolling(userAddress, 45, 3);
             setTimeout(async () => {
-              await verifyOnChainPrerequisites(userAddress);
               if (btnRwa) {
                 btnRwa.disabled = false;
                 btnRwa.innerText = "✓ $RWA ERFOLGREICH GEPRÄGT";
