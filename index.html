@@ -2,487 +2,349 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.67 | SmartEarthFamily</title>
-  
+  <!-- ⚡ CACHE BUSTING META TAGS -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.70 | SmartEarthFamily</title>
   <style>
     :root {
-      --bg-dark: #040d1a;
-      --card-bg: rgba(10, 25, 47, 0.85);
-      --border: rgba(0, 230, 255, 0.2);
-      --border-accent: rgba(0, 255, 102, 0.4);
-      --text-main: #e2e8f0;
-      --text-muted: #94a3b8;
+      --bg-dark: #0A0E17;
+      --card-bg: rgba(16, 24, 40, 0.9);
       --emerald: #00FF66;
       --gold: #FFD700;
-      --skyblue: #00ccff;
-      --crimson: #ff3366;
-      --purple: #9d4edd;
+      --red: #FF3366;
+      --skyblue: #00CCFF;
+      --text-main: #F0F4F8;
+      --text-muted: #8A99AD;
+      --border-color: rgba(0, 255, 102, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
     body {
       background-color: var(--bg-dark);
+      background-image: url('assets/images/sternenhimmel.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
       color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      margin: 0;
-      padding: 12px;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
-      box-sizing: border-box;
-      line-height: 1.5;
+      padding: 16px;
     }
 
     .container {
       width: 100%;
-      max-width: 540px;
+      max-width: 480px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 16px;
     }
 
-    .header {
+    header {
       text-align: center;
-      padding: 16px;
-      background: linear-gradient(135deg, rgba(4,13,26,0.95), rgba(10,25,47,0.9));
-      border: 1px solid var(--border-accent);
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0, 255, 102, 0.1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .header::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, var(--skyblue), var(--emerald), var(--gold));
-    }
-
-    .logo {
-      width: 84px;
-      height: 84px;
-      border-radius: 50%;
-      border: 2px solid var(--emerald);
-      box-shadow: 0 0 16px rgba(0, 255, 102, 0.3);
-      object-fit: cover;
-      margin-bottom: 8px;
-    }
-
-    h1 {
-      font-size: 1.25rem;
-      margin: 4px 0;
-      color: #fff;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-    }
-
-    .subtitle {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 10px;
+      padding: 12px 0;
     }
 
     .badge-satellit {
       display: inline-block;
-      padding: 4px 10px;
-      border-radius: 20px;
-      background: rgba(0, 255, 102, 0.12);
+      background: rgba(0, 255, 102, 0.15);
       border: 1px solid var(--emerald);
       color: var(--emerald);
       font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--emerald);
+      margin-bottom: 4px;
+    }
+
+    p.subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
     }
 
     .card {
       background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 18px;
     }
 
     .card-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--gold);
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--text-muted);
       margin-bottom: 12px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
     }
 
-    .dna-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 8px;
-      font-size: 0.82rem;
-    }
-
-    .dna-item {
+    .status-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 10px;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
-    .dna-label {
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .dna-value {
-      font-family: monospace;
-      color: var(--skyblue);
-      font-weight: 700;
-      word-break: break-all;
-      text-align: right;
+    .status-row:last-child {
+      border-bottom: none;
     }
 
     .status-pill {
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
     }
 
-    .pill-green { background: rgba(0, 255, 102, 0.15); color: var(--emerald); border: 1px solid var(--emerald); }
-    .pill-red { background: rgba(255, 51, 102, 0.15); color: var(--crimson); border: 1px solid var(--crimson); }
-    .pill-gold { background: rgba(255, 215, 0, 0.15); color: var(--gold); border: 1px solid var(--gold); }
+    .pill-green {
+      background: rgba(0, 255, 102, 0.15);
+      color: var(--emerald);
+      border: 1px solid rgba(0, 255, 102, 0.4);
+    }
 
-    .btn-action {
-      width: 100%;
-      padding: 14px;
-      border-radius: 10px;
-      border: none;
-      font-weight: 800;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
+    .pill-gold {
+      background: rgba(255, 215, 0, 0.15);
+      color: var(--gold);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+    }
+
+    .pill-red {
+      background: rgba(255, 51, 102, 0.15);
+      color: #FF6688;
+      border: 1px solid rgba(255, 51, 102, 0.4);
+    }
+
+    .pill-muted {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .gift-card {
+      background: rgba(0, 255, 102, 0.05);
+      border: 1px solid var(--emerald);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 0 15px rgba(0, 255, 102, 0.1);
+    }
+
+    .rwa-box {
+      background: rgba(255, 215, 0, 0.06);
+      border: 1px solid var(--gold);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .dna-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px dashed var(--border-color);
+      border-radius: 12px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 0.82rem;
+      word-break: break-all;
+    }
+
+    .dna-key {
+      color: var(--gold);
+      font-weight: bold;
+    }
+
+    .price-box {
+      background: rgba(0, 255, 102, 0.04);
+      border: 1px solid rgba(0, 255, 102, 0.3);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 4px;
+      font-family: monospace;
+      font-size: 0.8rem;
+    }
+
+    .price-row {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 0 4px 14px rgba(0, 255, 102, 0.2);
+      justify-content: space-between;
+      margin-bottom: 6px;
     }
 
-    .btn-action:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      box-shadow: none;
+    .price-row:last-child {
+      margin-bottom: 0;
     }
 
-    .btn-connect {
-      background: linear-gradient(135deg, var(--skyblue) 0%, #0088cc 100%);
-      color: #000;
+    .tx-display-box {
+      display: none;
+      background: rgba(0, 204, 255, 0.08);
+      border: 1px solid var(--skyblue);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      font-family: monospace;
+      font-size: 0.78rem;
+      word-break: break-all;
+    }
+
+    .tx-link {
+      color: var(--skyblue);
+      text-decoration: underline;
+      font-weight: bold;
+      cursor: pointer;
     }
 
     .btn-mint {
+      width: 100%;
       background: linear-gradient(135deg, var(--emerald) 0%, #00B347 100%);
       color: #041208;
+      font-size: 1.05rem;
+      font-weight: 900;
+      padding: 16px;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
 
     .btn-rwa {
-      background: linear-gradient(135deg, var(--gold) 0%, #ccac00 100%);
-      color: #000;
-    }
-
-    .input-field {
       width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: rgba(0, 0, 0, 0.4);
-      color: #fff;
-      font-size: 0.9rem;
-      box-sizing: border-box;
-      margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--gold) 0%, #CCAC00 100%);
+      color: #121004;
+      font-size: 1.0rem;
+      font-weight: 900;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.2s ease;
     }
 
-    .input-field:focus {
-      outline: none;
-      border-color: var(--emerald);
+    .btn-connect {
+      width: 100%;
+      background: linear-gradient(135deg, #00CCFF 0%, #0077FF 100%);
+      color: #FFFFFF;
+      font-size: 1.0rem;
+      font-weight: 900;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: all 0.2s ease;
     }
 
-    .log-box {
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px solid var(--border);
+    .btn-copy {
+      background: rgba(0, 204, 255, 0.2);
+      border: 1px solid var(--skyblue);
+      color: var(--skyblue);
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 6px 12px;
       border-radius: 8px;
-      padding: 10px;
-      font-family: monospace;
-      font-size: 0.72rem;
-      color: var(--emerald);
-      max-height: 140px;
-      overflow-y: auto;
-      white-space: pre-wrap;
-      word-break: break-all;
+      cursor: pointer;
     }
 
     .diag-textarea {
       width: 100%;
-      height: 90px;
-      background: rgba(0, 0, 0, 0.7);
-      border: 1px solid var(--border);
+      height: 130px;
+      background: #000;
+      color: var(--skyblue);
+      border: 1px solid var(--skyblue);
       border-radius: 8px;
-      color: var(--text-muted);
-      font-family: monospace;
-      font-size: 0.68rem;
       padding: 8px;
-      box-sizing: border-box;
+      font-family: monospace;
+      font-size: 0.70rem;
       resize: vertical;
+      margin-top: 8px;
     }
 
-    .btn-copy {
-      background: rgba(0, 204, 255, 0.15);
-      border: 1px solid var(--skyblue);
-      color: var(--skyblue);
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      cursor: pointer;
+    .btn-mint:disabled, .btn-rwa:disabled, .btn-connect:disabled {
+      background: #2A364F;
+      color: #5A6B87;
+      cursor: not-allowed;
+    }
+
+    .log-box {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: var(--emerald);
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(0, 255, 102, 0.15);
+      border-radius: 12px;
+      padding: 10px;
+      max-height: 140px;
+      overflow-y: auto;
     }
 
     footer {
-      margin-top: 10px;
       text-align: center;
-      font-size: 0.7rem;
-      color: var(--text-muted);
-    }
-
-    .directory-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .directory-item {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(0, 204, 255, 0.2);
-      border-radius: 8px;
-      padding: 8px;
-      text-align: center;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .directory-item:hover {
-      background: rgba(0, 204, 255, 0.12);
-    }
-
-    .tx-display {
-      margin-top: 8px;
-      padding: 8px;
-      background: rgba(0, 255, 102, 0.08);
-      border: 1px solid var(--emerald);
-      border-radius: 8px;
       font-size: 0.75rem;
-      display: none;
-    }
-
-    .tx-link {
-      color: var(--emerald);
-      text-decoration: underline;
-      word-break: break-all;
-      font-family: monospace;
+      color: var(--text-muted);
+      margin-top: 12px;
     }
   </style>
-</head>
-<body>
-  <div class="container">
-    
-    <!-- HEADER AREA -->
-    <header class="header">
-      <img src="./scanme-nft-minter-webon-logo.png" alt="Logo" class="logo" onerror="this.src='[suspicious link removed]'">
-      <h1>©️ ScanMe.NFT Satellit</h1>
-      <div class="subtitle">SmartEarthFamily • Eigenspende & P2P Call Gateway</div>
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.67 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
-    </header>
 
-    <!-- WALLET & BLOCKCHAIN DNA -->
-    <div class="card">
-      <div class="card-title">
-        <span>🔑 DEZENTRALE BLOCKCHAIN DNA</span>
-        <span id="wallet-short" style="color:var(--text-muted); font-size:0.8rem;">Nicht verbunden</span>
-      </div>
-      
-      <div class="dna-grid">
-        <div class="dna-item">
-          <span class="dna-label">HEX-Adresse:</span>
-          <span id="dna-hex" class="dna-value">0x...</span>
-        </div>
-        <div class="dna-item">
-          <span class="dna-label">SID (Short ID):</span>
-          <span id="dna-sid" class="dna-value">0000000000</span>
-        </div>
-        <div class="dna-item">
-          <span class="dna-label">FID (Family ID):</span>
-          <span id="dna-fid" class="dna-value">9999999999</span>
-        </div>
-      </div>
-
-      <button id="btn-connect-wallet" class="btn-action btn-connect" style="margin-top:12px;" onclick="userTriggerConnectWallet()">
-        🔑 WALLET VERBINDEN (NomoApp / MetaMask)
-      </button>
-    </div>
-
-    <!-- VORAUSSETZUNGEN STATUS -->
-    <div class="card">
-      <div class="card-title">
-        <span>📋 ON-CHAIN STATUS PRÜFUNG</span>
-        <button class="btn-copy" onclick="userManualRefreshStatus()">🔄 REFRESH</button>
-      </div>
-      
-      <div class="dna-grid">
-        <div class="dna-item">
-          <span class="dna-label">1. $KYC Token (Zugang):</span>
-          <span id="status-kyc" class="status-pill pill-red">Prüfe...</span>
-        </div>
-        <div class="dna-item">
-          <span class="dna-label">2. $RWA Spende (Naturland):</span>
-          <span id="status-rwa" class="status-pill pill-gold">Prüfe...</span>
-        </div>
-        <div class="dna-item">
-          <span class="dna-label">3. ©️ ScanMe.NFT (Schöpfung):</span>
-          <span id="status-nft" class="status-pill pill-gold">Prüfe...</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- RWA EIGENSPENDE CARD -->
-    <div id="rwa-action-card" class="card" style="border:1px solid var(--gold); background:rgba(255, 215, 0, 0.04); display:block;">
-      <div class="card-title" style="color:var(--gold);">
-        <span>🌱 100:10:1 EIGENSPENDE & $RWA INHALATION</span>
-        <span style="font-size:0.75rem; color:var(--emerald);">100 $WWW = 1.00 $RWA</span>
-      </div>
-      <p style="font-size:0.78rem; color:var(--text-main); line-height:1.4; margin-bottom:10px;">
-        Ihre Wallet benötigt On-Chain $RWA Guthaben für die Quadriga-Sättigung. Wählen Sie einen $WWW Betrag – dieser wird automatisch als Smart Contract Call <code>mintWithWWW</code> an den Minter gesendet.
-      </p>
-
-      <div style="display:flex; gap:6px; margin-bottom:10px;">
-        <button type="button" class="btn-copy" style="flex:1; padding:8px 4px; font-size:0.8rem; background:rgba(255,215,0,0.15); border:1px solid var(--gold); color:var(--gold);" onclick="setWwwAmount('1')">🌱 1 $WWW<br><span style="font-size:0.68rem; opacity:0.8;">(0.01 $RWA)</span></button>
-        <button type="button" class="btn-copy" style="flex:1; padding:8px 4px; font-size:0.8rem; background:rgba(255,215,0,0.15); border:1px solid var(--gold); color:var(--gold);" onclick="setWwwAmount('10')">🌿 10 $WWW<br><span style="font-size:0.68rem; opacity:0.8;">(0.10 $RWA)</span></button>
-        <button type="button" class="btn-copy" style="flex:1; padding:8px 4px; font-size:0.8rem; background:rgba(255,215,0,0.25); border:1px solid var(--gold); color:var(--gold); font-weight:bold;" onclick="setWwwAmount('100')">🌳 100 $WWW<br><span style="font-size:0.68rem; opacity:0.9;">(1.00 $RWA)</span></button>
-      </div>
-
-      <input type="text" id="input-www-amount" class="input-field" value="100" placeholder="$WWW Menge eingeben" oninput="updateRwaCalcPreview(this.value)">
-      
-      <div id="rwa-calc-preview" style="font-size:0.75rem; color:var(--emerald); margin-bottom:10px; font-weight:bold; text-align:center;">
-        📊 Errechneter Gegenwert: 1.00 $RWA • 10.0 qm Mutterboden geschützt
-      </div>
-
-      <button id="btn-trigger-rwa" class="btn-action btn-rwa" onclick="executeRwaWwwDonation()">
-        🌱 1. $WWW SPENDE & $RWA PRÄGEN (mintWithWWW)
-      </button>
-    </div>
-
-    <!-- SCANME MINT CARD -->
-    <div class="card">
-      <div class="card-title">
-        <span>🛡️ ©️ ScanMe.NFT SCHÖPFUNG</span>
-        <span style="color:var(--emerald);">0.00 ZENIQ</span>
-      </div>
-      <p style="font-size:0.78rem; color:var(--text-main); line-height:1.4; margin-bottom:10px;">
-        Prägen Sie Ihren unkopierbaren digitalen Passierschein auf der ZENIQ Smart Chain. Gebührenfrei (0.00 ZENIQ Gas).
-      </p>
-
-      <div id="tx-display-box" class="tx-display">
-        <div style="color:var(--text-muted); font-size:0.7rem;">Letzter Transaktions-Hash (ZSC Explorer):</div>
-        <a id="tx-hash-link" class="tx-link" href="#" target="_blank" rel="noopener">0x...</a>
-      </div>
-
-      <button id="btn-mint-action" class="btn-mint" style="margin-top:10px;" onclick="executeMint()">
-        🚀 2. ©️ ScanMe.NFT JETZT PRÄGEN (0.00 ZENIQ)
-      </button>
-    </div>
-
-    <!-- 📞 DEZENTRALER P2P CALL MODULE (NFT-GATED) -->
-    <div class="card" id="p2p-call-card" style="border:1px solid var(--emerald); background:rgba(0,30,20,0.6); margin-top:4px;">
-      <div class="card-title">
-        <span>📞 SmartEarthPhone P2P Call Gateway</span>
-        <span id="call-gate-status" style="color:var(--emerald); font-weight:bold;">🛡️ NFT Gated</span>
-      </div>
-      <p style="font-size:0.78rem; color:var(--text-main); line-height:1.4; margin-bottom:10px;">
-        Starten Sie einen vertraulichen P2P-Anruf über den Nomo Messenger. <strong>Zugang:</strong> Inhaberschaft von ©️ ScanMe.NFT oder $KYC Token.
-      </p>
-      
-      <div style="margin-bottom:10px;">
-        <label style="font-size:0.75rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:4px;">🎯 Ziel-HEX-Adresse (0x...) oder 10-stellige SID:</label>
-        <input type="text" id="input-call-target" placeholder="z.B. 0x... oder 7829104736" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:rgba(0,0,0,0.4); color:#fff; font-family:monospace; font-size:0.88rem; box-sizing:border-box;">
-      </div>
-
-      <!-- 🌐 SMARTEARTHDIRECTORY TELEFONBUCH EINGEBETTET -->
-      <div style="margin-bottom:12px;">
-        <label style="font-size:0.72rem; color:var(--gold); font-weight:bold; display:block; margin-bottom:4px;">🌐 SmartEarthDirectory (Verifizierte Partner-SIDs):</label>
-        <div class="directory-grid">
-          <div class="directory-item" onclick="selectDirectoryEntry('DIRK (ARCHITEKT)', '7829104736', '0x90cA10b5185BD65ebf6d6374CCE232bc92dDDaBB')">
-            <div style="font-weight:bold; color:#fff; font-size:0.75rem;">👨‍💻 DIRK (ARCHITEKT)</div>
-            <div style="font-size:0.68rem; color:var(--skyblue); font-family:monospace;">SID: 7829104736</div>
-            <div style="font-size:0.65rem; color:var(--emerald);">🟢 BEREIT</div>
-          </div>
-          <div class="directory-item" onclick="selectDirectoryEntry('WEBON PORTAL', '6384531622', '0x3e39dbD7EE545904E428E6f624d9FFEA507Ae11E')">
-            <div style="font-weight:bold; color:#fff; font-size:0.75rem;">🌐 WEBON PORTAL</div>
-            <div style="font-size:0.68rem; color:var(--skyblue); font-family:monospace;">SID: 6384531622</div>
-            <div style="font-size:0.65rem; color:var(--emerald);">🟢 BEREIT</div>
-          </div>
-          <div class="directory-item" onclick="selectDirectoryEntry('SEWWWES MAIN', '2956354020', '0xF1A5D0bAd2375d202A1BDCE4505dBceD929F7c22')">
-            <div style="font-weight:bold; color:#fff; font-size:0.75rem;">🛡️ SEWWWES MAIN</div>
-            <div style="font-size:0.68rem; color:var(--skyblue); font-family:monospace;">SID: 2956354020</div>
-            <div style="font-size:0.65rem; color:var(--emerald);">🟢 BEREIT</div>
-          </div>
-        </div>
-      </div>
-
-      <button id="btn-trigger-p2p-call" class="btn-action" style="background:linear-gradient(135deg, #00b0ff, #00e676); border:none; color:#000; font-weight:bold; width:100%; padding:12px; border-radius:8px; font-size:0.9rem; cursor:pointer;" onclick="executeNomoP2PCall()">
-        📞 SmartEarthPhone ScanToCall zünden
-      </button>
-      <div id="call-log" style="font-size:0.72rem; color:var(--gold); margin-top:6px; font-family:monospace;"></div>
-    </div>
-
-    <!-- DIAGNOSTIK & MONITORING -->
-    <div class="card" style="border:1px solid var(--skyblue);">
-      <div class="card-title" style="color:var(--skyblue);">
-        <span>🔍 DIAGNOSTIK & ECHTZEIT-MONITORING</span>
-        <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
-      </div>
-
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.67 initialisiert. Bereit...</div>
-
-      <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
-        Kopierfeld für Entwickler-Analyse:
-      </label>
-      <textarea id="diag-copy-field" class="diag-textarea" readonly placeholder="Lade Diagnostik-Daten..."></textarea>
-    </div>
-
-    <footer>
-      SmartEarthFamily • ZENIQ Smart Chain (Chain ID 38341)<br>
-      Vertrag: 0xf0c50Be74969E6c07b5C5D5AE31294e6a4a14881
-    </footer>
-
-  </div>
-
-  <!-- EMBEDDED NATIVE NOMO WEBON DART BRIDGE -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.70) -->
   <script>
     (function() {
-      var moduleID = Math.floor(Math.random() * 1000000000).toString();
-      var invocationCounter = 0;
-      window.nomoResolvePromises = {};
-      window.nomoRejectPromises = {};
+      "use strict";
+
+      window.isRealNomoApp = function() {
+        if (typeof window === "undefined") return false;
+        var ua = (navigator && navigator.userAgent) ? navigator.userAgent : "";
+        if (/Nomo|WebOn/i.test(ua)) return true;
+        if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.NOMOJSChannel) return true;
+        if (window.NOMOJSChannel && typeof window.NOMOJSChannel.postMessage === "function") return true;
+        return false;
+      };
 
       function getDartBridge() {
-        if (typeof nomo !== 'undefined' && nomo.postMessage) return function(msg) { nomo.postMessage(msg); };
-        if (window.nomo && window.nomo.postMessage) return function(msg) { window.nomo.postMessage(msg); };
-        if (window.FlutterBridge && window.FlutterBridge.postMessage) return function(msg) { window.FlutterBridge.postMessage(msg); };
+        if (typeof window === "undefined") return null;
+        if (!window.isRealNomoApp()) return null;
+
+        // 1. iOS / Standard NOMOJSChannel
+        if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.NOMOJSChannel) {
+          return function(payload) { window.webkit.messageHandlers.NOMOJSChannel.postMessage(payload); };
+        }
+        if (window.NOMOJSChannel && typeof window.NOMOJSChannel.postMessage === "function") {
+          return function(payload) { window.NOMOJSChannel.postMessage(payload); };
+        }
+
+        // 2. Android Flutter WebView NOMOJSChannel hostObjects
+        if (window.chrome && window.chrome.webview && window.chrome.webview.hostObjects && window.chrome.webview.hostObjects.NOMOJSChannel) {
+          return function(payload) { window.chrome.webview.hostObjects.NOMOJSChannel.postMessage(payload); };
+        }
+
+        // 3. Android Flutter WebView standard postMessage
+        if (window.chrome && window.chrome.webview && typeof window.chrome.webview.postMessage === "function") {
+          return function(payload) { window.chrome.webview.postMessage(payload); };
+        }
+
         return null;
       }
+
+      var invocationCounter = 0;
+      var moduleID = Math.random().toString(36).substring(2, 10);
+      window.nomoResolvePromises = window.nomoResolvePromises || {};
+      window.nomoRejectPromises = window.nomoRejectPromises || {};
 
       function invokeNomoFunction(functionName, args) {
         invocationCounter++;
@@ -496,40 +358,73 @@
             try {
               bridge(payload);
             } catch (e) {
-              reject(e);
+              reject(e.message || e);
             }
           } else {
-            reject("nomo_bridge_unavailable");
+            reject("Not running inside Nomo App.");
           }
         });
       }
 
-      window.nomoResponse = function(response) {
+      function decodeBase64UTF16(base64EncodedString) {
         try {
-          var res = (typeof response === 'string') ? JSON.parse(response) : response;
-          var invocationID = res.invocationID;
-          if (invocationID && window.nomoResolvePromises[invocationID]) {
-            if (res.status === 'error' || res.error) {
-              window.nomoRejectPromises[invocationID](res.error || res.status);
-            } else {
-              window.nomoResolvePromises[invocationID](res.result !== undefined ? res.result : res);
-            }
-            delete window.nomoResolvePromises[invocationID];
-            delete window.nomoRejectPromises[invocationID];
+          var binaryString = atob(base64EncodedString);
+          var bytes = new Uint8Array(binaryString.length);
+          for (var i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
           }
-        } catch (e) {}
+          return new TextDecoder("utf-8").decode(bytes);
+        } catch(e) {
+          return base64EncodedString;
+        }
+      }
+
+      window.fulfillPromiseFromFlutter = function(arg1, arg2, arg3) {
+        try {
+          var invocationID, status, result;
+          if (typeof arg1 === "string" && (!arg2 || typeof arg2 !== "string" || arg1.length > 50)) {
+            var jsonStr = decodeBase64UTF16(arg1);
+            var obj = JSON.parse(jsonStr);
+            invocationID = obj.invocationID;
+            status = obj.status;
+            result = obj.result;
+          } else {
+            invocationID = arg1;
+            result = arg2;
+            status = (arg3 === true || arg3 === "true" || arg3 === "OK" || arg3 === 1) ? "resolve" : "reject";
+          }
+
+          if (!invocationID) return "missing invocationID";
+
+          var fulfillFunction;
+          if (status === "resolve" || status === true) {
+            fulfillFunction = window.nomoResolvePromises[invocationID];
+          } else {
+            fulfillFunction = window.nomoRejectPromises[invocationID];
+          }
+
+          window.nomoResolvePromises[invocationID] = null;
+          window.nomoRejectPromises[invocationID] = null;
+
+          if (fulfillFunction) {
+            if (typeof result === "string" && (result.startsWith("{") || result.startsWith("["))) {
+              try { result = JSON.parse(result); } catch(e){}
+            }
+            fulfillFunction(result);
+            return "OK";
+          }
+        } catch (e) {
+          console.error("fulfillPromiseFromFlutter failed", e);
+        }
+        return "FAIL";
       };
 
-      window.isRealNomoApp = function() {
-        if (typeof window === "undefined") return false;
-        var ua = navigator.userAgent || "";
-        if (ua.indexOf("Nomo") !== -1 || ua.indexOf("WebOn") !== -1) return true;
-        if (typeof window.nomo !== "undefined" && typeof window.nomo.getEvmAddress === "function") return true;
-        return false;
-      };
+      // window.isRealNomoApp already defined cleanly at top of bridge IIFE
 
-      window.nomo = {
-        runsAsWebOn: function() { return window.isRealNomoApp(); },
+      var nomoBridge = {
+        runsAsWebOn: function() {
+          return window.isRealNomoApp();
+        },
         getEvmAddress: function() {
           if (!window.isRealNomoApp()) {
             return Promise.reject("NOT_IN_NOMO_APP");
@@ -572,22 +467,257 @@
           return invokeNomoFunction("nomoQrScan", {});
         }
       };
+
+      if (!window.nomo || Object.keys(window.nomo).length === 0) {
+        window.nomo = nomoBridge;
+      } else {
+        for (var key in nomoBridge) {
+          if (!(key in window.nomo)) {
+            window.nomo[key] = nomoBridge[key];
+          }
+        }
+      }
     })();
   </script>
+</head>
+<body>
 
-  <!-- MAIN APPLICATION LOGIC -->
+  <div class="container">
+    <header>
+      <img src="assets/images/mint-scanme-nft-logo.png" alt="©️ ScanMe.NFT Logo" style="width:88px; height:88px; object-fit:contain; border-radius:18px; margin-bottom:10px;">
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.70 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
+      <h1>©️ ScanMe.NFT Minter</h1>
+      <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
+    </header>
+
+
+    <!-- 🎁 COMMUNITY GESCHENK BANNER -->
+    <div class="gift-card">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+        <span style="font-size:1.3rem;">🎁</span>
+        <strong style="color:var(--emerald); font-size:0.88rem; letter-spacing:0.5px;">SMARTEARTHFAMILY COMMUNITY-GESCHENK</strong>
+      </div>
+      <p style="font-size:0.8rem; color:var(--text-main); line-height:1.45;">
+        <strong>Exklusiver Mehrwert & Geschenk:</strong> Das unbestechliche ©️ ScanMe.NFT Siegel besitzt einen regulären Schöpfungswert von <strong>$100.00 USD</strong>. Die Prägung selbst ist <strong>gebührenfrei (0.00 ZENIQ)</strong>. Über die 100 $WWW Eigenspende am Minter schalten Sie exakt <strong>1.00 $RWA Token</strong> frei (10 qm geschützter Mutterboden + 1 DigaBodhiTree)!
+      </p>
+    </div>
+
+    <!-- WALLET KOPPLUNG BUTTON -->
+    <button id="btn-connect-wallet" class="btn-connect" onclick="userTriggerConnectWallet()">
+      🔑 Sovereign Wallet Connect (Nomo / MetaMask)
+    </button>
+
+    <!-- ON-CHAIN PREREQUISITES VERIFICATION -->
+    <div class="card">
+      <div class="card-title">
+        <span>Voraussetzungen & Guthaben</span>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <button class="btn-copy" style="font-size:0.72rem; padding:3px 8px;" onclick="userManualRefreshStatus()">🔄 PRÜFEN</button>
+          <span id="wallet-short" style="color:var(--gold);">Warte auf Wallet-Kopplung...</span>
+        </div>
+      </div>
+
+      <div class="status-row">
+        <div>🔑 $KYC Zündschlüssel (>0)</div>
+        <div id="status-kyc" class="status-pill pill-muted">Prüfe On-Chain...</div>
+      </div>
+
+      <div class="status-row">
+        <div>🌱 $RWA Mikrospende (>0)</div>
+        <div id="status-rwa" class="status-pill pill-muted">Prüfe On-Chain...</div>
+      </div>
+
+      <div class="status-row">
+        <div>🛡️ ©️ ScanMe.NFT Siegel</div>
+        <div id="status-nft" class="status-pill pill-gold">Bereit zur Prägung</div>
+      </div>
+    </div>
+
+    <!-- 🌱 $RWA ZÜND-MODULE (DYNAMISCH AKTIV FALLS $RWA FEHLT) -->
+    <div id="rwa-action-card" class="rwa-box" style="display:none;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+        <span style="font-size:1.2rem;">🌱</span>
+        <strong style="color:var(--gold); font-size:0.88rem;">1. $RWA MIKROSPENDE ZÜNDEN (FREI WÄHLBAR)</strong>
+      </div>
+      <p style="font-size:0.78rem; color:var(--text-main); line-height:1.4; margin-bottom:10px;">
+        Ihre Wallet besitzt noch kein $RWA Guthaben. Wählen Sie eine Mikrospende ab <strong>1 $WWW</strong> (oder tragen Sie einen beliebigen Betrag ein). Der $RWA Minter prägt Ihnen im Gegenzug sofort anteilige $RWA Token!
+      </p>
+
+      <!-- PRESET BUTTONS -->
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <button type="button" class="btn-copy" style="flex:1; padding:8px 4px; font-size:0.8rem; background:rgba(255,215,0,0.15); border:1px solid var(--gold); color:var(--gold);" onclick="setWwwAmount('1')">🌱 1 $WWW<br><span style="font-size:0.68rem; opacity:0.8;">(0.01 $RWA)</span></button>
+        <button type="button" class="btn-copy" style="flex:1; padding:8px 4px; font-size:0.8rem; background:rgba(255,215,0,0.15); border:1px solid var(--gold); color:var(--gold);" onclick="setWwwAmount('10')">🌿 10 $WWW<br><span style="font-size:0.68rem; opacity:0.8;">(0.10 $RWA)</span></button>
+        <button type="button" class="btn-copy" style="flex:1; padding:8px 4px; font-size:0.8rem; background:rgba(255,215,0,0.25); border:1px solid var(--gold); color:var(--gold); font-weight:bold;" onclick="setWwwAmount('100')">🌳 100 $WWW<br><span style="font-size:0.68rem; opacity:0.9;">(1.00 $RWA)</span></button>
+      </div>
+
+      <!-- EINGABEFELD & DYNAMISCHE VORSCHAU -->
+      <div style="margin-bottom:10px;">
+        <label style="font-size:0.75rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:4px;">Oder eigenen $WWW Betrag eingeben:</label>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <input type="number" id="input-www-amount" min="0.000001" step="any" value="1" style="flex:1; background:#000; border:1px solid var(--gold); color:var(--gold); padding:10px; border-radius:8px; font-family:monospace; font-size:1.0rem; font-weight:bold;" oninput="updateRwaCalculation()">
+          <span style="font-weight:bold; color:var(--gold); font-size:0.9rem;">$WWW</span>
+        </div>
+      </div>
+
+      <div id="rwa-calc-preview" style="background:rgba(0,0,0,0.4); border:1px dashed var(--gold); border-radius:8px; padding:8px; font-family:monospace; font-size:0.78rem; color:var(--emerald); margin-bottom:10px;">
+        ⚡ Rechner: <strong>1.00 $WWW</strong> ➔ Ertrag: <strong style="color:var(--gold);">0.01 $RWA Token</strong>
+      </div>
+
+      <button id="btn-trigger-rwa" class="btn-rwa" onclick="executeRwaWwwDonation()">
+        🌱 1 $WWW SPENDE & $RWA PRÄGEN (mintWithWWW)
+      </button>
+    </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Blockchain-DNA Identität</div>
+      <div class="dna-box">
+        <div><span class="dna-key">HEX:</span> <span id="dna-hex">Warte auf Wallet...</span></div>
+        <div><span class="dna-key">SID:</span> <span id="dna-sid">berechne...</span></div>
+        <div><span class="dna-key">FID:</span> <span id="dna-fid">9999999999</span></div>
+      </div>
+
+      <div id="tx-display-box" class="tx-display-box">
+        <div style="color:var(--skyblue); font-weight:bold; margin-bottom:4px;">🔗 Transaktions-Hash (ZSC Explorer):</div>
+        <a id="tx-hash-link" class="tx-link" href="#" target="_blank" rel="noopener">0x...</a>
+      </div>
+    </div>
+
+    <button id="btn-mint-action" class="btn-mint" onclick="executeMint()">
+      🚀 2. ©️ ScanMe.NFT JETZT PRÄGEN (0.00 ZENIQ)
+    </button>
+
+    
+    <!-- 📞 DEZENTRALER P2P CALL MODULE (SMARTEARTHPHONE SCANTOCALL & TELEFONBUCH) -->
+        <!-- TARIF & VALUE UEBERSICHT -->
+    <div class="card" style="border:1px solid rgba(255,215,0,0.3); background:rgba(255,215,0,0.03);">
+      <div class="card-title" style="color:var(--gold);">
+        <span>📊 Smart Contract Tarif</span>
+        <span style="color:var(--emerald); font-size:0.8rem;">0.00 ZENIQ (Kostenfrei)</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:6px; font-size:0.78rem;">
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted);">Schöpfungswert der Family:</span>
+          <span style="text-decoration:line-through; color:var(--text-muted); font-weight:bold;">00.00 USD</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted);">RWA Minter Norm:</span>
+          <strong style="color:var(--gold);">100  = 1.00 </strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-top:1px dashed rgba(0,255,102,0.3); padding-top:4px; margin-top:2px;">
+          <span style="color:var(--text-muted);">ScanMe.NFT Präge-Value:</span>
+          <strong style="color:var(--emerald);">0x0 Wei (Non-Payable Direct Mint)</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="p2p-call-card" style="border:1px solid var(--emerald); background:rgba(0,30,20,0.6); margin-top:14px;">
+      <div class="card-title">
+        <span>📞 Sovereign SmartEarthPhone P2P Call (NFT-Gated)</span>
+        <span id="call-gate-status" style="color:var(--emerald); font-weight:bold;">🛡️ NFT Gated</span>
+      </div>
+      <p style="font-size:0.78rem; color:var(--text-main); line-height:1.4; margin-bottom:10px;">
+        Starten Sie einen vertraulichen, Ende-zu-Ende verschlüsselten P2P-Anruf über das Nomo Messenger Protokoll. <strong>Zugangsvoraussetzung:</strong> Inhaberschaft des ©️ ScanMe.NFT oder $KYC Zündschlüssels.
+      </p>
+
+      <!-- 📓 EMBEDDED SMARTEARTHPHONE TELEFONBUCH (DIRECTORY) -->
+      <div style="margin-bottom:12px; background:rgba(0,0,0,0.4); padding:10px; border-radius:10px; border:1px solid rgba(0,255,102,0.2);">
+        <label style="font-size:0.72rem; color:var(--gold); font-weight:bold; display:block; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">
+          📓 SmartEarthPhone Telefonbuch (Verifizierte Partner-SIDs):
+        </label>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <button class="btn-sub" style="background:rgba(0,255,102,0.08); border:1px solid rgba(0,255,102,0.3); color:#fff; text-align:left; padding:8px 10px; font-size:0.75rem; cursor:pointer; border-radius:6px; display:flex; justify-content:space-between; align-items:center;" onclick="selectDirectoryEntry('DIRK (ARCHITEKT)', '7829104736', '0x97ed03f89b5a178abba87bd1af8df4fafe02bd1d')">
+            <span>👨‍💻 <strong>DIRK (ARCHITEKT)</strong> <span style="color:var(--text-muted); font-size:0.68rem;">(SID: 7829104736)</span></span>
+            <span style="color:var(--emerald); font-weight:bold; font-size:0.68rem;">🟢 BEREIT</span>
+          </button>
+          <button class="btn-sub" style="background:rgba(0,204,255,0.08); border:1px solid rgba(0,204,255,0.3); color:#fff; text-align:left; padding:8px 10px; font-size:0.75rem; cursor:pointer; border-radius:6px; display:flex; justify-content:space-between; align-items:center;" onclick="selectDirectoryEntry('WEBON PORTAL', '6384531622', '0x3e39dbD7EE545904E428E6f624d9FFEA507Ae11E')">
+            <span>🌐 <strong>WEBON PORTAL</strong> <span style="color:var(--text-muted); font-size:0.68rem;">(SID: 6384531622)</span></span>
+            <span style="color:var(--skyblue); font-weight:bold; font-size:0.68rem;">🟢 BEREIT</span>
+          </button>
+          <button class="btn-sub" style="background:rgba(255,215,0,0.08); border:1px solid rgba(255,215,0,0.3); color:#fff; text-align:left; padding:8px 10px; font-size:0.75rem; cursor:pointer; border-radius:6px; display:flex; justify-content:space-between; align-items:center;" onclick="selectDirectoryEntry('SEWWWES MAIN', '2956354020', '0x7E28CAb3978Baf2F5d3C5d5b58f0Bf1e979f707E')">
+            <span>🛡️ <strong>SEWWWES MAIN</strong> <span style="color:var(--text-muted); font-size:0.68rem;">(SID: 2956354020)</span></span>
+            <span style="color:var(--gold); font-weight:bold; font-size:0.68rem;">🟢 BEREIT</span>
+          </button>
+        </div>
+      </div>
+      
+      <div style="margin-bottom:10px;">
+        <label style="font-size:0.75rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:4px;">🎯 Ziel-HEX-Adresse (0x...) oder 10-stellige SID:</label>
+        <input type="text" id="input-call-target" placeholder="z.B. 0x... oder 7829104736" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:rgba(0,0,0,0.4); color:#fff; font-family:monospace; font-size:0.88rem; box-sizing:border-box;">
+      </div>
+
+      <button id="btn-trigger-p2p-call" class="btn-action" style="background:linear-gradient(135deg, #00b0ff, #00e676); border:none; color:#000; font-weight:bold; width:100%; padding:12px; border-radius:8px; font-size:0.9rem; cursor:pointer;" onclick="executeNomoP2PCall()">
+        📞 SmartEarthPhone ScanToCall zünden
+      </button>
+      <div id="call-log" style="font-size:0.72rem; color:var(--gold); margin-top:6px; font-family:monospace;"></div>
+    </div>
+
+
+    <!-- 🌐 SMARTEARTHFAMILY MASTER GATEWAY (OPTIONALER SEWWWES.NET VERWEIS) -->
+    <div class="card" style="border:1px solid rgba(0, 204, 255, 0.3); background:rgba(0, 204, 255, 0.05);">
+      <div class="card-title" style="color:var(--skyblue);">
+        <span>🌐 OPTIONAL: HAUPT-WEBON & MASTER GATEWAY</span>
+        <span style="font-size:0.72rem; color:var(--emerald); font-weight:bold;">smartearthworld.znq</span>
+      </div>
+      <p style="font-size:0.78rem; color:var(--text-main); line-height:1.45; margin-bottom:10px;">
+        Verbindung zum globalen Portal der <strong>SmartEarthFamily</strong> auf sewwwes.net (ZNS Name Service & P2P ScanToChat):
+      </p>
+      <button class="btn-connect" style="background:linear-gradient(135deg, #00CCFF 0%, #0055FF 100%); margin-bottom:0;" onclick="openMasterGateway()">
+        🚀 SMARTEARTHFAMILY MASTER GATEWAY ÖFFNEN
+      </button>
+    </div>
+
+    <!-- 🔍 INTEGRATED DIAGNOSTIC TOOL & KOPIER-SUITE -->
+    <div class="card" style="padding:14px; border:1px solid var(--skyblue);">
+      <div class="card-title" style="margin-bottom:8px; color:var(--skyblue);">
+        <span>🔍 DIAGNOSTIK & ECHTZEIT-MONITORING</span>
+        <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
+      </div>
+
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.70 initialisiert. Bereit...</div>
+
+      <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
+        Kopierfeld für Entwickler-Analyse:
+      </label>
+      <textarea id="diag-copy-field" class="diag-textarea" readonly placeholder="Lade Diagnostik-Daten..."></textarea>
+    </div>
+
+    <footer>
+      SmartEarthFamily • ZENIQ Smart Chain (Chain ID 38341)<br>
+      Vertrag: 0xf0c50Be74969E6c07b5C5D5AE31294e6a4a14881
+    </footer>
+  </div>
+
   <script>
     const SCANME_NFT_ADDR = "0xf0c50Be74969E6c07b5C5D5AE31294e6a4a14881";
+    const KYC_TOKEN_ADDR  = "0xeeE15e47440A0Ed4bdC21a0988f2120923718192";
     const RWA_TOKEN_ADDR  = "0xF1A5D0bAd2375d202A1BDCE4505dBceD929F7c22";
     const WWW_TOKEN_ADDR  = "0xD979C1DA93EA9013a010CAA31C71D7f04FfA0497";
-    const KYC_TOKEN_ADDR  = "0xeeE15e47440A0Ed4bdC21a0988f2120923718192";
 
     let userAddress = null;
-    let userSID = null;
+    let userSID = "0000000000";
     let hasKycToken = false;
     let hasRwaToken = false;
     let hasScanMeNft = false;
+
     let diagLogList = [];
+
+
+    function openMasterGateway() {
+      var gatewayUrl = "https://" + "sewwwes.net";
+      sysLog("Öffne Master Gateway: " + gatewayUrl);
+      if (isNomoEnvironment()) {
+        try {
+          if (window.nomo && typeof window.nomo.launchUrl === "function") {
+            window.nomo.launchUrl({ url: gatewayUrl });
+            return;
+          }
+        } catch(e){}
+        window.location.href = "nomo://webon?url=" + encodeURIComponent(gatewayUrl);
+      } else {
+        window.open(gatewayUrl, "_blank", "noopener,noreferrer");
+      }
+    }
 
     function isNomoEnvironment() {
       if (typeof window === "undefined") return false;
@@ -596,6 +726,7 @@
       return false;
     }
 
+    // GLOBAL EXCEPTION CATCHER
     window.onerror = function(msg, url, line, col, error) {
       const errStr = "[EXCEPTION] " + msg + " (Zeile " + line + ":" + col + ")";
       sysLog(errStr);
@@ -615,7 +746,7 @@
       if (!field) return;
 
       const envInfo = {
-        version: "1.0.67",
+        version: "1.0.51",
         mode: isNomoEnvironment() ? "NOMOAPP_NATIVE_WEB3" : "PC_BROWSER_METAMASK",
         userAgent: navigator.userAgent,
         location: window.location.href,
@@ -631,7 +762,7 @@
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.67 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.70 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -643,7 +774,7 @@
     function copyDiagnosticReport() {
       const field = document.getElementById("diag-copy-field");
       if (!field) return;
-      [verdächtiger Link entfernt]();
+      field.select();
       field.setSelectionRange(0, 99999);
 
       try {
@@ -678,7 +809,7 @@
         link.innerText = txHash;
         const host = ["zeniqscan", "com"].join(".");
         link.href = "https://" + host + "/tx/" + txHash;
-        [verdächtiger Link entfernt].display = "block";
+        box.style.display = "block";
       }
     }
 
@@ -734,25 +865,12 @@
       return "0x" + selector + cleanAddr + offsetSid + offsetFid + sidLenHex + sidDataHex + fidLenHex + fidDataHex;
     }
 
-    async function fetchWithTimeout(resource, options = {}) {
-      const { timeout = 2500 } = options;
-      const controller = new AbortController();
-      const id = setTimeout(() => controller.abort(), timeout);
-      try {
-        const response = await fetch(resource, { ...options, signal: controller.signal });
-        clearTimeout(id);
-        return response;
-      } catch (error) {
-        clearTimeout(id);
-        throw error;
-      }
-    }
-
     async function checkErc20BalanceOnChain(tokenAddr, ownerAddr) {
       if (!ownerAddr) return 0;
       const cleanOwner = ownerAddr.toLowerCase().replace("0x", "").padStart(64, "0");
       const dataPayload = "0x70a08231" + cleanOwner;
 
+      // 1. Native Nomo Bridge Call (Mobile App)
       if (isNomoEnvironment() && window.nomo && typeof window.nomo.getBalance === "function") {
         try {
           const resNomo = await window.nomo.getBalance({ contractAddress: tokenAddr });
@@ -766,9 +884,12 @@
               }
             }
           }
-        } catch(eN) {}
+        } catch(eN) {
+          sysLog("Nomo getBalance Notice: " + (eN.message || eN));
+        }
       }
 
+      // 2. Injected EVM Provider (MetaMask / Web3)
       if (window.ethereum) {
         try {
           const res = await window.ethereum.request({
@@ -789,7 +910,7 @@
       for (let i = 0; i < rpcEndpoints.length; i++) {
         const rpcUrl = rpcEndpoints[i];
         try {
-          const response = await fetchWithTimeout(rpcUrl, {
+          const response = await fetch(rpcUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -797,8 +918,7 @@
               method: "eth_call",
               params: [{ to: tokenAddr, data: dataPayload }, "latest"],
               id: 1
-            }),
-            timeout: 2500
+            })
           });
           if (response.ok) {
             const json = await response.json();
@@ -806,8 +926,32 @@
               return BigInt(json.result) > 0n ? 1 : 0;
             }
           }
-        } catch(e) {}
+        } catch(e) {
+          sysLog("RPC Notice (" + rpcUrl + "): " + (e.message || e));
+        }
       }
+
+      // Blockscout Explorer Fallback
+      try {
+        const expUrl = "https://zeniqscan.com/api/v2/addresses/0x" + cleanOwner + "/tokens";
+        const resp = await fetch(expUrl);
+        if (resp.ok) {
+          const data = await resp.json();
+          const list = Array.isArray(data) ? data : (data.items || data.data || []);
+          const cleanToken = tokenAddr.toLowerCase();
+          for (let k = 0; k < list.length; k++) {
+            let item = list[k];
+            let addr = "";
+            if (item && item.token) addr = (item.token.address || item.token.contractAddress || "").toLowerCase();
+            else if (item && item.contractAddress) addr = item.contractAddress.toLowerCase();
+            if (addr === cleanToken) {
+              let val = item.value || (item.token ? item.token.value : "0");
+              if (BigInt(val) > 0n) return 1;
+            }
+          }
+        }
+      } catch(e) {}
+
       return 0;
     }
 
@@ -829,13 +973,14 @@
 
       const rpcEndpoints = [
         "https://api.zeniq.network",
-        "https://zsc.nomo.rest"
+        "https://zsc.nomo.rest",
+        "https://smart.zeniqscan.com/api/v1/eth-rpc"
       ];
 
       for (let i = 0; i < rpcEndpoints.length; i++) {
         const rpcUrl = rpcEndpoints[i];
         try {
-          const response = await fetchWithTimeout(rpcUrl, {
+          const response = await fetch(rpcUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -843,8 +988,7 @@
               method: "eth_call",
               params: [{ to: tokenAddr, data: dataPayload }, "latest"],
               id: 1
-            }),
-            timeout: 2500
+            })
           });
           if (response.ok) {
             const json = await response.json();
@@ -854,21 +998,48 @@
           }
         } catch(e) {}
       }
+
       return 0n;
     }
 
-    let prereqPollingTimer = null;
+        let prereqPollingTimer = null;
 
     function userManualRefreshStatus() {
       sysLog("Benutzer Klick: '🔄 STATUS PRÜFEN' gedrueckt.");
       if (userAddress) {
         verifyOnChainPrerequisites(userAddress);
+        startPrerequisitesPolling(userAddress, 15, 3);
       } else {
         alert("Bitte verbinden Sie zuerst Ihre Wallet.");
       }
     }
 
-    async function verifyOnChainPrerequisites(addr) {
+    function startPrerequisitesPolling(addr, durationSec = 30, intervalSec = 3) {
+      if (!addr) return;
+      if (prereqPollingTimer) clearInterval(prereqPollingTimer);
+
+      sysLog("⚡ Starte On-Chain Polling (" + durationSec + "s, Intervall " + intervalSec + "s)...");
+      let attempts = 0;
+      const maxAttempts = Math.ceil(durationSec / intervalSec);
+
+      prereqPollingTimer = setInterval(async () => {
+        attempts++;
+        sysLog("🔄 Polling-Check " + attempts + "/" + maxAttempts + " fuer " + addr.substring(0,8) + "...");
+        await verifyOnChainPrerequisites(addr);
+
+        if (hasRwaToken || attempts >= maxAttempts) {
+          clearInterval(prereqPollingTimer);
+          prereqPollingTimer = null;
+          if (hasRwaToken) {
+            sysLog("🎉 ✅ Polling erfolgreich: $RWA Token On-Chain gefunden!");
+          } else {
+            sysLog("Notice: Polling-Zeitfenster beendet.");
+          }
+        }
+      }, intervalSec * 1000);
+    }
+
+async function verifyOnChainPrerequisites(addr) {
       if (!addr) return;
       sysLog("Verifiziere On-Chain Voraussetzungen fuer " + addr.substring(0,8) + "...");
       const elKYC = document.getElementById("status-kyc");
@@ -900,11 +1071,11 @@
           if (hasRwaToken) {
             elRWA.className = "status-pill pill-green";
             elRWA.innerText = "✓ Bestätigt (Aktiv)";
-            if (rwaCard) [verdächtiger Link entfernt].display = "none";
+            if (rwaCard) rwaCard.style.display = "none";
           } else {
             elRWA.className = "status-pill pill-gold";
             elRWA.innerText = "⚠️ Fehlt ($RWA Spende)";
-            if (rwaCard) [verdächtiger Link entfernt].display = "block";
+            if (rwaCard) rwaCard.style.display = "block";
           }
         }
 
@@ -923,15 +1094,15 @@
           if (hasScanMeNft) {
             btnMint.disabled = true;
             btnMint.innerText = "✓ ©️ ScanMe.NFT BEREITS GEPRÄGT (Aktiv in Wallet)";
-            [verdächtiger Link entfernt].background = "rgba(0, 255, 102, 0.15)";
-            [verdächtiger Link entfernt].border = "1px solid var(--emerald)";
-            [verdächtiger Link entfernt].color = "var(--emerald)";
+            btnMint.style.background = "rgba(0, 255, 102, 0.15)";
+            btnMint.style.border = "1px solid var(--emerald)";
+            btnMint.style.color = "var(--emerald)";
           } else {
             btnMint.disabled = false;
             btnMint.innerText = "🚀 2. ©️ ScanMe.NFT JETZT PRÄGEN (0.00 ZENIQ)";
-            [verdächtiger Link entfernt].background = "linear-gradient(135deg, var(--emerald) 0%, #00B347 100%)";
-            [verdächtiger Link entfernt].border = "none";
-            [verdächtiger Link entfernt].color = "#041208";
+            btnMint.style.background = "linear-gradient(135deg, var(--emerald) 0%, #00B347 100%)";
+            btnMint.style.border = "none";
+            btnMint.style.color = "#041208";
           }
         }
 
@@ -951,27 +1122,29 @@
 
       if (elShort) {
         elShort.innerText = addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
-        [verdächtiger Link entfernt].color = "var(--emerald)";
+        elShort.style.color = "var(--emerald)";
       }
       if (elHex) elHex.innerText = addr;
 
       if (connBtn) {
         connBtn.innerText = "✓ WALLET GEKOPPELT: " + addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
-        [verdächtiger Link entfernt].background = "rgba(0, 255, 102, 0.15)";
-        [verdächtiger Link entfernt].border = "1px solid var(--emerald)";
-        [verdächtiger Link entfernt].color = "var(--emerald)";
+        connBtn.style.background = "rgba(0, 255, 102, 0.15)";
+        connBtn.style.border = "1px solid var(--emerald)";
+        connBtn.style.color = "var(--emerald)";
       }
 
       userSID = deriveSID(addr);
       if (elSid) elSid.innerText = userSID;
       if (logLabel) sysLog(logLabel + ": " + addr);
 
-      setTimeout(() => verifyOnChainPrerequisites(addr), 10);
+      setTimeout(function() {
+        verifyOnChainPrerequisites(addr).catch(function(e) { sysLog("Notice (Async Prereq): " + (e.message || e)); });
+      }, 10);
     }
 
     async function ensureZSCMetaMask() {
       if (!window.ethereum) return false;
-      const targetChainId = "0x95c5";
+      const targetChainId = "0x95a";
       try {
         const currentChainId = await window.ethereum.request({ method: "eth_chainId" });
         if (currentChainId === targetChainId) return true;
@@ -986,8 +1159,8 @@
         if (e.code === 4902 || (e.message && e.message.includes("4902"))) {
           sysLog("Fuege ZENIQ Smart Chain zu MetaMask hinzu...");
           try {
-            const rpcUrl = "https://api.zeniq.network";
-            const expUrl = "[suspicious link removed]";
+            const rpcUrl = "https://" + ["smart", "zeniqscan", "com"].join(".") + "/api/v1/eth-rpc";
+            const expUrl = "https://" + ["zeniqscan", "com"].join(".");
             await window.ethereum.request({
               method: "wallet_addEthereumChain",
               params: [{
@@ -1019,6 +1192,8 @@
           if (addr) {
             updateWalletUI(addr, "NomoApp gekoppelt");
             return true;
+          } else {
+            sysLog("⚠️ NomoApp Adress-Unboxing konnte keine '0x'-Adresse finden.");
           }
         } catch(e) {
           sysLog("❌ NomoApp Exception: " + (e.message || e));
@@ -1026,6 +1201,7 @@
         return false;
       }
 
+      // PC / METAMASK PFAD
       sysLog("👉 [PC METAMASK PFAD] Starte EIP-1193 verlinkten Aufruf...");
       if (window.ethereum && typeof window.ethereum.request === "function") {
         try {
@@ -1044,16 +1220,132 @@
         }
       } else {
         sysLog("Notice: Kein window.ethereum (MetaMask) im Browser verfuegbar.");
-        alert("Keine Web3-Wallet (MetaMask) im Browser gefunden!");
+        alert("Keine Web3-Wallet (MetaMask) im Browser gefunden! Bitte installieren Sie MetaMask oder oeffnen Sie dieses WebOn in der NomoApp.");
       }
+
       return false;
     }
 
     async function userTriggerConnectWallet() {
       sysLog("Benutzer Klick: '🔑 WALLET VERBINDEN' gedrueckt.");
       const ok = await performWalletConnect();
+      if (!ok) {
+        alert("Wallet-Verbindung ausstehend. Kopieren Sie den Diagnostik-Bericht unten und senden Sie ihn im Chat!");
+      }
     }
 
+    async function init() {
+      sysLog("Satellit v1.0.70 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      
+      const isNomo = isNomoEnvironment();
+      sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
+
+      const connBtn = document.getElementById("btn-connect-wallet");
+      if (connBtn) {
+        if (isNomo) {
+          connBtn.innerText = "🔑 NOMOAPP WALLET VERBINDEN";
+        } else {
+          connBtn.innerText = "🔑 METAMASK VERBINDEN (PC Browser)";
+        }
+      }
+
+      // PFAD 1: NOMOAPP AUTO-CONNECT (STUMM)
+      if (isNomo) {
+        try {
+          sysLog("Auto-Check NomoApp getEvmAddress()...");
+          const res = await window.nomo.getEvmAddress();
+          const addr = extractStringAddress(res);
+          if (addr) {
+            updateWalletUI(addr, "NomoApp Auto-Kopplung");
+            return;
+          }
+        } catch(e) {
+          sysLog("Nomo Auto-Check Notice: " + (e.message || e));
+        }
+      }
+
+      // PFAD 2: METAMASK AUTO-CONNECT (STUMM)
+      if (!isNomo && window.ethereum && typeof window.ethereum.request === "function") {
+        try {
+          sysLog("Auto-Check MetaMask eth_accounts (stumm)...");
+          const accs = await window.ethereum.request({ method: "eth_accounts" });
+          const addr = extractStringAddress(accs);
+          if (addr) {
+            updateWalletUI(addr, "MetaMask Auto-Kopplung");
+            return;
+          }
+        } catch(e) {
+          sysLog("MetaMask Auto-Check Notice: " + (e.message || e));
+        }
+
+        if (typeof window.ethereum.on === "function") {
+          window.ethereum.on("accountsChanged", (accounts) => {
+            const addr = extractStringAddress(accounts);
+            if (addr) {
+              updateWalletUI(addr, "MetaMask Konto gewechselt");
+            } else {
+              userAddress = null;
+              document.getElementById("wallet-short").innerText = "Warte auf Wallet-Kopplung...";
+              document.getElementById("wallet-short").style.color = "var(--gold)";
+              document.getElementById("dna-hex").innerText = "Warte auf Wallet...";
+              if (connBtn) {
+                connBtn.innerText = "🔑 METAMASK VERBINDEN (PC Browser)";
+                connBtn.style.background = "linear-gradient(135deg, #00CCFF 0%, #0077FF 100%)";
+                connBtn.style.color = "#FFFFFF";
+              }
+              sysLog("Wallet getrennt.");
+            }
+          });
+        }
+      }
+
+      document.addEventListener("visibilitychange", function() {
+        if (document.visibilityState === "visible" && userAddress) {
+          sysLog("📱 WebOn wieder im Vordergrund (visibilitychange). Prüfe On-Chain Status...");
+          startPrerequisitesPolling(userAddress, 18, 3);
+        }
+      });
+
+      window.addEventListener("focus", function() {
+        if (userAddress) {
+          sysLog("📱 WebOn Fokus erhalten (focus). Prüfe On-Chain Status...");
+          verifyOnChainPrerequisites(userAddress);
+        }
+      });
+
+      sysLog("Bereit.");
+    }
+
+    // 100 $WWW MIKROSPENDE & MINTING VIA mintWithWWW(uint256 wwwAmount)
+    
+    function setWwwAmount(valStr) {
+      const inp = document.getElementById("input-www-amount");
+      if (inp) {
+        inp.value = valStr;
+        updateRwaCalculation();
+      }
+    }
+
+    function updateRwaCalculation() {
+      const inp = document.getElementById("input-www-amount");
+      const prev = document.getElementById("rwa-calc-preview");
+      const btnRwa = document.getElementById("btn-trigger-rwa");
+
+      const rawVal = (inp ? inp.value : "1").toString().trim().replace(",", ".");
+      let val = parseFloat(rawVal);
+      if (isNaN(val) || val <= 0) val = 1;
+
+      const rwaAmount = (val / 100.0).toFixed(4);
+
+      if (prev) {
+        prev.innerHTML = "⚡ Rechner: <strong>" + val + " $WWW</strong> ➔ Ertrag: <strong style='color:var(--gold);'>" + rwaAmount + " $RWA Token</strong>";
+      }
+      if (btnRwa) {
+        btnRwa.innerText = "🌱 " + val + " $WWW SPENDE & $RWA PRÄGEN (mintWithWWW)";
+      }
+    }
+
+        
     function parseToAtomicWei(rawInputStr) {
       let str = (rawInputStr || "1").toString().replace(",", ".").trim();
       if (!str || str === ".") return 0n;
@@ -1071,23 +1363,28 @@
       return BigInt(combined);
     }
 
-    function setWwwAmount(valStr) {
-      const inp = document.getElementById("input-www-amount");
-      if (inp) {
-        inp.value = valStr;
-        updateRwaCalcPreview(valStr);
+    // ⚡ SOVEREIGN EVM CONTRACT CALL ENGINE (UNIFIED METAMASK & NOMO BRIDGE)
+    // 🛡️ SOUVERÄNER NOMO SCHEMA TRIGGER (VERHINDERT GRAUEN WEBWIEW BILDSCHIRM)
+    function triggerNomoSchema(url) {
+      if (typeof window === "undefined" || !url) return;
+      sysLog("Triggering Nomo Schema safely: " + url);
+      try {
+        const a = document.createElement("a");
+        a.href = url;
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+          if (a.parentNode) a.parentNode.removeChild(a);
+        }, 500);
+      } catch(e) {
+        try {
+          window.location.href = url;
+        } catch(e2) {}
       }
     }
 
-    function updateRwaCalcPreview(valStr) {
-      const preview = document.getElementById("rwa-calc-preview");
-      if (!preview) return;
-      const num = parseFloat((valStr || "0").toString().replace(",", ".")) || 0;
-      const rwaVal = (num / 100).toFixed(2);
-      const landVal = (num * 0.1).toFixed(1);
-      preview.innerText = "📊 Errechneter Gegenwert: " + rwaVal + " $RWA • " + landVal + " qm Mutterboden geschützt";
-    }
-
+    // 🚀 UNIFIED EVM CONTRACT CALL ENGINE (NOMOAPP PRE-FILL STEP 4/4 & METAMASK)
     async function extractTxHashFromNomoRes(res) {
       if (!res) return null;
       if (typeof res === "string" && res.startsWith("0x")) return res;
@@ -1144,7 +1441,7 @@
           sysLog("Stage 1 Complete Payload Notice: " + (e1.message || e1));
         }
 
-        // 1B. Fallback with evmTx wrapper
+        // STAGE 1B: Fallback with evmTx wrapper
         if (!txHash) {
           try {
             sysLog("Stage 1B (Nomo EVM Sign Wrapped Payload): Trying evmTx wrapper...");
@@ -1184,8 +1481,7 @@
             to: toAddress,
             value: "0x0",
             data: calldata,
-            gas: gasLimitHex || "0x2DC6C0",
-            gasPrice: "0x2540BE400"
+            gas: gasLimitHex || "0x2DC6C0"
           };
           const res = await window.ethereum.request({
             method: "eth_sendTransaction",
@@ -1280,6 +1576,7 @@
           sysLog("🎉 ✅ $WWW Minting platziert! Hash: " + mintTxHash);
           showTxHash(mintTxHash);
 
+          startPrerequisitesPolling(userAddress, 45, 3);
           setTimeout(async () => {
             if (btnRwa) {
               btnRwa.disabled = false;
@@ -1297,6 +1594,85 @@
           btnRwa.disabled = false;
           btnRwa.innerText = "🌱 " + amountStr + " $WWW SPENDE & $RWA PRÄGEN (mintWithWWW)";
         }
+      }
+    }
+
+    // 📞 Sovereign SmartEarthPhone P2P Call (NFT-Gated)
+    function selectDirectoryEntry(name, sid, hexAddr) {
+      const inp = document.getElementById("input-call-target");
+      if (inp) {
+        inp.value = hexAddr || sid;
+      }
+      sysLog("SmartEarthDirectory ausgewaehlt: " + name + " (SID: " + sid + ")");
+      const logDiv = document.getElementById("call-log");
+      if (logDiv) {
+        logDiv.innerText = "🎯 Partner ausgewaehlt: " + name + " (SID: " + sid + "). Klicken Sie auf '📞 Call zünden'!";
+      }
+    }
+
+    async function executeNomoP2PCall() {
+      const targetInput = document.getElementById("input-call-target");
+      const rawTarget = targetInput ? targetInput.value.trim() : "";
+      const logDiv = document.getElementById("call-log");
+
+      if (!rawTarget) {
+        alert("Bitte geben Sie eine Ziel-HEX-Adresse (0x...) oder eine 10-stellige SID ein.");
+        return;
+      }
+
+      // Target Format Validation: 0x Hex (42 chars) or 10-digit SID
+      const isHex = /^0x[a-fA-F0-9]{40}$/.test(rawTarget);
+      const isSid = /^\d{10}$/.test(rawTarget);
+
+      if (!isHex && !isSid) {
+        alert("⚠️ UNGÜLTIGES ZIEL-FORMAT:\n\nBitte geben Sie eine gültige 42-stellige 0x-Hex-Adresse oder eine 10-stellige SID ein.");
+        if (targetInput) {
+          targetInput.style.border = "2px solid #FF3366";
+          setTimeout(() => { targetInput.style.border = "1px solid var(--emerald)"; }, 3000);
+        }
+        if (logDiv) logDiv.innerText = "⚠️ Abbruch: Ungültiges Ziel-Format (Hex oder 10-stellige SID erforderlich).";
+        return;
+      }
+
+      // 1. NFT / KYC Zugangsprüfung (On-Chain Gating)
+      if (!hasScanMeNft && !hasKycToken) {
+        alert("🛡️ ZUGANG VERWEIGERT: Ein dezentraler SmartEarthPhone P2P-Anruf erfordert mindestens 1 $KYC Token oder ein geprägtes ©️ ScanMe.NFT in Ihrer Wallet!");
+        if (logDiv) logDiv.innerText = "❌ Abbruch: Kein $KYC / ScanMe.NFT vorhanden.";
+        return;
+      }
+
+      let cleanTarget = rawTarget;
+      sysLog("📞 Starte Sovereign SmartEarthPhone P2P Call zu Ziel: " + cleanTarget);
+      if (logDiv) logDiv.innerText = "⏳ Verbinde SmartEarthPhone P2P Call zu " + cleanTarget + "...";
+
+      try {
+        if (isNomoEnvironment()) {
+          let callSuccess = false;
+
+          if (window.nomo && typeof window.nomo.messengerCall === "function") {
+            try {
+              await window.nomo.messengerCall({ address: cleanTarget, recipient: cleanTarget });
+              callSuccess = true;
+            } catch(e) {
+              sysLog("Notice (messengerCall): " + (e.message || e));
+            }
+          }
+
+          if (!callSuccess) {
+            const schemaUrl = "nomo://messenger/call?address=" + encodeURIComponent(cleanTarget) + "&target=" + encodeURIComponent(cleanTarget);
+            sysLog("Löse Nomo Call Deep-Link Schema aus: " + schemaUrl);
+            triggerNomoSchema(schemaUrl);
+          }
+
+          if (logDiv) logDiv.innerText = "🚀 P2P Anruf-Signal an SmartEarthPhone Nomo Messenger übermittelt!";
+        } else {
+          sysLog("PC Browser Modus: P2P Call erfordert die NomoApp.");
+          alert("📞 Dezentrale SmartEarthPhone P2P-Telefonie ist direkt in das dezentrale NomoApp Messenger-Protokoll integriert. Bitte öffnen Sie diesen Link in der NomoApp!");
+          if (logDiv) logDiv.innerText = "ℹ️ Bitte im NomoApp Mobile Browser öffnen.";
+        }
+      } catch (err) {
+        sysLog("❌ Fehler beim Call-Start: " + (err.message || err));
+        if (logDiv) logDiv.innerText = "❌ Fehler: " + (err.message || err);
       }
     }
 
@@ -1330,6 +1706,7 @@
           sysLog("🎉 ✅ ©️ ScanMe.NFT Prägung platziert! Hash: " + txHash);
           showTxHash(txHash);
 
+          startPrerequisitesPolling(userAddress, 45, 3);
           setTimeout(async () => {
             if (btn) {
               btn.disabled = false;
@@ -1342,96 +1719,11 @@
 
       } catch (err) {
         sysLog("❌ Prägefehler/Abbruch: " + (err.message || err));
-        alert("Prägevorgang abgebrochen oder fehlgeschlagen.");
+        alert("Prägevorgang abgebrochen oder fehlgeschlagen: " + (err.message || err));
         if (btn) {
           btn.disabled = false;
           btn.innerText = "🚀 2. ©️ ScanMe.NFT JETZT PRÄGEN (0.00 ZENIQ)";
         }
-      }
-    }
-
-    function selectDirectoryEntry(name, sid, hexAddr) {
-      const inp = document.getElementById("input-call-target");
-      if (inp) {
-        inp.value = hexAddr || sid;
-      }
-      sysLog("SmartEarthDirectory ausgewaehlt: " + name + " (SID: " + sid + ")");
-      const logDiv = document.getElementById("call-log");
-      if (logDiv) {
-        logDiv.innerText = "🎯 Partner ausgewaehlt: " + name + " (SID: " + sid + "). Klicken Sie auf '📞 Call zünden'!";
-      }
-    }
-
-    async function executeNomoP2PCall() {
-      const targetInput = document.getElementById("input-call-target");
-      const rawTarget = targetInput ? targetInput.value.trim() : "";
-      const logDiv = document.getElementById("call-log");
-
-      if (!rawTarget) {
-        alert("Bitte geben Sie eine Ziel-HEX-Adresse (0x...) oder eine 10-stellige SID ein.");
-        return;
-      }
-
-      const isHex = /^0x[a-fA-F0-9]{40}$/.test(rawTarget);
-      const isSid = /^\d{10}$/.test(rawTarget);
-
-      if (!isHex && !isSid) {
-        alert("⚠️ UNGÜLTIGES ZIEL-FORMAT:\n\nBitte geben Sie eine gültige 42-stellige 0x-Hex-Adresse oder eine 10-stellige SID ein.");
-        if (targetInput) {
-          [verdächtiger Link entfernt].border = "2px solid #FF3366";
-          setTimeout(() => { [verdächtiger Link entfernt].border = "1px solid var(--emerald)"; }, 3000);
-        }
-        if (logDiv) logDiv.innerText = "⚠️ Abbruch: Ungültiges Ziel-Format (Hex oder 10-stellige SID erforderlich).";
-        return;
-      }
-
-      if (!hasScanMeNft && !hasKycToken) {
-        alert("🛡️ ZUGANG VERWEIGERT: Ein dezentraler SmartEarthPhone P2P-Anruf erfordert mindestens 1 $KYC Token oder ein geprägtes ©️ ScanMe.NFT in Ihrer Wallet!");
-        if (logDiv) logDiv.innerText = "❌ Abbruch: Kein $KYC / ScanMe.NFT vorhanden.";
-        return;
-      }
-
-      let cleanTarget = rawTarget;
-      sysLog("📞 Starte Sovereign SmartEarthPhone P2P Call zu Ziel: " + cleanTarget);
-      if (logDiv) logDiv.innerText = "⏳ Verbinde SmartEarthPhone P2P Call zu " + cleanTarget + "...";
-
-      try {
-        if (isNomoEnvironment()) {
-          let callSuccess = false;
-
-          if (window.nomo && typeof window.nomo.messengerCall === "function") {
-            try {
-              await window.nomo.messengerCall({ address: cleanTarget, recipient: cleanTarget });
-              callSuccess = true;
-            } catch(e) {
-              sysLog("Notice (messengerCall): " + (e.message || e));
-            }
-          }
-
-          if (!callSuccess) {
-            const schemaUrl = "nomo://messenger/call?address=" + encodeURIComponent(cleanTarget) + "&target=" + encodeURIComponent(cleanTarget);
-            sysLog("Löse Nomo Call Deep-Link Schema aus: " + schemaUrl);
-            try {
-              const a = document.createElement("a");
-              a.href = schemaUrl;
-              [verdächtiger Link entfernt].display = "none";
-              document.body.appendChild(a);
-              [verdächtiger Link entfernt]();
-              setTimeout(function() {
-                if (a.parentNode) a.parentNode.removeChild(a);
-              }, 500);
-            } catch(e2) {}
-          }
-
-          if (logDiv) logDiv.innerText = "🚀 P2P Anruf-Signal an SmartEarthPhone Nomo Messenger übermittelt!";
-        } else {
-          sysLog("PC Browser Modus: P2P Call erfordert die NomoApp.");
-          alert("📞 Dezentrale SmartEarthPhone P2P-Telefonie ist direkt in das dezentrale NomoApp Messenger-Protokoll integriert. Bitte öffnen Sie diesen Link in der NomoApp!");
-          if (logDiv) logDiv.innerText = "ℹ️ Bitte im NomoApp Mobile Browser öffnen.";
-        }
-      } catch (err) {
-        sysLog("❌ Fehler beim Call-Start: " + (err.message || err));
-        if (logDiv) logDiv.innerText = "❌ Fehler: " + (err.message || err);
       }
     }
 
