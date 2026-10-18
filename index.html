@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.72 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.73 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -302,7 +302,7 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.72) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.73) -->
   <script>
     (function() {
       "use strict";
@@ -486,7 +486,7 @@
     <header>
       <img src="assets/images/mint-scanme-nft-logo.png" alt="©️ ScanMe.NFT Logo" style="width:88px; height:88px; object-fit:contain; border-radius:18px; margin-bottom:10px;">
       <img src="./scanme-nft-minter-webon-logo.png" alt="©️ ScanMe.NFT Logo" style="width:96px; height:96px; object-fit:contain; border-radius:18px; margin-bottom:10px; border:2px solid var(--emerald); box-shadow: 0 0 16px rgba(0,255,102,0.3);">
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.72 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.73 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -675,7 +675,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.72 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.73 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -762,7 +762,7 @@
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.72 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.73 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -1144,40 +1144,35 @@ async function verifyOnChainPrerequisites(addr) {
 
     async function ensureZSCMetaMask() {
       if (!window.ethereum) return false;
-      const targetChainId = "0x95c5";
       try {
         const currentChainId = await window.ethereum.request({ method: "eth_chainId" });
-        if (currentChainId === targetChainId) return true;
-
-        sysLog("MetaMask nicht auf ZENIQ Smart Chain (38341). Wechsel anfordern...");
-        await window.ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: targetChainId }]
-        });
-        return true;
-      } catch (e) {
-        if (e.code === 4902 || (e.message && e.message.includes("4902"))) {
-          sysLog("Fuege ZENIQ Smart Chain zu MetaMask hinzu...");
-          try {
-            const rpcUrl = "https://" + ["smart", "zeniqscan", "com"].join(".") + "/api/v1/eth-rpc";
-            const expUrl = "https://" + ["zeniqscan", "com"].join(".");
-            await window.ethereum.request({
-              method: "wallet_addEthereumChain",
-              params: [{
-                chainId: targetChainId,
-                chainName: "ZENIQ Smart Chain",
-                nativeCurrency: { name: "ZENIQ", symbol: "ZENIQ", decimals: 18 },
-                rpcUrls: [rpcUrl],
-                blockExplorerUrls: [expUrl]
-              }]
-            });
-            return true;
-          } catch (addErr) {
-            sysLog("Network add declined: " + (addErr.message || addErr));
-            return false;
-          }
+        sysLog("Aktuelle MetaMask Chain ID: " + currentChainId);
+        if (currentChainId === "0x95a" || currentChainId === "0x95c5") {
+          sysLog("✓ MetaMask befindet sich bereits auf der ZENIQ Smart Chain (" + currentChainId + ").");
+          return true;
         }
-        sysLog("Network switch declined: " + (e.message || e));
+        sysLog("MetaMask nicht auf ZENIQ Smart Chain. Wechsel anfordern...");
+        try {
+          await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: "0x95a" }] });
+          return true;
+        } catch (switchErr) {
+          if (switchErr.code === 4902 || (switchErr.message && switchErr.message.includes("4902"))) {
+            try {
+              await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: "0x95c5" }] });
+              return true;
+            } catch (switchErr2) {
+              sysLog("Fuege ZENIQ Smart Chain zu MetaMask hinzu...");
+              await window.ethereum.request({
+                method: "wallet_addEthereumChain",
+                params: [{ chainId: "0x95a", chainName: "ZENIQ Smart Chain", nativeCurrency: { name: "ZENIQ", symbol: "ZENIQ", decimals: 18 }, rpcUrls: ["https://api.zeniq.network"], blockExplorerUrls: ["https://zeniqscan.com"] }]
+              });
+              return true;
+            }
+          }
+          return false;
+        }
+      } catch (e) {
+        sysLog("ensureZSCMetaMask Notice: " + (e.message || e));
         return false;
       }
     }
@@ -1235,7 +1230,7 @@ async function verifyOnChainPrerequisites(addr) {
     }
 
     async function init() {
-      sysLog("Satellit v1.0.72 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      sysLog("Satellit v1.0.73 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
       
       const isNomo = isNomoEnvironment();
       sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
