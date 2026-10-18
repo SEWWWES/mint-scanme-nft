@@ -2,9 +2,9 @@
   "nomo_manifest_version": "1.2.0",
   "webon_id": "net.sewwwes.mint-scanme-nft",
   "webon_name": "©️ ScanMe.NFT Minter Satellit",
-  "webon_version": "1.0.70",
+  "webon_version": "1.0.71",
   "webon_description": "Satelliten-WebOn der SmartEarthFamily mit vollautomatischer 100:10:1 Eigenspende-Sättigung, verlässlichem Pre-Fill Schritt 4/4, 18-Dezimalstellen Wei-Präzision und integriertem SmartEarthPhone P2P Call Gateway.",
-  "nomo_webon_version": "1.0.70",
+  "nomo_webon_version": "1.0.71",
   "nomo_webon_description": "Satelliten-WebOn der SmartEarthFamily mit vollautomatischer 100:10:1 Eigenspende-Sättigung, verlässlichem Pre-Fill Schritt 4/4, 18-Dezimalstellen Wei-Präzision und integriertem SmartEarthPhone P2P Call Gateway.",
   "permissions": [
     "nomo.permission.GET_EVM_ADDRESS",
