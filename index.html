@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.54 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.55 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -302,7 +302,7 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.54) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.55) -->
   <script>
     (function() {
       "use strict";
@@ -485,7 +485,7 @@
   <div class="container">
     <header>
       <img src="assets/images/mint-scanme-nft-logo.png" alt="©️ ScanMe.NFT Logo" style="width:88px; height:88px; object-fit:contain; border-radius:18px; margin-bottom:10px;">
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.54 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.55 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -504,7 +504,7 @@
 
     <!-- WALLET KOPPLUNG BUTTON -->
     <button id="btn-connect-wallet" class="btn-connect" onclick="userTriggerConnectWallet()">
-      🔑 WALLET VERBINDEN (NomoApp / MetaMask)
+      🔑 Sovereign Wallet Connect (Nomo / MetaMask)
     </button>
 
     <!-- ON-CHAIN PREREQUISITES VERIFICATION -->
@@ -604,7 +604,7 @@
       </div>
 
       <button id="btn-trigger-p2p-call" class="btn-action" style="background:linear-gradient(135deg, #00b0ff, #00e676); border:none; color:#000; font-weight:bold; width:100%; padding:12px; border-radius:8px; font-size:0.9rem; cursor:pointer;" onclick="executeNomoP2PCall()">
-        📞 1-KLICK DEZENTRALEN P2P ANRUF STARTEN
+        📞 SmartEarthPhone ScanToCall zünden
       </button>
       <div id="call-log" style="font-size:0.72rem; color:var(--gold); margin-top:6px; font-family:monospace;"></div>
     </div>
@@ -631,7 +631,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.54 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.55 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -719,7 +719,7 @@
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.54 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.55 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -1186,7 +1186,7 @@ async function verifyOnChainPrerequisites(addr) {
     }
 
     async function init() {
-      sysLog("Satellit v1.0.54 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      sysLog("Satellit v1.0.55 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
       
       const isNomo = isNomoEnvironment();
       sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
@@ -1314,6 +1314,91 @@ async function verifyOnChainPrerequisites(addr) {
       return BigInt(combined);
     }
 
+    // ⚡ SOVEREIGN EVM CONTRACT CALL ENGINE (UNIFIED METAMASK & NOMO BRIDGE)
+    async function sendEvmContractCall(toAddress, calldata, gasLimitHex) {
+      sysLog("👉 Starte EVM Contract Call an " + toAddress.substring(0,10) + "... Selector: " + calldata.substring(0,10));
+      
+      let txHash = null;
+      let lastError = null;
+
+      // STAGE 1: Standard Web3 / EIP-1193 Provider (window.ethereum)
+      if (window.ethereum && typeof window.ethereum.request === "function") {
+        try {
+          sysLog("Stage 1: Calling window.ethereum.request(eth_sendTransaction)...");
+          const txParams = {
+            from: userAddress,
+            to: toAddress,
+            value: "0x0",
+            data: calldata,
+            gas: gasLimitHex || "0x2DC6C0"
+          };
+          const res = await window.ethereum.request({
+            method: "eth_sendTransaction",
+            params: [txParams]
+          });
+          txHash = res && (res.hash || res.txHash || (typeof res === "string" ? res : null));
+          if (txHash) {
+            sysLog("✅ Stage 1 Web3 Success! TxHash: " + txHash);
+            return txHash;
+          }
+        } catch(e1) {
+          lastError = e1;
+          sysLog("Stage 1 Notice: " + (e1.message || e1));
+        }
+      }
+
+      // STAGE 2: Native Nomo Bridge (window.nomo.signEvmTransaction)
+      if (!txHash && window.nomo && typeof window.nomo.signEvmTransaction === "function") {
+        try {
+          sysLog("Stage 2: Calling window.nomo.signEvmTransaction...");
+          const res = await window.nomo.signEvmTransaction({
+            to: toAddress,
+            recipient: toAddress,
+            value: "0x0",
+            data: calldata,
+            gasLimit: gasLimitHex || "0x2DC6C0",
+            gas: gasLimitHex || "0x2DC6C0",
+            gasPrice: "0x2540BE400",
+            chainId: "0x181"
+          });
+          txHash = res && (res.hash || res.txHash || (typeof res === "string" ? res : null));
+          if (txHash) {
+            sysLog("✅ Stage 2 Nomo Bridge Success! TxHash: " + txHash);
+            return txHash;
+          }
+        } catch(e2) {
+          lastError = e2;
+          sysLog("Stage 2 Notice: " + (e2.message || e2));
+        }
+      }
+
+      // STAGE 3: Nomo nomoSignEvmTransaction Direct Method
+      if (!txHash && window.nomo && typeof window.nomo.nomoSignEvmTransaction === "function") {
+        try {
+          sysLog("Stage 3: Calling window.nomo.nomoSignEvmTransaction...");
+          const res = await window.nomo.nomoSignEvmTransaction({
+            to: toAddress,
+            data: calldata,
+            value: "0x0",
+            gasLimit: gasLimitHex || "0x2DC6C0"
+          });
+          txHash = res && (res.hash || res.txHash || (typeof res === "string" ? res : null));
+          if (txHash) {
+            sysLog("✅ Stage 3 Direct Bridge Success! TxHash: " + txHash);
+            return txHash;
+          }
+        } catch(e3) {
+          lastError = e3;
+          sysLog("Stage 3 Notice: " + (e3.message || e3));
+        }
+      }
+
+      if (!txHash && lastError) {
+        throw lastError;
+      }
+      return txHash;
+    }
+
     async function executeRwaWwwDonation() {
       if (!userAddress) {
         const ok = await performWalletConnect();
@@ -1351,8 +1436,8 @@ async function verifyOnChainPrerequisites(addr) {
 
       try {
         const amountPad = wwwWei.toString(16).padStart(64, "0");
-        const mintWwwCalldata = "0xdbe97695" + amountPad;
 
+        // 1. Check Allowance on-chain
         const currentAllowance = await checkAllowanceOnChain(WWW_TOKEN_ADDR, userAddress, RWA_TOKEN_ADDR);
 
         if (currentAllowance < wwwWei) {
@@ -1362,37 +1447,7 @@ async function verifyOnChainPrerequisites(addr) {
           const cleanSpender = RWA_TOKEN_ADDR.toLowerCase().replace("0x", "").padStart(64, "0");
           const approveCalldata = "0x095ea7b3" + cleanSpender + amountPad;
 
-          let approveTxHash = null;
-
-          if (isNomoEnvironment() && window.nomo && typeof window.nomo.signEvmTransaction === "function") {
-            try {
-              const res = await window.nomo.signEvmTransaction({
-                to: WWW_TOKEN_ADDR,
-                recipient: WWW_TOKEN_ADDR,
-                value: "0x0",
-                data: approveCalldata,
-                gasLimit: "0x1E8480",
-                gas: "0x1E8480",
-                gasPrice: "0x2540BE400",
-                chainId: "0x181"
-              });
-              approveTxHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
-            } catch(eN1) {
-              sysLog("Nomo Approve Notice: " + (eN1.message || eN1));
-            }
-          } else if (window.ethereum) {
-            await ensureZSCMetaMask();
-            approveTxHash = await window.ethereum.request({
-              method: "eth_sendTransaction",
-              params: [{
-                from: userAddress,
-                to: WWW_TOKEN_ADDR,
-                value: "0x0",
-                data: approveCalldata,
-                gas: "0x1E8480"
-              }]
-            });
-          }
+          const approveTxHash = await sendEvmContractCall(WWW_TOKEN_ADDR, approveCalldata, "0x1E8480");
 
           if (approveTxHash) {
             sysLog("✅ $WWW Freigabe gesendet! Hash: " + approveTxHash);
@@ -1402,59 +1457,12 @@ async function verifyOnChainPrerequisites(addr) {
           }
         }
 
+        // 2. Execute mintWithWWW(uint256 wwwAmount) contract call (Selector: 0xdbe97695)
         sysLog("Sende mintWithWWW(" + amountStr + " $WWW) an RWA Minter Contract...");
         if (btnRwa) btnRwa.innerText = "🚀 STEP 2: " + amountStr + " $WWW MINTING BESTÄTIGEN...";
 
-        let mintTxHash = null;
-
-        if (isNomoEnvironment() && window.nomo && typeof window.nomo.signEvmTransaction === "function") {
-          try {
-            const res = await window.nomo.signEvmTransaction({
-              to: RWA_TOKEN_ADDR,
-              recipient: RWA_TOKEN_ADDR,
-              value: "0x0",
-              data: mintWwwCalldata,
-              gasLimit: "0x2DC6C0",
-              gas: "0x2DC6C0",
-              gasPrice: "0x2540BE400",
-              chainId: "0x181"
-            });
-            mintTxHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
-          } catch(eN2) {
-            sysLog("Nomo Mint Notice: " + (eN2.message || eN2) + ", versuche Fallback sendAssets...");
-          }
-        }
-
-        if (isNomoEnvironment() && !mintTxHash) {
-          if (window.nomo && typeof window.nomo.sendAssets === "function") {
-            const res = await window.nomo.sendAssets({
-              recipient: RWA_TOKEN_ADDR,
-              targetAddress: RWA_TOKEN_ADDR,
-              address: RWA_TOKEN_ADDR,
-              to: RWA_TOKEN_ADDR,
-              amount: amountStr,
-              assetSymbol: "WWW",
-              symbol: "WWW",
-              contractAddress: WWW_TOKEN_ADDR,
-              asset: wwwAssetObj
-            });
-            mintTxHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
-          }
-        }
-
-        if (!isNomoEnvironment() && !mintTxHash && window.ethereum) {
-          await ensureZSCMetaMask();
-          mintTxHash = await window.ethereum.request({
-            method: "eth_sendTransaction",
-            params: [{
-              from: userAddress,
-              to: RWA_TOKEN_ADDR,
-              value: "0x0",
-              data: mintWwwCalldata,
-              gas: "0x2DC6C0"
-            }]
-          });
-        }
+        const mintWwwCalldata = "0xdbe97695" + amountPad;
+        const mintTxHash = await sendEvmContractCall(RWA_TOKEN_ADDR, mintWwwCalldata, "0x2DC6C0");
 
         if (mintTxHash) {
           sysLog("🎉 ✅ $WWW Minting platziert! Hash: " + mintTxHash);
@@ -1481,40 +1489,53 @@ async function verifyOnChainPrerequisites(addr) {
       }
     }
 
-    // 📞 DEZENTRALER P2P MESSENGER CALL (SMARTEARTHPHONE SCANTOCALL)
+    // 📞 Sovereign SmartEarthPhone P2P Call (NFT-Gated)
     function selectDirectoryEntry(name, sid, hexAddr) {
       const inp = document.getElementById("input-call-target");
       if (inp) {
         inp.value = hexAddr || sid;
       }
-      sysLog("Telefonbuch ausgewaehlt: " + name + " (SID: " + sid + ")");
+      sysLog("SmartEarthDirectory ausgewaehlt: " + name + " (SID: " + sid + ")");
       const logDiv = document.getElementById("call-log");
-      if (logDiv) logDiv.innerText = "📍 Ziel bereit: " + name + " (" + (hexAddr ? hexAddr.substring(0,10) + "..." : sid) + ")";
+      if (logDiv) {
+        logDiv.innerText = "🎯 Partner ausgewaehlt: " + name + " (SID: " + sid + "). Klicken Sie auf '📞 Call zünden'!";
+      }
     }
 
     async function executeNomoP2PCall() {
       const targetInput = document.getElementById("input-call-target");
-      const targetVal = targetInput ? targetInput.value.trim() : "";
+      const rawTarget = targetInput ? targetInput.value.trim() : "";
       const logDiv = document.getElementById("call-log");
 
-      if (!targetVal) {
+      if (!rawTarget) {
         alert("Bitte geben Sie eine Ziel-HEX-Adresse (0x...) oder eine 10-stellige SID ein.");
         return;
       }
 
+      // Target Format Validation: 0x Hex (42 chars) or 10-digit SID
+      const isHex = /^0x[a-fA-F0-9]{40}$/.test(rawTarget);
+      const isSid = /^\d{10}$/.test(rawTarget);
+
+      if (!isHex && !isSid) {
+        alert("⚠️ UNGÜLTIGES ZIEL-FORMAT:\n\nBitte geben Sie eine gültige 42-stellige 0x-Hex-Adresse oder eine 10-stellige SID ein.");
+        if (targetInput) {
+          targetInput.style.border = "2px solid #FF3366";
+          setTimeout(() => { targetInput.style.border = "1px solid var(--emerald)"; }, 3000);
+        }
+        if (logDiv) logDiv.innerText = "⚠️ Abbruch: Ungültiges Ziel-Format (Hex oder 10-stellige SID erforderlich).";
+        return;
+      }
+
+      // 1. NFT / KYC Zugangsprüfung (On-Chain Gating)
       if (!hasScanMeNft && kycBal <= 0) {
-        alert("🛡️ ZUGANG VERWEIGERT: Ein dezentraler P2P-Anruf erfordert mindestens 1 $KYC Token oder ein geprägtes ©️ ScanMe.NFT in Ihrer Wallet!");
+        alert("🛡️ ZUGANG VERWEIGERT: Ein dezentraler SmartEarthPhone P2P-Anruf erfordert mindestens 1 $KYC Token oder ein geprägtes ©️ ScanMe.NFT in Ihrer Wallet!");
         if (logDiv) logDiv.innerText = "❌ Abbruch: Kein $KYC / ScanMe.NFT vorhanden.";
         return;
       }
 
-      let cleanTarget = targetVal;
-      if (!cleanTarget.startsWith("0x") && cleanTarget.length === 10 && /^\d+$/.test(cleanTarget)) {
-        sysLog("Anruf-Ziel als 10-stellige SID erkannt: " + cleanTarget);
-      }
-
-      sysLog("📞 Starte dezentralen P2P Call zu Ziel: " + cleanTarget);
-      if (logDiv) logDiv.innerText = "⏳ Verbinde Nomo Messenger Call zu " + cleanTarget + "...";
+      let cleanTarget = rawTarget;
+      sysLog("📞 Starte Sovereign SmartEarthPhone P2P Call zu Ziel: " + cleanTarget);
+      if (logDiv) logDiv.innerText = "⏳ Verbinde SmartEarthPhone P2P Call zu " + cleanTarget + "...";
 
       try {
         if (isNomoEnvironment()) {
@@ -1529,24 +1550,16 @@ async function verifyOnChainPrerequisites(addr) {
             }
           }
 
-          if (!callSuccess && window.nomo && typeof window.nomo.launchUrl === "function") {
-            try {
-              const schemaUrl = "nomo://messenger/call?address=" + encodeURIComponent(cleanTarget);
-              await window.nomo.launchUrl({ url: schemaUrl, launchUrl: schemaUrl, launchMode: "platformDefault" });
-              callSuccess = true;
-            } catch(e2) {
-              sysLog("Notice (launchUrl): " + (e2.message || e2));
-            }
-          }
-
           if (!callSuccess) {
-            sysLog("Deep-Link fallback fuer Nomo Messenger Call...");
+            const schemaUrl = "nomo://messenger/call?address=" + encodeURIComponent(cleanTarget) + "&target=" + encodeURIComponent(cleanTarget);
+            sysLog("Löse Nomo Call Deep-Link Schema aus: " + schemaUrl);
+            window.location.href = schemaUrl;
           }
 
-          if (logDiv) logDiv.innerText = "🚀 P2P Anruf-Signal an Nomo Messenger übermittelt!";
+          if (logDiv) logDiv.innerText = "🚀 P2P Anruf-Signal an SmartEarthPhone Nomo Messenger übermittelt!";
         } else {
           sysLog("PC Browser Modus: P2P Call erfordert die NomoApp.");
-          alert("📞 Dezentrale P2P-Telefonie ist direkt in das dezentrale NomoApp Messenger-Protokoll integriert. Bitte öffnen Sie diesen Link in der NomoApp!");
+          alert("📞 Dezentrale SmartEarthPhone P2P-Telefonie ist direkt in das dezentrale NomoApp Messenger-Protokoll integriert. Bitte öffnen Sie diesen Link in der NomoApp!");
           if (logDiv) logDiv.innerText = "ℹ️ Bitte im NomoApp Mobile Browser öffnen.";
         }
       } catch (err) {
@@ -1554,7 +1567,6 @@ async function verifyOnChainPrerequisites(addr) {
         if (logDiv) logDiv.innerText = "❌ Fehler: " + (err.message || err);
       }
     }
-
 
     async function executeMint() {
       if (!userAddress) {
@@ -1580,85 +1592,21 @@ async function verifyOnChainPrerequisites(addr) {
       sysLog("Sende mintScanMe(recipient=" + userAddress + ", SID=" + userSID + ", FID=9999999999)...");
 
       try {
-        let txHash = null;
-
-        // NOMOAPP NATIVE PFAD (DIRECT EVM SIGNING VIA signEvmTransaction)
-        if (isNomoEnvironment()) {
-          sysLog("👉 [NOMO PFAD] Starte native EVM Contract Prägung (signEvmTransaction)...");
-          try {
-            if (window.nomo && typeof window.nomo.signEvmTransaction === "function") {
-              const res = await window.nomo.signEvmTransaction({
-                to: SCANME_NFT_ADDR,
-                recipient: SCANME_NFT_ADDR,
-                value: "0x0",
-                data: calldata,
-                gasLimit: "0x2DC6C0",
-                gas: "0x2DC6C0",
-                gasPrice: "0x0",
-                chainId: "0x95c5"
-              });
-              txHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
-            }
-          } catch(e1) {
-            sysLog("Notice: signEvmTransaction (" + (e1.message || e1) + "), versuche sendAssets Fallback...");
-          }
-
-          if (!txHash && window.nomo && typeof window.nomo.sendAssets === "function") {
-            const res = await window.nomo.sendAssets({
-              recipient: SCANME_NFT_ADDR,
-              targetAddress: SCANME_NFT_ADDR,
-              address: SCANME_NFT_ADDR,
-              to: SCANME_NFT_ADDR,
-              amount: "0",
-              assetSymbol: "ZENIQ",
-              symbol: "ZENIQ",
-              data: calldata
-            });
-            txHash = res.hash || res.txHash || (typeof res === "string" ? res : JSON.stringify(res));
-          }
-
-          if (!txHash) {
-            sysLog("Stage 3 Fallback: Triggering nomo://wallet/send Deep-Link...");
-            window.location.href = "nomo://wallet/send?address=" + SCANME_NFT_ADDR + "&amount=0&assetSymbol=ZENIQ";
-            setTimeout(async () => {
-              await verifyOnChainPrerequisites(userAddress);
-              if (btn) {
-                btn.disabled = false;
-                btn.innerText = "🚀 2. ©️ ScanMe.NFT JETZT PRÄGEN (0.00 ZENIQ)";
-              }
-            }, 6000);
-            return;
-          }
-        }
-        // METAMASK PFAD (PC BROWSER)
-        else if (window.ethereum && typeof window.ethereum.request === "function") {
-          sysLog("👉 [PC METAMASK PFAD] Prüfe Netzwerk-Kopplung (ZSC 38341)...");
-          await ensureZSCMetaMask();
-
-          sysLog("Sende Transaktion über MetaMask...");
-          const txParams = {
-            from: userAddress,
-            to: SCANME_NFT_ADDR,
-            value: "0x0",
-            data: calldata,
-            gas: "0x1E8480"
-          };
-          txHash = await window.ethereum.request({
-            method: "eth_sendTransaction",
-            params: [txParams]
-          });
-        }
+        const txHash = await sendEvmContractCall(SCANME_NFT_ADDR, calldata, "0x2DC6C0");
 
         if (txHash) {
-          sysLog("✅ Transaktion im Mempool platziert! Hash: " + txHash);
+          sysLog("🎉 ✅ ©️ ScanMe.NFT Prägung platziert! Hash: " + txHash);
           showTxHash(txHash);
-          if (!isNomoEnvironment()) {
-            await waitForReceipt(txHash);
-          } else {
-            alert("🎉 Transaktion an NomoApp übermittelt!\n\nTx Hash:\n" + txHash);
-          }
+
+          startPrerequisitesPolling(userAddress, 45, 3);
+          setTimeout(async () => {
+            if (btn) {
+              btn.disabled = false;
+              btn.innerText = "✓ ©️ ScanMe.NFT JETZT PRÄGEN (0.00 ZENIQ)";
+            }
+          }, 4000);
         } else {
-          throw new Error("Kein Transaktions-Hash erhalten.");
+          throw new Error("Keine Transaktions-Antwort erhalten.");
         }
 
       } catch (err) {
