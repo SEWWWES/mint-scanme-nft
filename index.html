@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.65 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.66 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -302,7 +302,7 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.65) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.66) -->
   <script>
     (function() {
       "use strict";
@@ -485,7 +485,7 @@
   <div class="container">
     <header>
       <img src="assets/images/mint-scanme-nft-logo.png" alt="©️ ScanMe.NFT Logo" style="width:88px; height:88px; object-fit:contain; border-radius:18px; margin-bottom:10px;">
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.65 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.66 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -652,7 +652,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.65 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.66 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -740,7 +740,7 @@
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.65 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.66 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -1115,7 +1115,9 @@ async function verifyOnChainPrerequisites(addr) {
       if (elSid) elSid.innerText = userSID;
       if (logLabel) sysLog(logLabel + ": " + addr);
 
-      verifyOnChainPrerequisites(addr);
+      setTimeout(function() {
+        verifyOnChainPrerequisites(addr).catch(function(e) { sysLog("Notice (Async Prereq): " + (e.message || e)); });
+      }, 10);
     }
 
     async function ensureZSCMetaMask() {
@@ -1211,7 +1213,7 @@ async function verifyOnChainPrerequisites(addr) {
     }
 
     async function init() {
-      sysLog("Satellit v1.0.65 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      sysLog("Satellit v1.0.66 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
       
       const isNomo = isNomoEnvironment();
       sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
@@ -1376,7 +1378,7 @@ async function verifyOnChainPrerequisites(addr) {
       return String(res);
     }
 
-        async function sendEvmContractCall(toAddress, calldata, gasLimitHex, assetSymbol) {
+    async function sendEvmContractCall(toAddress, calldata, gasLimitHex, assetSymbol) {
       sysLog("👉 Starte EVM Contract Call an " + toAddress.substring(0,10) + "... Selector: " + calldata.substring(0,10));
       
       let txHash = null;
@@ -1417,7 +1419,7 @@ async function verifyOnChainPrerequisites(addr) {
           sysLog("Stage 1 Complete Payload Notice: " + (e1.message || e1));
         }
 
-        // 1B. Fallback with evmTx wrapper
+        // STAGE 1B: Fallback with evmTx wrapper
         if (!txHash) {
           try {
             sysLog("Stage 1B (Nomo EVM Sign Wrapped Payload): Trying evmTx wrapper...");
@@ -1443,90 +1445,6 @@ async function verifyOnChainPrerequisites(addr) {
           } catch(e1b) {
             lastError = e1b;
             sysLog("Stage 1B Notice: " + (e1b.message || e1b));
-          }
-        }
-      }
-
-      // STAGE 2 (METAMASK / PC BROWSER): Standard EIP-1193 Web3 Provider
-      if (!txHash && window.ethereum && typeof window.ethereum.request === "function") {
-        try {
-          sysLog("Stage 2 (Web3 / MetaMask): Calling window.ethereum.request(eth_sendTransaction)...");
-          await ensureZSCMetaMask();
-          const txParams = {
-            from: userAddress,
-            to: toAddress,
-            value: "0x0",
-            data: calldata,
-            gas: gasLimitHex || "0x2DC6C0"
-          };
-          const res = await window.ethereum.request({
-            method: "eth_sendTransaction",
-            params: [txParams]
-          });
-          txHash = extractTxHashFromNomoRes(res);
-          if (txHash) {
-            sysLog("✅ Stage 2 Web3 Success! TxHash: " + txHash);
-            return txHash;
-          }
-        } catch(e2) {
-          lastError = e2;
-          sysLog("Stage 2 Web3 Notice: " + (e2.message || e2));
-        }
-      }
-
-      if (!txHash && lastError) {
-        throw lastError;
-      }
-      if (!txHash) {
-        throw new Error("Transaktions-Aufruf abgebrochen oder nicht durchgeführt.");
-      }
-      return txHash;
-    }
-        } catch(eA) {
-          lastError = eA;
-          sysLog("Notice (Stage 1A): " + (eA.message || eA));
-        }
-
-        // Variant B: Puristic minimalist (to, data, value)
-        if (!txHash) {
-          try {
-            const payloadB = {
-              to: toAddress,
-              data: calldata,
-              value: "0x0"
-            };
-            const resB = await window.nomo.signEvmTransaction(payloadB);
-            sysLog("Nomo signEvmTransaction Raw Output (1B): " + JSON.stringify(resB));
-            txHash = extractTxHashFromNomoRes(resB);
-            if (txHash) {
-              sysLog("✅ Stage 1B Nomo EVM Sign Success! TxHash: " + txHash);
-              return txHash;
-            }
-          } catch(eB) {
-            lastError = eB;
-            sysLog("Notice (Stage 1B): " + (eB.message || eB));
-          }
-        }
-
-        // Variant C: With recipient key
-        if (!txHash) {
-          try {
-            const payloadC = {
-              to: toAddress,
-              recipient: toAddress,
-              data: calldata,
-              value: "0x0"
-            };
-            const resC = await window.nomo.signEvmTransaction(payloadC);
-            sysLog("Nomo signEvmTransaction Raw Output (1C): " + JSON.stringify(resC));
-            txHash = extractTxHashFromNomoRes(resC);
-            if (txHash) {
-              sysLog("✅ Stage 1C Nomo EVM Sign Success! TxHash: " + txHash);
-              return txHash;
-            }
-          } catch(eC) {
-            lastError = eC;
-            sysLog("Notice (Stage 1C): " + (eC.message || eC));
           }
         }
       }
