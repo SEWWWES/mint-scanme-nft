@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.53 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.54 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -302,7 +302,7 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.53) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.54) -->
   <script>
     (function() {
       "use strict";
@@ -485,7 +485,7 @@
   <div class="container">
     <header>
       <img src="assets/images/mint-scanme-nft-logo.png" alt="©️ ScanMe.NFT Logo" style="width:88px; height:88px; object-fit:contain; border-radius:18px; margin-bottom:10px;">
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.53 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.54 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -631,7 +631,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.53 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.54 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -719,7 +719,7 @@
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.53 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.54 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -1186,7 +1186,7 @@ async function verifyOnChainPrerequisites(addr) {
     }
 
     async function init() {
-      sysLog("Satellit v1.0.53 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      sysLog("Satellit v1.0.54 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
       
       const isNomo = isNomoEnvironment();
       sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
@@ -1481,7 +1481,17 @@ async function verifyOnChainPrerequisites(addr) {
       }
     }
 
-    // 📞 DEZENTRALER P2P MESSENGER CALL (NFT-GATED)
+    // 📞 DEZENTRALER P2P MESSENGER CALL (SMARTEARTHPHONE SCANTOCALL)
+    function selectDirectoryEntry(name, sid, hexAddr) {
+      const inp = document.getElementById("input-call-target");
+      if (inp) {
+        inp.value = hexAddr || sid;
+      }
+      sysLog("Telefonbuch ausgewaehlt: " + name + " (SID: " + sid + ")");
+      const logDiv = document.getElementById("call-log");
+      if (logDiv) logDiv.innerText = "📍 Ziel bereit: " + name + " (" + (hexAddr ? hexAddr.substring(0,10) + "..." : sid) + ")";
+    }
+
     async function executeNomoP2PCall() {
       const targetInput = document.getElementById("input-call-target");
       const targetVal = targetInput ? targetInput.value.trim() : "";
@@ -1492,14 +1502,12 @@ async function verifyOnChainPrerequisites(addr) {
         return;
       }
 
-      // 1. NFT / KYC Zugangsprüfung (On-Chain Gating)
       if (!hasScanMeNft && kycBal <= 0) {
         alert("🛡️ ZUGANG VERWEIGERT: Ein dezentraler P2P-Anruf erfordert mindestens 1 $KYC Token oder ein geprägtes ©️ ScanMe.NFT in Ihrer Wallet!");
         if (logDiv) logDiv.innerText = "❌ Abbruch: Kein $KYC / ScanMe.NFT vorhanden.";
         return;
       }
 
-      // 2. Zieladresse formatieren
       let cleanTarget = targetVal;
       if (!cleanTarget.startsWith("0x") && cleanTarget.length === 10 && /^\d+$/.test(cleanTarget)) {
         sysLog("Anruf-Ziel als 10-stellige SID erkannt: " + cleanTarget);
@@ -1510,10 +1518,8 @@ async function verifyOnChainPrerequisites(addr) {
 
       try {
         if (isNomoEnvironment()) {
-          // Native Nomo Messenger Call Trigger
           let callSuccess = false;
 
-          // Versuche native Bridge falls verfügbar
           if (window.nomo && typeof window.nomo.messengerCall === "function") {
             try {
               await window.nomo.messengerCall({ address: cleanTarget, recipient: cleanTarget });
@@ -1523,16 +1529,22 @@ async function verifyOnChainPrerequisites(addr) {
             }
           }
 
-          // Fallback zu Nomo URL Schema Protocol
+          if (!callSuccess && window.nomo && typeof window.nomo.launchUrl === "function") {
+            try {
+              const schemaUrl = "nomo://messenger/call?address=" + encodeURIComponent(cleanTarget);
+              await window.nomo.launchUrl({ url: schemaUrl, launchUrl: schemaUrl, launchMode: "platformDefault" });
+              callSuccess = true;
+            } catch(e2) {
+              sysLog("Notice (launchUrl): " + (e2.message || e2));
+            }
+          }
+
           if (!callSuccess) {
-            const schemaUrl = "nomo://messenger/call?address=" + encodeURIComponent(cleanTarget) + "&target=" + encodeURIComponent(cleanTarget);
-            sysLog("Löse Nomo Call Deep-Link Schema aus: " + schemaUrl);
-            window.location.href = schemaUrl;
+            sysLog("Deep-Link fallback fuer Nomo Messenger Call...");
           }
 
           if (logDiv) logDiv.innerText = "🚀 P2P Anruf-Signal an Nomo Messenger übermittelt!";
         } else {
-          // PC / Browser Fallback
           sysLog("PC Browser Modus: P2P Call erfordert die NomoApp.");
           alert("📞 Dezentrale P2P-Telefonie ist direkt in das dezentrale NomoApp Messenger-Protokoll integriert. Bitte öffnen Sie diesen Link in der NomoApp!");
           if (logDiv) logDiv.innerText = "ℹ️ Bitte im NomoApp Mobile Browser öffnen.";
