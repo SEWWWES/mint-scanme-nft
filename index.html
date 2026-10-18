@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>©️ ScanMe.NFT Minter Satellit v1.0.57 | SmartEarthFamily</title>
+  <title>©️ ScanMe.NFT Minter Satellit v1.0.58 | SmartEarthFamily</title>
   <style>
     :root {
       --bg-dark: #0A0E17;
@@ -302,7 +302,7 @@
     }
   </style>
 
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.57) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (HYBRID RESOLVER v1.0.58) -->
   <script>
     (function() {
       "use strict";
@@ -485,7 +485,7 @@
   <div class="container">
     <header>
       <img src="assets/images/mint-scanme-nft-logo.png" alt="©️ ScanMe.NFT Logo" style="width:88px; height:88px; object-fit:contain; border-radius:18px; margin-bottom:10px;">
-      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.57 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
+      <div class="badge-satellit">⚡ SATELLITEN-WEBON v1.0.58 (AUTO PRE-FILL SCHRITT 4/4 & MINT)</div>
       <h1>©️ ScanMe.NFT Minter</h1>
       <p class="subtitle">Souveränes Off-Chain & On-Chain Präge-Portal</p>
     </header>
@@ -631,7 +631,7 @@
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.57 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.58 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -719,7 +719,7 @@
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.57 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.58 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -1186,7 +1186,7 @@ async function verifyOnChainPrerequisites(addr) {
     }
 
     async function init() {
-      sysLog("Satellit v1.0.57 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      sysLog("Satellit v1.0.58 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
       
       const isNomo = isNomoEnvironment();
       sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
@@ -1315,16 +1315,58 @@ async function verifyOnChainPrerequisites(addr) {
     }
 
     // ⚡ SOVEREIGN EVM CONTRACT CALL ENGINE (UNIFIED METAMASK & NOMO BRIDGE)
+    async     // 🛡️ SOUVERÄNER NOMO SCHEMA TRIGGER (VERHINDERT GRAUEN WEBWIEW BILDSCHIRM)
+    function triggerNomoSchema(url) {
+      if (typeof window === "undefined" || !url) return;
+      sysLog("Triggering Nomo Schema safely: " + url);
+      try {
+        const a = document.createElement("a");
+        a.href = url;
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+          if (a.parentNode) a.parentNode.removeChild(a);
+        }, 500);
+      } catch(e) {
+        try {
+          window.location.href = url;
+        } catch(e2) {}
+      }
+    }
+
+    // 🚀 UNIFIED EVM CONTRACT CALL ENGINE (NOMOAPP PRE-FILL STEP 4/4 & METAMASK)
     async function sendEvmContractCall(toAddress, calldata, gasLimitHex, assetSymbol) {
       sysLog("👉 Starte EVM Contract Call an " + toAddress.substring(0,10) + "... Selector: " + calldata.substring(0,10));
       
       let txHash = null;
       let lastError = null;
 
-      // STAGE 1: MetaMask / Standard Web3 Provider (window.ethereum)
-      if (!isNomoEnvironment() && window.ethereum && typeof window.ethereum.request === "function") {
+      // STAGE 1 (PRIMÄR NOMOAPP): Puristic Native EVM Sign (Triggers Step 4 von 4 Pre-Fill Sheet)
+      if (isNomoEnvironment() && window.nomo && typeof window.nomo.signEvmTransaction === "function") {
         try {
-          sysLog("Stage 1: Calling window.ethereum.request(eth_sendTransaction)...");
+          sysLog("Stage 1 (Nomo EVM Sign): Calling window.nomo.signEvmTransaction...");
+          const cleanPayload = {
+            to: toAddress,
+            data: calldata,
+            value: "0x0"
+          };
+          const res = await window.nomo.signEvmTransaction(cleanPayload);
+          txHash = res && (res.hash || res.txHash || (typeof res === "string" ? res : null));
+          if (txHash) {
+            sysLog("✅ Stage 1 Nomo EVM Sign Success! TxHash: " + txHash);
+            return txHash;
+          }
+        } catch(e1) {
+          lastError = e1;
+          sysLog("Stage 1 Notice: " + (e1.message || e1));
+        }
+      }
+
+      // STAGE 2 (METAMASK / PC BROWSER): Standard EIP-1193 Web3 Provider
+      if (!txHash && window.ethereum && typeof window.ethereum.request === "function") {
+        try {
+          sysLog("Stage 2 (Web3 / MetaMask): Calling window.ethereum.request(eth_sendTransaction)...");
           await ensureZSCMetaMask();
           const txParams = {
             from: userAddress,
@@ -1339,32 +1381,7 @@ async function verifyOnChainPrerequisites(addr) {
           });
           txHash = res && (res.hash || res.txHash || (typeof res === "string" ? res : null));
           if (txHash) {
-            sysLog("✅ Stage 1 Web3 Success! TxHash: " + txHash);
-            return txHash;
-          }
-        } catch(e1) {
-          lastError = e1;
-          sysLog("Stage 1 Notice: " + (e1.message || e1));
-        }
-      }
-
-      // STAGE 2: Native Nomo Bridge sendAssets mit Custom Calldata Payload
-      if (!txHash && isNomoEnvironment() && window.nomo && typeof window.nomo.sendAssets === "function") {
-        try {
-          sysLog("Stage 2: Calling window.nomo.sendAssets with Custom Calldata...");
-          const res = await window.nomo.sendAssets({
-            recipient: toAddress,
-            targetAddress: toAddress,
-            address: toAddress,
-            to: toAddress,
-            amount: "0",
-            assetSymbol: assetSymbol || "ZENIQ",
-            symbol: assetSymbol || "ZENIQ",
-            data: calldata
-          });
-          txHash = res && (res.hash || res.txHash || (typeof res === "string" ? res : null));
-          if (txHash) {
-            sysLog("✅ Stage 2 Nomo sendAssets Success! TxHash: " + txHash);
+            sysLog("✅ Stage 2 Web3 Success! TxHash: " + txHash);
             return txHash;
           }
         } catch(e2) {
@@ -1373,38 +1390,12 @@ async function verifyOnChainPrerequisites(addr) {
         }
       }
 
-      // STAGE 3: Nomo signEvmTransaction (Direct Bridge Fallback)
-      if (!txHash && isNomoEnvironment() && window.nomo && typeof window.nomo.signEvmTransaction === "function") {
-        try {
-          sysLog("Stage 3: Calling window.nomo.signEvmTransaction...");
-          const res = await window.nomo.signEvmTransaction({
-            to: toAddress,
-            recipient: toAddress,
-            value: "0x0",
-            data: calldata,
-            gasLimit: gasLimitHex || "0x2DC6C0"
-          });
-          txHash = res && (res.hash || res.txHash || (typeof res === "string" ? res : null));
-          if (txHash) {
-            sysLog("✅ Stage 3 Nomo signEvm Success! TxHash: " + txHash);
-            return txHash;
-          }
-        } catch(e3) {
-          lastError = e3;
-          sysLog("Stage 3 Notice: " + (e3.message || e3));
-        }
-      }
-
-      // STAGE 4: Nomo DeepLink Schema Fallback
+      // STAGE 3 (NOMO SCHEMA FALLBACK): Dynamic Anchor Click (Prevents Gray Screen Error)
       if (!txHash && isNomoEnvironment()) {
-        try {
-          sysLog("Stage 4: Triggering nomo://wallet/send DeepLink Fallback...");
-          const schemaUrl = "nomo://wallet/send?address=" + encodeURIComponent(toAddress) + "&data=" + encodeURIComponent(calldata) + "&amount=0";
-          window.location.href = schemaUrl;
-          return "DEEPLINK_TRIGGERED";
-        } catch(e4) {
-          lastError = e4;
-        }
+        sysLog("Stage 3 (Nomo Schema): Triggering nomo://wallet/send DeepLink via safe Anchor...");
+        const schemaUrl = "nomo://wallet/send?address=" + encodeURIComponent(toAddress) + "&data=" + encodeURIComponent(calldata) + "&amount=0";
+        triggerNomoSchema(schemaUrl);
+        return "DEEPLINK_TRIGGERED";
       }
 
       if (!txHash && lastError) {
@@ -1567,7 +1558,7 @@ async function verifyOnChainPrerequisites(addr) {
           if (!callSuccess) {
             const schemaUrl = "nomo://messenger/call?address=" + encodeURIComponent(cleanTarget) + "&target=" + encodeURIComponent(cleanTarget);
             sysLog("Löse Nomo Call Deep-Link Schema aus: " + schemaUrl);
-            window.location.href = schemaUrl;
+            triggerNomoSchema(schemaUrl);
           }
 
           if (logDiv) logDiv.innerText = "🚀 P2P Anruf-Signal an SmartEarthPhone Nomo Messenger übermittelt!";
