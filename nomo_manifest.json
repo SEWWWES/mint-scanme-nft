@@ -1,9 +1,9 @@
 {
   "nomo_manifest_version": "1.2.0",
   "webon_id": "net.sewwwes",
-  "webon_name": "MyQR ©️ ScanMe.NFT",
-  "webon_version": "1.0.85",
-  "webon_description": "©️ ScanMe.NFT Minter Satellit v1.0.85 SUPREME - Dual-Engine NomoApp & PC MetaMask Parität mit geheilter Contract Call Cascade",
+  "webon_name": "MyQR \u00a9\ufe0f ScanMe.NFT",
+  "webon_version": "1.0.88",
+  "webon_description": "\u00a9\ufe0f ScanMe.NFT Minter Satellit v1.0.88 SUPREME - Dual-Engine NomoApp & PC MetaMask Parit\u00e4t",
   "webon_icon": "assets/images/www-token-logo.png",
   "webon_card": "assets/images/smartearthland_family_mandala.jpg",
   "min_nomo_version": "0.5.0",
@@ -15,6 +15,6 @@
     "nomo.permission.SIGN_EVM_TRANSACTION",
     "nomo.permission.ADD_CUSTOM_TOKEN",
     "nomo.permission.GET_EVM_ADDRESS",
-    "nomo.permission.SIGN_AUTH_MESSAGE"
+    "nomo.permission.GET_EVM_ADDRESSES"
   ]
 }
