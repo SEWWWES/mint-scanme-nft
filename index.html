@@ -195,7 +195,7 @@
   ========================================================================
 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>©️ ScanMe.NFT Minter Satellit v1.0.89 SUPREME | SmartEarthFamily</title>
+<title>©️ ScanMe.NFT Minter Satellit v1.0.90 SUPREME | SmartEarthFamily</title>
 <style>
 :root {
   --bg-dark: #0A0E17;
@@ -636,7 +636,7 @@ body {
 <!-- 🔍 DACH-HEADER TELEMETRIE-BAR (2 ZEILEN) -->
 <div class="spcl-top-roof-banner">
   <div class="spcl-top-roof-line1">SeWWWeS.NET 🔍 SPCL | SEARCH PROOF CONTROL LABELING | SIGNAL VERIFIED</div>
-  <div class="spcl-top-roof-line2">powered by SmartEarthFamily (©️ ScanMe.NFT Minter Satellit WebOn v1.0.89 SUPREME)</div>
+  <div class="spcl-top-roof-line2">powered by SmartEarthFamily (©️ ScanMe.NFT Minter Satellit WebOn v1.0.90 SUPREME)</div>
 </div>
 
 <!-- 🛡️ GEBÜNDELTER SPCL-SCANNER HAUPTRAHMEN -->
@@ -1480,7 +1480,7 @@ LÖSUNG:
     }
 
     async function init() {
-      sysLog("Satellit v1.0.89 SUPREME (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      sysLog("Satellit v1.0.90 SUPREME (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
       startPrerequisitesPolling();
       updateRwaCalculation();
       
@@ -1603,16 +1603,18 @@ LÖSUNG:
       if (isNomoEnvironment() && window.nomo && typeof window.nomo.signEvmTransaction === "function") {
         try {
           sysLog("Stage 1 (Nomo EVM Sign Puristic 5-Key Payload): Calling window.nomo.signEvmTransaction...");
-          const puristicPayload = {
+          const completeNomoEvmPayload = {
             recipient: cleanTo,
             to: cleanTo,
+            value: "0",
             data: cleanData,
-            value: "0x0",
-            gasLimit: cleanGasLimit,
-            gasPrice: "0x2540BE400"
+            gasLimit: "3000000",
+            gasPrice: "10000000000",
+            nonce: "0",
+            chainId: "38341"
           };
           
-          const res = await window.nomo.signEvmTransaction(puristicPayload);
+          const res = await window.nomo.signEvmTransaction(completeNomoEvmPayload);
           sysLog("Nomo signEvmTransaction Raw Output: " + JSON.stringify(res));
           txHash = extractTxHashFromNomoRes(res);
           if (txHash) {
@@ -1663,7 +1665,8 @@ LÖSUNG:
             to: cleanTo,
             value: "0x0",
             data: cleanData,
-            gas: cleanGasLimit
+            gas: cleanGasLimit,
+            gasPrice: "0x2540BE400"
           };
           const res = await window.ethereum.request({
             method: "eth_sendTransaction",
