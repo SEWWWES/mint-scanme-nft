@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (SYNCHRONOUS RESOLVER v1.0.84) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (SYNCHRONOUS RESOLVER v1.0.85) -->
   <script>
     (function() {
       "use strict";
@@ -1602,60 +1602,47 @@ LÖSUNG:
       let txHash = null;
       let lastError = null;
 
-      // STAGE 1 (PRIMÄR NOMOAPP): Complete Non-Null String Payload for Flutter/Dart Null-Safety
+      // STAGE 1 (NOMOAPP PRIMARY): Clean evmTx Payload (WebOn Kit Official Pattern)
       if (isNomoEnvironment() && window.nomo && typeof window.nomo.signEvmTransaction === "function") {
         try {
-          sysLog("Stage 1 (Nomo EVM Sign Complete Payload): Calling window.nomo.signEvmTransaction...");
-          const completePayload = {
-            to: toAddress,
-            recipient: toAddress,
-            contractAddress: toAddress,
-            targetAddress: toAddress,
-            address: toAddress,
-            data: calldata,
-            input: calldata,
-            value: "0x0",
-            amount: "0x0",
-            gasLimit: gasLimitHex || "0x2DC6C0",
-            gas: gasLimitHex || "0x2DC6C0",
-            gasPrice: "0x2540BE400",
-            maxFeePerGas: "0x2540BE400",
-            maxPriorityFeePerGas: "0x2540BE400",
-            chainId: "0x95c5",
-            chain: "0x95c5",
-            nonce: "0x0"
-          };
-          const res = await window.nomo.signEvmTransaction(completePayload);
-          sysLog("Nomo signEvmTransaction Raw Output: " + JSON.stringify(res));
-          txHash = extractTxHashFromNomoRes(res);
+          sysLog("Stage 1 (Nomo EVM Sign evmTx Payload): Calling window.nomo.signEvmTransaction...");
+          const res1 = await window.nomo.signEvmTransaction({
+            evmTx: {
+              to: toAddress,
+              value: "0x0",
+              data: calldata,
+              gasLimit: gasLimitHex || "0x2DC6C0",
+              gasPrice: "0x2540BE400",
+              chainId: "0x95c5"
+            }
+          });
+          sysLog("Nomo signEvmTransaction Stage 1 Raw Output: " + JSON.stringify(res1));
+          txHash = extractTxHashFromNomoRes(res1);
           if (txHash) {
             sysLog("✅ Stage 1 Nomo EVM Sign Success! TxHash: " + txHash);
             return txHash;
           }
         } catch(e1) {
           lastError = e1;
-          sysLog("Stage 1 Complete Payload Notice: " + (e1.message || e1));
+          sysLog("Stage 1 Notice: " + (e1.message || e1));
         }
 
-        // STAGE 1B: Fallback with evmTx wrapper
+        // STAGE 1B: Clean tx Payload Wrapper
         if (!txHash) {
           try {
-            sysLog("Stage 1B (Nomo EVM Sign Wrapped Payload): Trying evmTx wrapper...");
-            const wrappedPayload = {
-              evmTx: {
+            sysLog("Stage 1B (Nomo EVM Sign tx Payload): Trying tx wrapper...");
+            const res1B = await window.nomo.signEvmTransaction({
+              tx: {
                 to: toAddress,
-                recipient: toAddress,
-                data: calldata,
                 value: "0x0",
+                data: calldata,
                 gasLimit: gasLimitHex || "0x2DC6C0",
                 gasPrice: "0x2540BE400",
-                chainId: "0x95c5",
-                nonce: "0x0"
+                chainId: "0x95c5"
               }
-            };
-            const resB = await window.nomo.signEvmTransaction(wrappedPayload);
-            sysLog("Nomo signEvmTransaction 1B Raw Output: " + JSON.stringify(resB));
-            txHash = extractTxHashFromNomoRes(resB);
+            });
+            sysLog("Nomo signEvmTransaction Stage 1B Raw Output: " + JSON.stringify(res1B));
+            txHash = extractTxHashFromNomoRes(res1B);
             if (txHash) {
               sysLog("✅ Stage 1B Nomo EVM Sign Success! TxHash: " + txHash);
               return txHash;
@@ -1665,12 +1652,62 @@ LÖSUNG:
             sysLog("Stage 1B Notice: " + (e1b.message || e1b));
           }
         }
+
+        // STAGE 1C: Flat EVM Transaction Payload
+        if (!txHash) {
+          try {
+            sysLog("Stage 1C (Nomo EVM Sign Flat Payload): Trying flat EVM payload...");
+            const res1C = await window.nomo.signEvmTransaction({
+              to: toAddress,
+              value: "0x0",
+              data: calldata,
+              gasLimit: gasLimitHex || "0x2DC6C0",
+              gasPrice: "0x2540BE400",
+              nonce: "0x0",
+              chainId: "0x95c5"
+            });
+            sysLog("Nomo signEvmTransaction Stage 1C Raw Output: " + JSON.stringify(res1C));
+            txHash = extractTxHashFromNomoRes(res1C);
+            if (txHash) {
+              sysLog("✅ Stage 1C Nomo EVM Sign Success! TxHash: " + txHash);
+              return txHash;
+            }
+          } catch(e1c) {
+            lastError = e1c;
+            sysLog("Stage 1C Notice: " + (e1c.message || e1c));
+          }
+        }
+
+        // STAGE 1D: Nomo sendAssets Contract Trigger
+        if (!txHash && typeof window.nomo.sendAssets === "function") {
+          try {
+            sysLog("Stage 1D (Nomo Native sendAssets Contract Trigger)...");
+            const res1D = await window.nomo.sendAssets({
+              recipient: toAddress,
+              targetAddress: toAddress,
+              address: toAddress,
+              amount: "0",
+              assetSymbol: assetSymbol || "ZENIQ",
+              contractAddress: toAddress,
+              data: calldata
+            });
+            sysLog("Nomo sendAssets Stage 1D Output: " + JSON.stringify(res1D));
+            txHash = extractTxHashFromNomoRes(res1D);
+            if (txHash) {
+              sysLog("✅ Stage 1D Nomo sendAssets Success! TxHash: " + txHash);
+              return txHash;
+            }
+          } catch(e1d) {
+            lastError = e1d;
+            sysLog("Stage 1D Notice: " + (e1d.message || e1d));
+          }
+        }
       }
 
       // STAGE 2 (METAMASK / PC BROWSER): Standard EIP-1193 Web3 Provider
       if (!txHash && window.ethereum && typeof window.ethereum.request === "function") {
         try {
-          sysLog("Stage 2 (Web3 / MetaMask): Calling window.ethereum.request(eth_sendTransaction)...");
+          sysLog("Stage 2 (Web3 / MetaMask PC): Calling window.ethereum.request(eth_sendTransaction)...");
           await ensureZSCMetaMask();
           const txParams = {
             from: userAddress,
@@ -1685,21 +1722,31 @@ LÖSUNG:
           });
           txHash = extractTxHashFromNomoRes(res);
           if (txHash) {
-            sysLog("✅ Stage 2 Web3 Success! TxHash: " + txHash);
+            sysLog("✅ Stage 2 MetaMask Success! TxHash: " + txHash);
             return txHash;
           }
         } catch(e2) {
           lastError = e2;
-          sysLog("Stage 2 Web3 Notice: " + (e2.message || e2));
+          sysLog("Stage 2 MetaMask Error: " + (e2.message || e2));
+        }
+      }
+
+      // STAGE 3 (NOMO DEEPLINK SCHEMA FALLBACK)
+      if (!txHash && isNomoEnvironment()) {
+        try {
+          sysLog("Stage 3: Attempting Nomo DeepLink Schema (nomo://wallet/send)...");
+          const deepLinkUrl = "nomo://wallet/send?address=" + toAddress + "&data=" + encodeURIComponent(calldata) + "&value=0&network=zeniq-smart-chain";
+          triggerNomoSchema(deepLinkUrl);
+          return "DEEPLINK_TRIGGERED";
+        } catch(e3) {
+          sysLog("Stage 3 DeepLink Notice: " + (e3.message || e3));
         }
       }
 
       if (!txHash && lastError) {
         throw lastError;
       }
-      if (!txHash) {
-        throw new Error("Transaktions-Aufruf abgebrochen oder nicht durchgeführt.");
-      }
+
       return txHash;
     }
 
