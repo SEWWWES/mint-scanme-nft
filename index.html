@@ -12,7 +12,7 @@
   ========================================================================
 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>©️ ScanMe.NFT Minter Satellit v1.0.81 SUPREME | SmartEarthFamily</title>
+<title>©️ ScanMe.NFT Minter Satellit v1.0.83 SUPREME | SmartEarthFamily</title>
 <style>
 :root {
   --bg-dark: #0A0E17;
@@ -453,7 +453,7 @@ body {
 <!-- 🔍 DACH-HEADER TELEMETRIE-BAR (2 ZEILEN) -->
 <div class="spcl-top-roof-banner">
   <div class="spcl-top-roof-line1">SeWWWeS.NET 🔍 SPCL | SEARCH PROOF CONTROL LABELING | SIGNAL VERIFIED</div>
-  <div class="spcl-top-roof-line2">powered by SmartEarthFamily (©️ ScanMe.NFT Minter Satellit WebOn v1.0.81 SUPREME)</div>
+  <div class="spcl-top-roof-line2">powered by SmartEarthFamily (©️ ScanMe.NFT Minter Satellit WebOn v1.0.83 SUPREME)</div>
 </div>
 
 <!-- 🛡️ GEBÜNDELTER SPCL-SCANNER HAUPTRAHMEN -->
@@ -482,6 +482,22 @@ body {
 <!-- ▼ [ HIER FOLGT DER INDIVIDUELLE INHALT DER JEWEILIGEN LANDINGPAGE / DES WEBONs ] ▼ -->
 
 <script>
+
+    window.isRealNomoApp = function() {
+      if (typeof window === "undefined") return false;
+      if (window.nomo && typeof window.nomo.getEvmAddress === "function") return true;
+      var ua = (navigator && navigator.userAgent) ? navigator.userAgent : "";
+      if (/Nomo|WebOn/i.test(ua)) return true;
+      if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.NOMOJSChannel) return true;
+      if (window.NOMOJSChannel && typeof window.NOMOJSChannel.postMessage === "function") return true;
+      if (window.ethereum && window.ethereum.isNomo) return true;
+      return false;
+    };
+
+    function isNomoEnvironment() {
+      return window.isRealNomoApp();
+    }
+
 function openSovereignCameraScanner() {
   if (window.nomo && window.nomo.nativeScan) {
     window.nomo.nativeScan().then(res => {
@@ -688,7 +704,7 @@ function executeSpclVerificationSearch() {
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.81 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.83 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -775,7 +791,7 @@ function executeSpclVerificationSearch() {
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.81 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.83 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -1219,46 +1235,65 @@ async function verifyOnChainPrerequisites(addr) {
     }
 
     async function performWalletConnect() {
+      sysLog("👉 Starte Wallet-Kopplung...");
       if (isNomoEnvironment()) {
-        sysLog("👉 [NOMO PFAD] Starte NomoApp Web3 Adressabfrage...");
+        sysLog("👉 [NOMO APP NATIVE PFAD] Abfrage window.nomo.getEvmAddress()...");
         try {
-          const res = await window.nomo.getEvmAddress();
-          sysLog("NomoApp Raw Result: " + JSON.stringify(res));
+          const res = await (window.nomo && window.nomo.getEvmAddress ? window.nomo.getEvmAddress() : Promise.resolve(null));
+          sysLog("NomoApp Raw Address Result: " + JSON.stringify(res));
           const addr = extractStringAddress(res);
           if (addr) {
-            updateWalletUI(addr, "NomoApp gekoppelt");
+            userAddress = addr.toLowerCase();
+            updateWalletUI(userAddress);
+            sysLog("✓ NomoApp Wallet erfolgreich gekoppelt: " + userAddress);
+            await verifyOnChainPrerequisites(userAddress);
             return true;
           } else {
-            sysLog("⚠️ NomoApp Adress-Unboxing konnte keine '0x'-Adresse finden.");
+            sysLog("⚠️ Keine '0x'-Adresse in NomoApp-Antwort gefunden.");
           }
         } catch(e) {
-          sysLog("❌ NomoApp Exception: " + (e.message || e));
+          sysLog("❌ NomoApp Connect Fehler: " + (e.message || e));
         }
         return false;
       }
 
-      // PC / METAMASK PFAD
       sysLog("👉 [PC METAMASK PFAD] Starte EIP-1193 verlinkten Aufruf...");
       if (window.ethereum && typeof window.ethereum.request === "function") {
         try {
-          sysLog("Aufruf window.ethereum.request(eth_requestAccounts)...");
-          const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
-          sysLog("MetaMask Raw Accounts: " + JSON.stringify(accs));
-          const addr = extractStringAddress(accs);
+          sysLog("Aufruf window.ethereum.request({ method: 'eth_requestAccounts' })...");
+          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+          sysLog("MetaMask Raw Accounts: " + JSON.stringify(accounts));
+          const addr = extractStringAddress(accounts);
           if (addr) {
-            updateWalletUI(addr, "MetaMask gekoppelt");
-            sysLog("Konto verbunden. Verifiziere ZENIQ Smart Chain (38341)...");
-            await ensureZSCMetaMask();
+            userAddress = addr.toLowerCase();
+            updateWalletUI(userAddress);
+            sysLog("✓ MetaMask gekoppelt: " + userAddress);
+            try {
+              await ensureZSCMetaMask();
+            } catch(zscErr) {
+              sysLog("Notice ensureZSCMetaMask: " + (zscErr.message || zscErr));
+            }
+            await verifyOnChainPrerequisites(userAddress);
             return true;
           }
         } catch(e) {
-          sysLog("❌ MetaMask Fehler/Abbruch: " + (e.message || e));
+          sysLog("❌ MetaMask Connect Fehler: " + (e.message || e));
+          alert("MetaMask Verbindung abgelehnt oder unterbrochen: " + (e.message || e));
         }
       } else {
         sysLog("Notice: Kein window.ethereum (MetaMask) im Browser verfuegbar.");
-        alert("Keine Web3-Wallet (MetaMask) im Browser gefunden! Bitte installieren Sie MetaMask oder oeffnen Sie dieses WebOn in der NomoApp.");
-      }
+        if (window.location.protocol === "file:") {
+          alert("⚠️ LOKALE DATEI (file://) ERKANNT!
 
+MetaMask blockiert standardmaessig die Injektion bei lokalen Dateien ('file:///...').
+
+LÖSUNG:
+1. In Chrome/Brave/Edge: chrome://extensions oeffnen -> MetaMask -> Details -> 'Zugriff auf Datei-URLs zulassen' AKTIVIEREN.
+2. ODER die Seite auf euren Webserver/GitHub hochladen.");
+        } else {
+          alert("Keine Web3-Wallet (MetaMask) im Browser gefunden! Bitte installieren Sie MetaMask oder oeffnen Sie dieses WebOn in der NomoApp.");
+        }
+      }
       return false;
     }
 
@@ -1271,85 +1306,29 @@ async function verifyOnChainPrerequisites(addr) {
     }
 
     async function init() {
-      sysLog("Satellit v1.0.81 (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      sysLog("Satellit v1.0.83 SUPREME (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      startPrerequisitesPolling();
+      updateRwaCalculation();
       
-      const isNomo = isNomoEnvironment();
-      sysLog("UMGEBUNGS-ROUTING -> " + (isNomo ? "📱 NOMOAPP NATIVE WEB3" : "💻 PC BROWSER / METAMASK"));
-
-      const connBtn = document.getElementById("btn-connect-wallet");
-      if (connBtn) {
-        if (isNomo) {
-          connBtn.innerText = "🔑 NOMOAPP WALLET VERBINDEN";
-        } else {
-          connBtn.innerText = "🔑 METAMASK VERBINDEN (PC Browser)";
-        }
-      }
-
-      // PFAD 1: NOMOAPP AUTO-CONNECT (STUMM)
-      if (isNomo) {
-        try {
-          sysLog("Auto-Check NomoApp getEvmAddress()...");
-          const res = await window.nomo.getEvmAddress();
-          const addr = extractStringAddress(res);
-          if (addr) {
-            updateWalletUI(addr, "NomoApp Auto-Kopplung");
-            return;
+      if (isNomoEnvironment()) {
+        sysLog("UMGEBUNGS-ROUTING -> 📱 REAL NOMO APP / WEBON");
+        performWalletConnect();
+      } else if (window.ethereum) {
+        sysLog("UMGEBUNGS-ROUTING -> 💻 PC BROWSER / METAMASK");
+        sysLog("Auto-Check MetaMask eth_accounts (stumm)...");
+        window.ethereum.request({ method: "eth_accounts" }).then(accs => {
+          if (accs && accs.length > 0) {
+            userAddress = accs[0].toLowerCase();
+            updateWalletUI(userAddress);
+            sysLog("MetaMask Auto-Kopplung: " + userAddress);
+            ensureZSCMetaMask().then(() => verifyOnChainPrerequisites(userAddress));
           }
-        } catch(e) {
-          sysLog("Nomo Auto-Check Notice: " + (e.message || e));
-        }
+        }).catch(e => {
+          sysLog("Auto-Connect Silent Check Notice: " + (e.message || e));
+        });
+      } else {
+        sysLog("UMGEBUNGS-ROUTING -> 🌐 STANDALONE BROWSER (OHNE EXTENSION)");
       }
-
-      // PFAD 2: METAMASK AUTO-CONNECT (STUMM)
-      if (!isNomo && window.ethereum && typeof window.ethereum.request === "function") {
-        try {
-          sysLog("Auto-Check MetaMask eth_accounts (stumm)...");
-          const accs = await window.ethereum.request({ method: "eth_accounts" });
-          const addr = extractStringAddress(accs);
-          if (addr) {
-            updateWalletUI(addr, "MetaMask Auto-Kopplung");
-            return;
-          }
-        } catch(e) {
-          sysLog("MetaMask Auto-Check Notice: " + (e.message || e));
-        }
-
-        if (typeof window.ethereum.on === "function") {
-          window.ethereum.on("accountsChanged", (accounts) => {
-            const addr = extractStringAddress(accounts);
-            if (addr) {
-              updateWalletUI(addr, "MetaMask Konto gewechselt");
-            } else {
-              userAddress = null;
-              document.getElementById("wallet-short").innerText = "Warte auf Wallet-Kopplung...";
-              document.getElementById("wallet-short").style.color = "var(--gold)";
-              document.getElementById("dna-hex").innerText = "Warte auf Wallet...";
-              if (connBtn) {
-                connBtn.innerText = "🔑 METAMASK VERBINDEN (PC Browser)";
-                connBtn.style.background = "linear-gradient(135deg, #00CCFF 0%, #0077FF 100%)";
-                connBtn.style.color = "#FFFFFF";
-              }
-              sysLog("Wallet getrennt.");
-            }
-          });
-        }
-      }
-
-      document.addEventListener("visibilitychange", function() {
-        if (document.visibilityState === "visible" && userAddress) {
-          sysLog("📱 WebOn wieder im Vordergrund (visibilitychange). Prüfe On-Chain Status...");
-          startPrerequisitesPolling(userAddress, 18, 3);
-        }
-      });
-
-      window.addEventListener("focus", function() {
-        if (userAddress) {
-          sysLog("📱 WebOn Fokus erhalten (focus). Prüfe On-Chain Status...");
-          verifyOnChainPrerequisites(userAddress);
-        }
-      });
-
-      sysLog("Bereit.");
     }
 
     // 100 $WWW MIKROSPENDE & MINTING VIA mintWithWWW(uint256 wwwAmount)
