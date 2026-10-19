@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (SYNCHRONOUS RESOLVER v1.0.88) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (SYNCHRONOUS RESOLVER v1.0.89) -->
   <script>
     (function() {
       "use strict";
@@ -16,7 +16,7 @@
         if (/Nomo|WebOn/i.test(ua)) return true;
         if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.NOMOJSChannel) return true;
         if (window.NOMOJSChannel && typeof window.NOMOJSChannel.postMessage === "function") return true;
-        if (window.chrome && window.chrome.webview && (window.chrome.webview.hostObjects || typeof window.chrome.webview.postMessage === "function")) return true;
+        if (window.chrome && window.chrome.webview && (window.chrome.webview.hostObjects && window.chrome.webview.hostObjects.NOMOJSChannel || typeof window.chrome.webview.postMessage === "function")) return true;
         return false;
       };
 
@@ -195,7 +195,7 @@
   ========================================================================
 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>©️ ScanMe.NFT Minter Satellit v1.0.88 SUPREME | SmartEarthFamily</title>
+<title>©️ ScanMe.NFT Minter Satellit v1.0.89 SUPREME | SmartEarthFamily</title>
 <style>
 :root {
   --bg-dark: #0A0E17;
@@ -636,7 +636,7 @@ body {
 <!-- 🔍 DACH-HEADER TELEMETRIE-BAR (2 ZEILEN) -->
 <div class="spcl-top-roof-banner">
   <div class="spcl-top-roof-line1">SeWWWeS.NET 🔍 SPCL | SEARCH PROOF CONTROL LABELING | SIGNAL VERIFIED</div>
-  <div class="spcl-top-roof-line2">powered by SmartEarthFamily (©️ ScanMe.NFT Minter Satellit WebOn v1.0.88 SUPREME)</div>
+  <div class="spcl-top-roof-line2">powered by SmartEarthFamily (©️ ScanMe.NFT Minter Satellit WebOn v1.0.89 SUPREME)</div>
 </div>
 
 <!-- 🛡️ GEBÜNDELTER SPCL-SCANNER HAUPTRAHMEN -->
@@ -666,16 +666,7 @@ body {
 
 <script>
 
-    window.isRealNomoApp = function() {
-      if (typeof window === "undefined") return false;
-      if (window.nomo && typeof window.nomo.getEvmAddress === "function") return true;
-      var ua = (navigator && navigator.userAgent) ? navigator.userAgent : "";
-      if (/Nomo|WebOn/i.test(ua)) return true;
-      if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.NOMOJSChannel) return true;
-      if (window.NOMOJSChannel && typeof window.NOMOJSChannel.postMessage === "function") return true;
-      if (window.ethereum && window.ethereum.isNomo) return true;
-      return false;
-    };
+    
 
     function isNomoEnvironment() {
       return window.isRealNomoApp();
@@ -887,7 +878,7 @@ function executeSpclVerificationSearch() {
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.88 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.89 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -974,7 +965,7 @@ function executeSpclVerificationSearch() {
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.88 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.89 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -1489,7 +1480,7 @@ LÖSUNG:
     }
 
     async function init() {
-      sysLog("Satellit v1.0.88 SUPREME (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      sysLog("Satellit v1.0.89 SUPREME (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
       startPrerequisitesPolling();
       updateRwaCalculation();
       
