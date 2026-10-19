@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (SYNCHRONOUS RESOLVER v1.0.87) -->
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (SYNCHRONOUS RESOLVER v1.0.88) -->
   <script>
     (function() {
       "use strict";
@@ -195,7 +195,7 @@
   ========================================================================
 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>©️ ScanMe.NFT Minter Satellit v1.0.87 SUPREME | SmartEarthFamily</title>
+<title>©️ ScanMe.NFT Minter Satellit v1.0.88 SUPREME | SmartEarthFamily</title>
 <style>
 :root {
   --bg-dark: #0A0E17;
@@ -636,7 +636,7 @@ body {
 <!-- 🔍 DACH-HEADER TELEMETRIE-BAR (2 ZEILEN) -->
 <div class="spcl-top-roof-banner">
   <div class="spcl-top-roof-line1">SeWWWeS.NET 🔍 SPCL | SEARCH PROOF CONTROL LABELING | SIGNAL VERIFIED</div>
-  <div class="spcl-top-roof-line2">powered by SmartEarthFamily (©️ ScanMe.NFT Minter Satellit WebOn v1.0.87 SUPREME)</div>
+  <div class="spcl-top-roof-line2">powered by SmartEarthFamily (©️ ScanMe.NFT Minter Satellit WebOn v1.0.88 SUPREME)</div>
 </div>
 
 <!-- 🛡️ GEBÜNDELTER SPCL-SCANNER HAUPTRAHMEN -->
@@ -887,7 +887,7 @@ function executeSpclVerificationSearch() {
         <button class="btn-copy" onclick="copyDiagnosticReport()">📋 LOGS KOPIEREN</button>
       </div>
 
-      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.87 initialisiert. Bereit...</div>
+      <div id="sys-log" class="log-box">[SYS] Satellit v1.0.88 initialisiert. Bereit...</div>
 
       <label style="font-size:0.72rem; color:var(--text-muted); font-weight:bold; display:block; margin-top:8px;">
         Kopierfeld für Entwickler-Analyse:
@@ -974,7 +974,7 @@ function executeSpclVerificationSearch() {
         hasScanMeNft: hasScanMeNft
       };
 
-      const fullReport = "=== SEWWWES WEBON v1.0.87 DIAGNOSTIK REPORT ===\n" +
+      const fullReport = "=== SEWWWES WEBON v1.0.88 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "UMGEBUNG: " + JSON.stringify(envInfo, null, 2) + "\n" +
         "\n=== PROTOKOLL-LOGS ===\n" +
@@ -1417,7 +1417,7 @@ async function verifyOnChainPrerequisites(addr) {
       }
     }
 
-    async async function performWalletConnect() {
+    async function performWalletConnect() {
       sysLog("👉 Starte Wallet-Kopplung...");
       if (isNomoEnvironment()) {
         sysLog("👉 [NOMO APP NATIVE PFAD] Abfrage window.nomo.getEvmAddress()...");
@@ -1489,7 +1489,7 @@ LÖSUNG:
     }
 
     async function init() {
-      sysLog("Satellit v1.0.87 SUPREME (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
+      sysLog("Satellit v1.0.88 SUPREME (AUTO PRE-FILL SCHRITT 4/4 & MINT) initialisiert...");
       startPrerequisitesPolling();
       updateRwaCalculation();
       
@@ -1568,20 +1568,17 @@ LÖSUNG:
     // 🛡️ SOUVERÄNER NOMO SCHEMA TRIGGER (VERHINDERT GRAUEN WEBWIEW BILDSCHIRM)
     function triggerNomoSchema(url) {
       if (typeof window === "undefined" || !url) return;
-      sysLog("Triggering Nomo Schema safely: " + url);
+      sysLog("Triggering Nomo Schema safely (iframe bridge): " + url);
       try {
-        const a = document.createElement("a");
-        a.href = url;
-        a.style.display = "none";
-        document.body.appendChild(a);
-        a.click();
+        const iframe = document.createElement("iframe");
+        iframe.style.display = "none";
+        iframe.src = url;
+        document.body.appendChild(iframe);
         setTimeout(function() {
-          if (a.parentNode) a.parentNode.removeChild(a);
-        }, 500);
+          if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+        }, 1000);
       } catch(e) {
-        try {
-          window.location.href = url;
-        } catch(e2) {}
+        sysLog("Schema trigger notice: " + (e.message || e));
       }
     }
 
@@ -1601,7 +1598,7 @@ LÖSUNG:
       return String(res);
     }
 
-    async async function sendEvmContractCall(toAddress, calldata, gasLimitHex, assetSymbol) {
+    async function sendEvmContractCall(toAddress, calldata, gasLimitHex, assetSymbol) {
       sysLog("👉 Starte EVM Contract Call an " + toAddress.substring(0,10) + "... Selector: " + calldata.substring(0,10));
       
       const cleanTo = String(toAddress).trim();
