@@ -1,6 +1,184 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+  <!-- 🧱 EMBEDDED NATIVE NOMO WEBON DART BRIDGE (SYNCHRONOUS RESOLVER v1.0.84) -->
+  <script>
+    (function() {
+      "use strict";
+
+      window.isRealNomoApp = function() {
+        if (typeof window === "undefined") return false;
+        var ua = (navigator && navigator.userAgent) ? navigator.userAgent : "";
+        if (/Nomo|WebOn/i.test(ua)) return true;
+        if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.NOMOJSChannel) return true;
+        if (window.NOMOJSChannel && typeof window.NOMOJSChannel.postMessage === "function") return true;
+        return false;
+      };
+
+      function getDartBridge() {
+        if (typeof window === "undefined") return null;
+        if (!window.isRealNomoApp()) return null;
+
+        // 1. iOS / Standard NOMOJSChannel
+        if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.NOMOJSChannel) {
+          return function(payload) { window.webkit.messageHandlers.NOMOJSChannel.postMessage(payload); };
+        }
+        if (window.NOMOJSChannel && typeof window.NOMOJSChannel.postMessage === "function") {
+          return function(payload) { window.NOMOJSChannel.postMessage(payload); };
+        }
+
+        // 2. Android Flutter WebView NOMOJSChannel hostObjects
+        if (window.chrome && window.chrome.webview && window.chrome.webview.hostObjects && window.chrome.webview.hostObjects.NOMOJSChannel) {
+          return function(payload) { window.chrome.webview.hostObjects.NOMOJSChannel.postMessage(payload); };
+        }
+
+        // 3. Android Flutter WebView standard postMessage
+        if (window.chrome && window.chrome.webview && typeof window.chrome.webview.postMessage === "function") {
+          return function(payload) { window.chrome.webview.postMessage(payload); };
+        }
+
+        return null;
+      }
+
+      var invocationCounter = 0;
+      var moduleID = Math.random().toString(36).substring(2, 10);
+      window.nomoResolvePromises = window.nomoResolvePromises || {};
+      window.nomoRejectPromises = window.nomoRejectPromises || {};
+
+      function invokeNomoFunction(functionName, args) {
+        invocationCounter++;
+        var invocationID = invocationCounter.toString() + "_" + functionName + "_" + moduleID;
+        var payload = JSON.stringify({ functionName: functionName, invocationID: invocationID, args: args || {} });
+        return new Promise(function(resolve, reject) {
+          window.nomoResolvePromises[invocationID] = resolve;
+          window.nomoRejectPromises[invocationID] = reject;
+          var bridge = getDartBridge();
+          if (bridge) {
+            try {
+              bridge(payload);
+            } catch (e) {
+              reject(e.message || e);
+            }
+          } else {
+            reject("Not running inside Nomo App.");
+          }
+        });
+      }
+
+      function decodeBase64UTF16(base64EncodedString) {
+        try {
+          var binaryString = atob(base64EncodedString);
+          var bytes = new Uint8Array(binaryString.length);
+          for (var i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          return new TextDecoder("utf-8").decode(bytes);
+        } catch(e) {
+          return base64EncodedString;
+        }
+      }
+
+      window.fulfillPromiseFromFlutter = function(arg1, arg2, arg3) {
+        try {
+          var invocationID, status, result;
+          if (typeof arg1 === "string" && (!arg2 || typeof arg2 !== "string" || arg1.length > 50)) {
+            var jsonStr = decodeBase64UTF16(arg1);
+            var obj = JSON.parse(jsonStr);
+            invocationID = obj.invocationID;
+            status = obj.status;
+            result = obj.result;
+          } else {
+            invocationID = arg1;
+            result = arg2;
+            status = (arg3 === true || arg3 === "true" || arg3 === "OK" || arg3 === 1) ? "resolve" : "reject";
+          }
+
+          if (!invocationID) return "missing invocationID";
+
+          var fulfillFunction;
+          if (status === "resolve" || status === true) {
+            fulfillFunction = window.nomoResolvePromises[invocationID];
+          } else {
+            fulfillFunction = window.nomoRejectPromises[invocationID];
+          }
+
+          window.nomoResolvePromises[invocationID] = null;
+          window.nomoRejectPromises[invocationID] = null;
+
+          if (fulfillFunction) {
+            if (typeof result === "string" && (result.startsWith("{") || result.startsWith("["))) {
+              try { result = JSON.parse(result); } catch(e){}
+            }
+            fulfillFunction(result);
+            return "OK";
+          }
+        } catch (e) {
+          console.error("fulfillPromiseFromFlutter failed", e);
+        }
+        return "FAIL";
+      };
+
+      // window.isRealNomoApp already defined cleanly at top of bridge IIFE
+
+      var nomoBridge = {
+        runsAsWebOn: function() {
+          return window.isRealNomoApp();
+        },
+        getEvmAddress: function() {
+          if (!window.isRealNomoApp()) {
+            return Promise.reject("NOT_IN_NOMO_APP");
+          }
+          return invokeNomoFunction("nomoGetEvmAddress", {}).then(function(res) {
+            if (typeof res === "object" && res !== null) {
+              return res.evmAddress || res.ethAddress || res.address || res;
+            }
+            return res;
+          });
+        },
+        sendAssets: function(args) {
+          if (!window.isRealNomoApp()) {
+            return Promise.reject("NOT_IN_NOMO_APP");
+          }
+          return invokeNomoFunction("nomoSendAssets", args || {});
+        },
+        signEvmTransaction: function(args) {
+          if (!window.isRealNomoApp()) {
+            return Promise.reject("NOT_IN_NOMO_APP");
+          }
+          return invokeNomoFunction("nomoSignEvmTransaction", args || {});
+        },
+        signAuthMessage: function(args) {
+          if (!window.isRealNomoApp()) {
+            return Promise.reject("NOT_IN_NOMO_APP");
+          }
+          return invokeNomoFunction("nomoSignAuthMessage", args || {});
+        },
+        addCustomToken: function(args) {
+          if (!window.isRealNomoApp()) {
+            return Promise.reject("NOT_IN_NOMO_APP");
+          }
+          return invokeNomoFunction("nomoAddCustomToken", args || {});
+        },
+        qrScan: function() {
+          if (!window.isRealNomoApp()) {
+            return Promise.reject("NOT_IN_NOMO_APP");
+          }
+          return invokeNomoFunction("nomoQrScan", {});
+        }
+      };
+
+      if (!window.nomo || Object.keys(window.nomo).length === 0) {
+        window.nomo = nomoBridge;
+      } else {
+        for (var key in nomoBridge) {
+          if (!(key in window.nomo)) {
+            window.nomo[key] = nomoBridge[key];
+          }
+        }
+      }
+    })();
+  </script>
+
 <meta charset="UTF-8">
 <!-- 
   ========================================================================
@@ -1283,13 +1461,13 @@ async function verifyOnChainPrerequisites(addr) {
       } else {
         sysLog("Notice: Kein window.ethereum (MetaMask) im Browser verfuegbar.");
         if (window.location.protocol === "file:") {
-          alert("⚠️ LOKALE DATEI (file://) ERKANNT!
+          alert(`⚠️ LOKALE DATEI (file://) ERKANNT!
 
-MetaMask blockiert standardmaessig die Injektion bei lokalen Dateien ('file:///...').
+MetaMask blockiert standardmaessig die Injektion bei lokalen Dateien ('file:///D:/...').
 
 LÖSUNG:
 1. In Chrome/Brave/Edge: chrome://extensions oeffnen -> MetaMask -> Details -> 'Zugriff auf Datei-URLs zulassen' AKTIVIEREN.
-2. ODER die Seite auf euren Webserver/GitHub hochladen.");
+2. ODER die Datei über einen lokalen Server (http://localhost) bzw. Webserver/GitHub oeffnen.`);
         } else {
           alert("Keine Web3-Wallet (MetaMask) im Browser gefunden! Bitte installieren Sie MetaMask oder oeffnen Sie dieses WebOn in der NomoApp.");
         }
