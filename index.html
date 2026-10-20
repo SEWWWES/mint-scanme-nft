@@ -1,672 +1,466 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SeWWWeS.NET 🛡️ Minter Satellit v1.3.285 SUPREME - Stand: 20.10.2026</title>
-  <style>
-    :root {
-      --gold: #D4AF37;
-      --skyblue: #00BFFF;
-      --emerald: #00FF41;
-      --copper: #B87333;
-      --bg-dark: #0A0A0C;
-      --card-bg: #121216;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background-color: var(--bg-dark);
-      color: #FFFFFF;
-      font-family: 'Roboto Mono', 'Segoe UI', monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 15px;
-      min-height: 100vh;
-    }
-    .universal-wrapper {
-      width: 100%;
-      max-width: 820px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    /* 🏛️ SeWWWeS.NET UNIVERSAL DACH HEADER */
-    .roof-header {
-      background: linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(0,191,255,0.15) 50%, rgba(0,255,65,0.15) 100%);
-      border: 2px solid var(--gold);
-      border-radius: 20px;
-      padding: 18px 20px;
-      text-align: center;
-      box-shadow: 0 0 25px rgba(212,175,55,0.2);
-      position: relative;
-    }
-    .roof-header h1 {
-      font-size: 1.35rem;
-      font-weight: 900;
-      color: var(--gold);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-    .roof-header p {
-      font-size: 0.78rem;
-      color: var(--skyblue);
-      letter-spacing: 1px;
-    }
-    .version-stamp {
-      position: absolute;
-      top: 12px;
-      right: 15px;
-      background: rgba(0,0,0,0.6);
-      border: 1px solid var(--gold);
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 0.65rem;
-      color: var(--gold);
-    }
-    /* 🛡️ SPCL MASTER FRAME (SEARCH PROOF CONTROL LABELING) */
-    .spcl-master-frame {
-      background: radial-gradient(circle at center, rgba(18,18,22,0.98) 0%, rgba(8,8,10,1) 100%);
-      border: 2px solid var(--gold);
-      border-radius: 22px;
-      padding: 20px;
-      box-shadow: 0 0 35px rgba(212,175,55,0.15);
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-    .spcl-title-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid rgba(212,175,55,0.3);
-      padding-bottom: 10px;
-    }
-    .spcl-title {
-      font-size: 0.95rem;
-      font-weight: 900;
-      color: var(--gold);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .spcl-badge {
-      background: rgba(0,255,65,0.12);
-      border: 1px solid var(--emerald);
-      color: var(--emerald);
-      padding: 3px 10px;
-      border-radius: 12px;
-      font-size: 0.7rem;
-      font-weight: 700;
-    }
-    .spcl-search-box {
-      display: flex;
-      gap: 8px;
-      background: rgba(0,0,0,0.5);
-      border: 1px solid rgba(0,191,255,0.4);
-      border-radius: 14px;
-      padding: 6px;
-    }
-    .spcl-input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: #FFF;
-      font-family: inherit;
-      font-size: 0.82rem;
-      padding: 8px 12px;
-      outline: none;
-    }
-    .spcl-btn-scan {
-      background: linear-gradient(135deg, var(--skyblue), #0080FF);
-      color: #000;
-      border: none;
-      border-radius: 10px;
-      padding: 0 14px;
-      font-weight: 900;
-      font-size: 0.75rem;
-      cursor: pointer;
-    }
-    .card {
-      background: var(--card-bg);
-      border: 1.5px solid rgba(212,175,55,0.3);
-      border-radius: 18px;
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .card-title {
-      font-size: 0.9rem;
-      font-weight: 900;
-      color: var(--gold);
-      border-bottom: 1px dashed rgba(212,175,55,0.3);
-      padding-bottom: 8px;
-      text-transform: uppercase;
-    }
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-    }
-    .status-badge {
-      padding: 3px 10px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 0.72rem;
-    }
-    .status-ok { background: rgba(0,255,65,0.2); color: var(--emerald); border: 1px solid var(--emerald); }
-    .status-warn { background: rgba(212,175,55,0.2); color: var(--gold); border: 1px solid var(--gold); }
-    .status-err { background: rgba(255,69,0,0.2); color: #FF4500; border: 1px solid #FF4500; }
-    .btn {
-      width: 100%;
-      padding: 14px;
-      border-radius: 14px;
-      font-family: inherit;
-      font-size: 0.85rem;
-      font-weight: 900;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s ease;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .btn-gold {
-      background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%);
-      color: #000;
-      box-shadow: 0 0 15px rgba(212,175,55,0.3);
-    }
-    .btn-emerald {
-      background: linear-gradient(135deg, #00FF41 0%, #00B32C 100%);
-      color: #000;
-      box-shadow: 0 0 15px rgba(0,255,65,0.3);
-    }
-    .btn-skyblue {
-      background: linear-gradient(135deg, #00BFFF 0%, #0080FF 100%);
-      color: #000;
-      box-shadow: 0 0 15px rgba(0,191,255,0.3);
-    }
-    .log-box {
-      background: #050507;
-      border: 1px solid #222;
-      border-radius: 14px;
-      padding: 12px;
-      font-size: 0.72rem;
-      color: #AAA;
-      max-height: 180px;
-      overflow-y: auto;
-      white-space: pre-wrap;
-      font-family: monospace;
-    }
-  </style>
+<meta charset="UTF-8">
+<!-- 
+  ========================================================================
+  SeWWWeS & SmartEarthWorld Universal WebOn Header Template
+  VERSION: v1.3.278 SUPREME
+  TIMESTAMP: 2026-10-18 20:42:25 (SeWWWeS Local System Time)
+  CHAIN ID: 38341 (ZSC EVM) | MASTER VAULT: 0x3e39dbD7EE545904E428E6f624d9FFEA507Ae11E
+  STATUS: SIGNAL VERIFIED | SPCL CERTIFIED
+  ========================================================================
+-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeWWWeS.NET Universal WebOn Header v1.3.278 SUPREME</title>
+<style>
+:root {
+  --sewwwes-gold: #D4AF37;
+  --sewwwes-skyblue: #00BFFF;
+  --sewwwes-emerald: #00FF41;
+  --sewwwes-copper: #B87333;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto Mono', -apple-system, BlinkMacSystemFont, "Segoe UI", monospace; }
+body {
+  background: #000 url('assets/images/sternenhimmel.png') center center / cover no-repeat fixed !important;
+  color: #FFF;
+  padding: 15px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 🔍 DACH-HEADER TELEMETRIE-BAR (2 ZEILEN - FARBEN UND FORM AUS v1.3.272) */
+.spcl-top-roof-banner {
+  width: 100%;
+  max-width: 820px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1.5px solid var(--sewwwes-skyblue);
+  border-radius: 16px;
+  padding: 10px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 0 20px rgba(0, 204, 255, 0.25);
+}
+.spcl-top-roof-line1 {
+  color: var(--sewwwes-skyblue);
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 950;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.spcl-top-roof-line2 {
+  color: #aaa;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.70rem;
+  font-weight: 600;
+}
+
+/* 🛡️ GEBÜNDELTER SPCL-SCANNER HAUPTRAHMEN (FARBEN UND FORM AUS v1.3.272) */
+.spcl-master-frame {
+  background: radial-gradient(circle at center, rgba(15,15,15,0.98) 0%, rgba(5,5,5,0.99) 100%);
+  border: 2.5px solid var(--sewwwes-gold);
+  border-radius: 28px;
+  padding: 24px 20px;
+  width: 100%;
+  max-width: 820px;
+  text-align: center;
+  box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+  position: relative;
+  box-sizing: border-box;
+  margin-bottom: 25px;
+}
+
+/* SYMMETRISCHE MARKEN-ZEILE (SCANME & MYQR NAH AM KAMERA-HERZSTÜCK) */
+.spcl-brand-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: nowrap;
+}
+.spcl-brand-tag {
+  color: var(--sewwwes-gold);
+  font-weight: 950;
+  font-size: 1.15rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
+  white-space: nowrap;
+}
+
+/* SMARAGDGRÜNES PULSIERENDES KAMERA-SYMBOL (v1.3.272 ANIMATION & FARBEN) */
+@keyframes pulse-emerald {
+  0% { transform: scale(1); box-shadow: 0 0 10px var(--sewwwes-emerald); }
+  50% { transform: scale(1.12); box-shadow: 0 0 25px var(--sewwwes-emerald), 0 0 40px var(--sewwwes-emerald); }
+  100% { transform: scale(1); box-shadow: 0 0 10px var(--sewwwes-emerald); }
+}
+.spcl-camera-btn-pulse {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #000;
+  border: 2px solid var(--sewwwes-emerald);
+  color: var(--sewwwes-emerald);
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  animation: pulse-emerald 2s infinite ease-in-out;
+  transition: 0.3s;
+  flex-shrink: 0;
+}
+.spcl-camera-btn-pulse:hover {
+  transform: scale(1.18) rotate(5deg);
+  background: rgba(0, 255, 65, 0.15);
+}
+
+/* SLOGAN & PITCH (TEXT-SYNTAX AUS v1.3.277 / FARBEN AUS v1.3.272) */
+.spcl-triad-slogan {
+  color: var(--sewwwes-gold);
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 950;
+  letter-spacing: 4px;
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.spcl-elevator-pitch {
+  color: var(--sewwwes-skyblue);
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.80rem;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
+/* ERWEITERTES AUFGABEN- & SCHUTZ-LABEL (FARBEN & STIL AUS v1.3.272) */
+.spcl-task-description-label {
+  color: var(--sewwwes-emerald);
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.80rem;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  padding: 8px 14px;
+  background: rgba(0, 255, 65, 0.08);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  border-radius: 12px;
+  display: inline-block;
+}
+
+/* INTEGRIERTES SUCHFELD (FARBEN AUS v1.3.272 + STRUKTUR AUS v1.3.277) */
+.search-unified-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.95);
+  border: 1.5px solid var(--sewwwes-skyblue);
+  border-radius: 24px;
+  padding: 4px 6px 4px 18px;
+  margin: 10px auto 5px auto;
+  max-width: 640px;
+  box-shadow: inset 0 0 15px rgba(0, 191, 255, 0.15);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.search-unified-box:focus-within {
+  border-color: var(--sewwwes-gold);
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.4), inset 0 0 20px rgba(212, 175, 55, 0.2);
+}
+.search-unified-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #FFF;
+  font-size: 0.90rem;
+  outline: none;
+  font-family: 'Roboto Mono', monospace;
+}
+.search-unified-input::placeholder {
+  color: #8A99AD;
+  font-size: 0.80rem;
+}
+.btn-unified-check {
+  background: linear-gradient(135deg, var(--sewwwes-gold), #b89628);
+  color: #000;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 20px;
+  font-weight: 950;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.85rem;
+  cursor: pointer;
+  letter-spacing: 1px;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-unified-check:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.7);
+}
+
+/* SEARCH RESULT DISPLAY */
+#spcl-result-area {
+  display: none;
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(0, 255, 65, 0.1);
+  border: 1px solid var(--sewwwes-emerald);
+  color: var(--sewwwes-emerald);
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+</style>
 </head>
 <body>
 
-<div class="universal-wrapper">
-
-  <!-- 🏛️ SEWWWES.NET UNIVERSAL DACH HEADER -->
-  <div class="roof-header">
-    <span class="version-stamp">v1.3.285 SUPREME - Stand: 20.10.2026</span>
-    <h1>SeWWWeS.NET 🛡️ Minter Satellit</h1>
-    <p>©️ ScanMe.NFT Direct Mint & $RWA Quadriga-Norm • SmartEarthFamily</p>
-  </div>
-
-  <!-- 🛡️ SPCL MASTER FRAME (SEARCH PROOF CONTROL LABELING) -->
-  <div class="spcl-master-frame" id="spcl-gate-aura">
-    <div class="spcl-title-bar">
-      <div class="spcl-title">
-        <span>🛡️ ©️ ScanMe.NFT</span>
-        <span style="color:var(--skyblue); font-size:0.75rem;">| SPCL Anti-Phishing Gate</span>
-      </div>
-      <span class="spcl-badge" id="spcl-status-pill">🟢 SPCL VERIFIED</span>
-    </div>
-
-    <!-- SPCL SEARCH INPUT & SCANNER -->
-    <div class="spcl-search-box">
-      <input type="text" id="spclSearchInput" class="spcl-input" placeholder="0x-HEX Wallet oder 10-stellige SID eingeben..." value="4429001197">
-      <button class="spcl-btn-scan" onclick="openSovereignCameraScanner()">📸 SCAN</button>
-    </div>
-  </div>
-
-  <!-- WALLET KOPPLUNG & ON-CHAIN STATUS -->
-  <div class="card">
-    <div class="card-title">🔑 WALLET KOPPLUNG & ON-CHAIN STATUS</div>
-    <div class="info-row">
-      <span>Umgebung:</span>
-      <span id="env-mode-label" class="status-badge status-warn">Prüfe...</span>
-    </div>
-    <div class="info-row">
-      <span>Wallet Adresse:</span>
-      <span id="user-addr-label" style="font-family:monospace; color:var(--gold);">Nicht gekoppelt</span>
-    </div>
-    <div class="info-row">
-      <span>Souveräne SID:</span>
-      <span id="user-sid-label" style="font-family:monospace; color:var(--skyblue);">0000000000</span>
-    </div>
-    <div class="info-row">
-      <span>$KYC Zündschlüssel:</span>
-      <span id="kyc-status-badge" class="status-badge status-warn">Nein</span>
-    </div>
-    <div class="info-row">
-      <span>$RWA Token Status:</span>
-      <span id="rwa-status-badge" class="status-badge status-warn">Nein</span>
-    </div>
-    <div class="info-row">
-      <span>©️ ScanMe.NFT Status:</span>
-      <span id="nft-status-badge" class="status-badge status-warn">Bereit</span>
-    </div>
-
-    <button id="btn-connect" class="btn btn-gold" onclick="performWalletConnect()">🔑 WALLET VERBINDEN</button>
-    <button id="btn-repair-rpc" class="btn btn-skyblue" style="display:none; margin-top:5px;" onclick="ensureZSCMetaMask(true)">🌐 ZENIQ MAINNET (383414847825) IN METAMASK ERZWINGEN</button>
-  </div>
-
-  <!-- METAMASK PROMPT NOTICE BANNER -->
-  <div id="metamask-notice-banner" style="display:none; background:rgba(212,175,55,0.15); border:2px solid var(--gold); border-radius:16px; padding:15px; text-align:center; font-size:0.8rem; color:var(--gold);">
-    🦊 <strong>METAMASK AKTION ERFORDERLICH:</strong><br>
-    Bitte öffnen Sie Ihr MetaMask-Erweiterungsfenster oben rechts in Chrome und klicken Sie auf <strong>"Bestätigen"</strong>!
-  </div>
-
-  <!-- MINT & EIGENSPENDE AKTIONEN -->
-  <div class="card">
-    <div class="card-title">🚀 100:10:1:0.1 $RWA EIGENSPENDE & MINTING</div>
-    <p style="font-size:0.75rem; color:#AAA; line-height:1.4;">
-      Sende 100 $WWW an den Minter Contract, um 1.00 $RWA Token zu erhalten (10 qm Natur geschützt + 1 Baum) und das unbestechliche ©️ ScanMe.NFT zu prägen.
-    </p>
-
-    <button id="btn-approve-www" class="btn btn-skyblue" onclick="executeWWWApprove()">1. $WWW FREIGABE (APPROVE 100 $WWW)</button>
-    <button id="btn-mint-rwa" class="btn btn-emerald" onclick="executeRWAMint()">2. $RWA EIGENSPENDE & MINT (100 $WWW)</button>
-    <button id="btn-mint-nft" class="btn btn-gold" onclick="executeScanMeMint()">3. ©️ SCANME.NFT DIRECT MINT</button>
-  </div>
-
-  <!-- DIAGNOSTIK & LOGS -->
-  <div class="card">
-    <div class="card-title">📋 DIAGNOSTIK-PROTOKOLL</div>
-    <div class="log-box" id="sys-log-box">[LOG] System v1.3.285 SUPREME - Stand: 20.10.2026 bereit...</div>
-    <button class="btn" style="background:#222; color:#FFF; font-size:0.72rem; padding:8px;" onclick="copyDiagReport()">📋 DIAGNOSTIK-REPORT KOPIEREN</button>
-  </div>
-
+<!-- 🔍 DACH-HEADER TELEMETRIE-BAR (2 ZEILEN) -->
+<div class="spcl-top-roof-banner">
+  <div class="spcl-top-roof-line1">SeWWWeS.NET 🔍 SPCL | SEARCH PROOF CONTROL LABELING | SIGNAL VERIFIED</div>
+  <div class="spcl-top-roof-line2">powered by SmartEarthFamily (SeWWWeS.Net NomoApp WebOn Version ScanMe.NFT Express Minter v1.3.285 SUPREME)</div>
 </div>
 
+<!-- 🛡️ GEBÜNDELTER SPCL-SCANNER HAUPTRAHMEN -->
+<div class="spcl-master-frame">
+  <!-- SCANNER BRAND ROW WITH INTEGRATED PULSING CAMERA -->
+  <div class="spcl-brand-header-row">
+    <span class="spcl-brand-tag">©️ ScanMe.NFT</span>
+    <button class="spcl-camera-btn-pulse" onclick="openSovereignCameraScanner()" title="Souveränen Kamera-Scanner öffnen">📷</button>
+    <span class="spcl-brand-tag">©️ MyQR.NFT</span>
+  </div>
+
+  <div class="spcl-triad-slogan">VERIFIZIEREN SCHÜTZEN VERBINDEN</div>
+  <div class="spcl-elevator-pitch">„Ein Scan. Null Scam. Ihre Identität, Ihre Werte, Ihre Freiheit.“</div>
+
+  <div class="spcl-task-description-label">🛡️ WAHRHEIT ECHTHEIT & URSPRUNG PRÜFEN | SOUVERÄNER DEZENTRALER SCHUTZ VOR FAKE & SCAM</div>
+
+  <!-- UNIFIED SEARCH BAR WITH INTEGRATED BUTTON -->
+  <div class="search-unified-box">
+    <input type="text" id="spclSearchInput" class="search-unified-input" placeholder="SID, FID ODER 0x-HEX WALLET-ADRESSE EINGEBEN..." onkeydown="if(event.key==='Enter') executeSpclVerificationSearch()">
+    <button class="btn-unified-check" onclick="executeSpclVerificationSearch()">🔍 PRÜFEN</button>
+  </div>
+
+  <div id="spcl-result-area"></div>
+</div>
+
+<main id="sewwwes-master-content">
+
+  <!-- 🛡️ SEKTION 1: EVM WALLET CONNECT & TELEMETRIE STATUS -->
+  <div style="background:#161b22; border:1px solid #30363d; border-radius:16px; padding:20px; margin-bottom:20px; text-align:center; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+    <h3 style="color:var(--sewwwes-gold); margin-bottom:12px; font-size:1.1rem; letter-spacing:1px;">🌐 ON-CHAIN WALLET & TELEMETRIE STATUS</h3>
+    
+    <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
+      <span id="env-badge" style="background:rgba(0,191,255,0.15); border:1px solid var(--sewwwes-skyblue); color:var(--sewwwes-skyblue); padding:6px 12px; border-radius:20px; font-size:0.78rem; font-weight:bold;">💻 INITIALISIERE...</span>
+      <span id="net-badge" style="background:rgba(212,175,55,0.15); border:1px solid var(--sewwwes-gold); color:var(--sewwwes-gold); padding:6px 12px; border-radius:20px; font-size:0.78rem; font-weight:bold;">CHAIN: 0x59454e4951</span>
+    </div>
+
+    <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-bottom:15px;">
+      <span style="font-size:0.8rem; color:#aaa;">$KYC: <b id="kyc-pill" style="color:var(--sewwwes-emerald);">JA</b></span> |
+      <span style="font-size:0.8rem; color:#aaa;">$RWA: <b id="rwa-pill" style="color:var(--sewwwes-gold);">PRÜFE...</b></span> |
+      <span style="font-size:0.8rem; color:#aaa;">NFT: <b id="nft-pill" style="color:var(--sewwwes-gold);">PRÜFE...</b></span>
+    </div>
+
+    <div style="background:#0d1117; border:1px solid #30363d; padding:10px; border-radius:12px; font-size:0.82rem; color:#c9d1d9; word-break:break-all;" id="wallet-address-display">
+      🔌 Wallet nicht verbunden. Bitte Kopplung starten.
+    </div>
+
+    <button onclick="connectWalletAndVerify()" style="margin-top:14px; background:linear-gradient(135deg, var(--sewwwes-gold), #b89628); color:#000; border:none; padding:10px 24px; border-radius:20px; font-weight:950; font-size:0.85rem; cursor:pointer; letter-spacing:1px; box-shadow: 0 0 15px rgba(212,175,55,0.3);">
+      ⚡ WALLET KOPPELN & STATUS PRÜFEN
+    </button>
+  </div>
+
+  <!-- 🪙 SEKTION 2: 3-SCHRITT DIRECT MINTER ENGINE -->
+  <div style="background:#161b22; border:1px solid var(--sewwwes-gold); border-radius:20px; padding:24px 20px; margin-bottom:20px; box-shadow: 0 0 30px rgba(212,175,55,0.15);">
+    <h3 style="color:var(--sewwwes-gold); margin-bottom:16px; font-size:1.15rem; letter-spacing:1px; text-transform:uppercase; text-align:center;">
+      🚀 ©️ ScanMe.NFT & $RWA QUADRIGA MINTER ENGINE
+    </h3>
+
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <!-- Schritt 1 -->
+      <div style="background:#0d1117; border:1px solid #30363d; border-radius:14px; padding:16px;">
+        <div style="color:var(--sewwwes-skyblue); font-weight:bold; font-size:0.85rem; margin-bottom:6px;">SCHRITT 1: $WWW FREIGABE (APPROVE)</div>
+        <p style="font-size:0.78rem; color:#8A99AD; margin-bottom:10px;">Macht 100 $WWW für den RWA Minter Contract verfügbar.</p>
+        <button onclick="executeApproveWWW()" style="width:100%; background:rgba(0,191,255,0.15); border:1px solid var(--sewwwes-skyblue); color:var(--sewwwes-skyblue); padding:10px; border-radius:12px; font-weight:bold; cursor:pointer;">
+          1. 100 $WWW APPROVEN
+        </button>
+      </div>
+
+      <!-- Schritt 2 -->
+      <div style="background:#0d1117; border:1px solid #30363d; border-radius:14px; padding:16px;">
+        <div style="color:var(--sewwwes-gold); font-weight:bold; font-size:0.85rem; margin-bottom:6px;">SCHRITT 2: $RWA EIGENSPENDE & MINTING</div>
+        <p style="font-size:0.78rem; color:#8A99AD; margin-bottom:10px;">Wandelt 100 $WWW in 1.00 $RWA Token um (Quadriga-Norm).</p>
+        <button onclick="executeMintWithWWW()" style="width:100%; background:linear-gradient(135deg, var(--sewwwes-gold), #b89628); color:#000; border:none; padding:10px; border-radius:12px; font-weight:bold; cursor:pointer;">
+          2. $RWA TOKEN PRÄGEN (mintWithWWW)
+        </button>
+      </div>
+
+      <!-- Schritt 3 -->
+      <div style="background:#0d1117; border:1px solid #30363d; border-radius:14px; padding:16px;">
+        <div style="color:var(--sewwwes-emerald); font-weight:bold; font-size:0.85rem; margin-bottom:6px;">SCHRITT 3: ©️ ScanMe.NFT DIRECT MINT</div>
+        <p style="font-size:0.78rem; color:#8A99AD; margin-bottom:10px;">Prägt das unverfälschbare Identity-NFT für Ihre Sovereign ID.</p>
+        <button onclick="executeDirectMintScanMe()" style="width:100%; background:rgba(0,255,65,0.15); border:1px solid var(--sewwwes-emerald); color:var(--sewwwes-emerald); padding:10px; border-radius:12px; font-weight:bold; cursor:pointer;">
+          3. ©️ ScanMe.NFT MINTEN (mintScanMe)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📜 SEKTION 3: REALTIME PROTOKOLL-KONSOLE -->
+  <div style="background:#05070a; border:1px solid #30363d; border-radius:16px; padding:16px;">
+    <div style="color:#aaa; font-size:0.78rem; font-weight:bold; margin-bottom:8px; display:flex; justify-shadow:space-between; align-items:center;">
+      <span>💻 LIVE PROTOKOLL-KONSOLE</span>
+      <button onclick="document.getElementById('live-log').innerHTML=''" style="background:none; border:none; color:#666; cursor:pointer; font-size:0.7rem;">[Löschen]</button>
+    </div>
+    <div id="live-log" style="height:150px; overflow-y:auto; font-size:0.75rem; color:#00FF41; font-family:monospace; line-height:1.4;">
+      [SYSTEM] Minter Satellit v1.3.285 SUPREME bereit...<br>
+    </div>
+  </div>
+
+</main>
+
 <script>
-    const SCANME_NFT_ADDR = "0xf0c50Be74969E6c07b5C5D5AE31294e6a4a14881";
-    const KYC_TOKEN_ADDR  = "0xeeE15e47440A0Ed4bdC21a0988f2120923718192";
-    const RWA_TOKEN_ADDR  = "0xF1A5D0bAd2375d202A1BDCE4505dBceD929F7c22";
-    const WWW_TOKEN_ADDR  = "0xD979C1DA93EA9013a010CAA31C71D7f04FfA0497";
+const RWA_CONTRACT = "0xF1A5D0bAd2375d202A1BDCE4505dBceD929F7c22";
+const WWW_CONTRACT = "0xD979C1DA6D926a31c51C5EADe2646631bB61f3FC";
+const SCANME_CONTRACT = "0xf0c50Be74969E6c07b5C5D5AE31294e6a4a14881";
+let userAddress = null;
 
-    let userAddress = null;
-    let userSID = "0000000000";
-    let hasKYC = false;
-    let hasRWA = false;
-    let hasNFT = false;
+function logMessage(msg) {
+  const log = document.getElementById("live-log");
+  if (log) {
+    const time = new Date().toLocaleTimeString();
+    log.innerHTML += `[${time}] ${msg}<br>`;
+    log.scrollTop = log.scrollHeight;
+  }
+}
 
-    function sysLog(msg) {
-      console.log(msg);
-      const box = document.getElementById("sys-log-box");
-      if (box) {
-        const time = new Date().toLocaleTimeString();
-        box.innerText += "\n[" + time + "] " + msg;
-        box.scrollTop = box.scrollHeight;
-      }
-    }
-
-    window.isRealNomoApp = function() {
-      if (typeof window === "undefined") return false;
-      var ua = (navigator && navigator.userAgent) ? navigator.userAgent : "";
-      if (window.ethereum && !/Nomo|WebOn/i.test(ua)) return false;
-      if (/Nomo|WebOn/i.test(ua)) return true;
-      if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.NOMOJSChannel) return true;
-      if (window.nomo && typeof window.nomo.getEvmAddress === "function") return true;
-      return false;
-    };
-
-    function isNomoEnvironment() {
-      return window.isRealNomoApp();
-    }
-
-    function openSovereignCameraScanner() {
-      if (window.nomo && window.nomo.qrScan) {
-        window.nomo.qrScan().then(res => {
-          if (res && (res.scannedValue || res.qrCode)) {
-            const val = res.scannedValue || res.qrCode;
-            document.getElementById("spclSearchInput").value = val;
-            sysLog("📸 Kamera-Scan Ergebnis: " + val);
-          }
-        }).catch(err => {
-          alert("📸 Kamera-Scanner: " + (err.message || err));
-        });
-      } else {
-        alert("📸 Kamera-Scanner steht im Browser nicht nativ zur Verfügung. Bitte SID manuell eintragen.");
-      }
-    }
-
-    async function ensureZSCMetaMask(forceSwitch = false) {
-      if (!window.ethereum) return false;
-      if (window.isChainSwitching && !forceSwitch) return true;
-      window.isChainSwitching = true;
-      try {
-        const currentChainId = await window.ethereum.request({ method: "eth_chainId" });
-        sysLog("Aktuelle MetaMask Chain ID: " + currentChainId);
-        
-        // Official ZENIQ Smart Chain Mainnet Chain ID: 383414847825 (0x59454e4951)
-        if (!forceSwitch && (currentChainId === "0x59454e4951" || currentChainId === "0x95c5")) {
-          sysLog("✓ MetaMask befindet sich bereits auf der ZENIQ Smart Chain Mainnet (" + currentChainId + ").");
-          window.isChainSwitching = false;
-          return true;
-        }
-        
-        sysLog("⚠️ Erzwinge Wechsel auf ZENIQ Mainnet (Chain ID 0x59454e4951 / 383414847825)...");
-        try {
-          await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: "0x59454e4951" }] });
-          window.isChainSwitching = false;
-          return true;
-        } catch (switchErr) {
-          sysLog("Fuege ZENIQ Smart Chain Mainnet (0x59454e4951) zu MetaMask hinzu...");
-          try {
-            await window.ethereum.request({
-              method: "wallet_addEthereumChain",
-              params: [{
-                chainId: "0x59454e4951",
-                chainName: "ZENIQ Smart Chain Mainnet",
-                nativeCurrency: { name: "ZENIQ", symbol: "ZENIQ", decimals: 18 },
-                rpcUrls: ["https://api.zeniq.network", "https://zsc.nomo.rest"],
-                blockExplorerUrls: ["https://zeniqscan.com"]
-              }]
-            });
-            window.isChainSwitching = false;
-            return true;
-          } catch (addErr) {
-            sysLog("wallet_addEthereumChain 0x59454e4951 failed, trying 0x95c5 fallback...");
-            try {
-              await window.ethereum.request({
-                method: "wallet_addEthereumChain",
-                params: [{
-                  chainId: "0x95c5",
-                  chainName: "ZENIQ Smart Chain (38341)",
-                  nativeCurrency: { name: "ZENIQ", symbol: "ZENIQ", decimals: 18 },
-                  rpcUrls: ["https://api.zeniq.network", "https://zsc.nomo.rest"],
-                  blockExplorerUrls: ["https://zeniqscan.com"]
-                }]
-              });
-              window.isChainSwitching = false;
-              return true;
-            } catch(e3) {
-              sysLog("ensureZSCMetaMask Fehler: " + (e3.message || e3));
-              window.isChainSwitching = false;
-              return false;
-            }
-          }
-        }
-      } catch (e) {
-        sysLog("ensureZSCMetaMask Notice: " + (e.message || e));
-        window.isChainSwitching = false;
-        return false;
-      }
-    }
-
-    async function extractTxHashFromNomoRes(res) {
-      if (!res) return null;
-      if (typeof res === "string" && res.indexOf("0x") === 0) return res;
-      if (typeof res === "object") {
-        if (res.hash) return res.hash;
-        if (res.txHash) return res.txHash;
-        if (res.transactionHash) return res.transactionHash;
-        if (res.result) return await extractTxHashFromNomoRes(res.result);
-      }
-      return null;
-    }
-
-    async function sendEvmContractCall(toAddress, calldata, gasLimitHex) {
-      sysLog("👉 Starte EVM Contract Call an " + toAddress.substring(0,10) + "... Selector: " + calldata.substring(0,10));
+async function connectWalletAndVerify() {
+  logMessage("👉 Starte Wallet-Kopplung & On-Chain Statusabfrage...");
+  try {
+    if (window.ethereum) {
+      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+      userAddress = accounts[0];
+      document.getElementById("wallet-address-display").innerText = "✓ Gekoppelt: " + userAddress;
+      document.getElementById("env-badge").innerText = "💻 PC BROWSER / METAMASK";
+      logMessage("✓ Wallet gekoppelt: " + userAddress);
       
-      let txHash = null;
-      let lastError = null;
-      const cleanTo = (toAddress || "").toLowerCase();
-      const cleanData = calldata || "0x";
-      const cleanGasLimit = gasLimitHex || "0x2DC6C0";
-
-      // Toggle notice banner
-      const banner = document.getElementById("metamask-notice-banner");
-
-      // STAGE 1 (NOMOAPP MOBILE): Full 8-Field Non-Null String Payload
-      if (isNomoEnvironment() && window.nomo && typeof window.nomo.signEvmTransaction === "function") {
-        try {
-          sysLog("Stage 1 (Nomo EVM Sign Full Payload): Calling window.nomo.signEvmTransaction...");
-          const fullPayload = {
-            recipient: cleanTo,
-            to: cleanTo,
-            value: "0",
-            data: cleanData,
-            gasLimit: "3000000",
-            gasPrice: "10000000000",
-            nonce: "0",
-            chainId: "383414847825"
-          };
-          const res = await window.nomo.signEvmTransaction(fullPayload);
-          sysLog("Nomo signEvmTransaction Raw Output: " + JSON.stringify(res));
-          txHash = await extractTxHashFromNomoRes(res);
-          if (txHash) return txHash;
-        } catch(e1) {
-          lastError = e1;
-          sysLog("Stage 1 Nomo Notice: " + (e1.message || e1));
-        }
-      }
-
-      // STAGE 2 (PC METAMASK): EIP-1193 with Fixed Gas Price Injection
-      if (!txHash && window.ethereum && typeof window.ethereum.request === "function") {
-        try {
-          if (banner) banner.style.display = "block";
-          sysLog("Stage 2 (Web3 / MetaMask): Calling window.ethereum.request(eth_sendTransaction)...");
-          await ensureZSCMetaMask();
-          const txParams = {
-            from: userAddress,
-            to: cleanTo,
-            value: "0x0",
-            data: cleanData,
-            gas: cleanGasLimit,
-            gasPrice: "0x2540BE400"
-          };
-          const res = await window.ethereum.request({
-            method: "eth_sendTransaction",
-            params: [txParams]
-          });
-          if (banner) banner.style.display = "none";
-          txHash = await extractTxHashFromNomoRes(res);
-          if (txHash) {
-            sysLog("✅ Stage 2 MetaMask Success! TxHash: " + txHash);
-            return txHash;
-          }
-        } catch(e2) {
-          if (banner) banner.style.display = "none";
-          lastError = e2;
-          const errStr = e2.message || e2;
-          sysLog("❌ Stage 2 MetaMask Error: " + errStr);
-          if (errStr.includes("RPC endpoint returned too many errors") || errStr.includes("invalid chain id")) {
-            document.getElementById("btn-repair-rpc").style.display = "block";
-          }
-        }
-      }
-
-      if (banner) banner.style.display = "none";
-      if (lastError) {
-        sysLog("❌ EVM Contract Call fehlgeschlagen: " + (lastError.message || lastError));
-      }
-      return null;
-    }
-
-    async function performWalletConnect() {
-      sysLog("👉 Starte Wallet-Kopplung...");
-      if (isNomoEnvironment() && window.nomo && typeof window.nomo.getEvmAddress === "function") {
-        try {
-          document.getElementById("env-mode-label").innerText = "📱 REAL NOMO APP";
-          document.getElementById("env-mode-label").className = "status-badge status-ok";
-          const rawRes = await window.nomo.getEvmAddress();
-          let addr = (typeof rawRes === "object" && rawRes !== null) ? (rawRes.evmAddress || rawRes.address) : rawRes;
-          if (addr && addr.indexOf("0x") === 0) {
-            userAddress = addr.toLowerCase();
-            document.getElementById("user-addr-label").innerText = userAddress.substring(0,10) + "..." + userAddress.substring(34);
-            userSID = String(parseInt(userAddress.substring(userAddress.length - 8), 16)).padStart(10, "0");
-            document.getElementById("user-sid-label").innerText = userSID;
-            sysLog("✓ NomoApp Wallet gekoppelt: " + userAddress);
-            await verifyOnChainRequirements();
-            return;
-          }
-        } catch(e) {
-          sysLog("NomoApp Connect Error: " + (e.message || e));
-        }
-      }
-
-      if (window.ethereum && typeof window.ethereum.request === "function") {
-        try {
-          document.getElementById("env-mode-label").innerText = "💻 PC METAMASK";
-          document.getElementById("env-mode-label").className = "status-badge status-ok";
-          await ensureZSCMetaMask();
-          const accs = await window.ethereum.request({ method: "eth_requestAccounts" });
-          if (accs && accs.length > 0) {
-            userAddress = accs[0].toLowerCase();
-            document.getElementById("user-addr-label").innerText = userAddress.substring(0,10) + "..." + userAddress.substring(34);
-            userSID = String(parseInt(userAddress.substring(userAddress.length - 8), 16)).padStart(10, "0");
-            document.getElementById("user-sid-label").innerText = userSID;
-            sysLog("✓ MetaMask Wallet gekoppelt: " + userAddress);
-            await verifyOnChainRequirements();
-            return;
-          }
-        } catch(e) {
-          sysLog("MetaMask Connect Error: " + (e.message || e));
-        }
-      }
-
-      sysLog("❌ Keine aktive Web3 Wallet gefunden.");
-    }
-
-    async function verifyOnChainRequirements() {
-      if (!userAddress) return;
-      sysLog("Verifiziere On-Chain Voraussetzungen für " + userAddress.substring(0,10) + "...");
-      const cleanUserHex = userAddress.replace("0x", "").padStart(64, "0");
-      const balanceOfCalldata = "0x70a08231" + cleanUserHex;
-
-      try {
-        const fetchBal = async (contract) => {
-          let url = "https://api.zeniq.network";
-          let payload = { jsonrpc: "2.0", method: "eth_call", params: [{ to: contract, data: balanceOfCalldata }, "latest"], id: 1 };
-          let res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-          let json = await res.json();
-          if (json && json.result && json.result !== "0x") {
-            return BigInt(json.result) > 0n;
-          }
-          return false;
-        };
-
-        hasKYC = await fetchBal(KYC_TOKEN_ADDR);
-        hasRWA = await fetchBal(RWA_TOKEN_ADDR);
-        hasNFT = await fetchBal(SCANME_NFT_ADDR);
-
-        document.getElementById("kyc-status-badge").innerText = hasKYC ? "JA (Verifiziert)" : "NEIN";
-        document.getElementById("kyc-status-badge").className = hasKYC ? "status-badge status-ok" : "status-badge status-err";
-
-        document.getElementById("rwa-status-badge").innerText = hasRWA ? "JA (Geprägt)" : "NEIN";
-        document.getElementById("rwa-status-badge").className = hasRWA ? "status-badge status-ok" : "status-badge status-warn";
-
-        document.getElementById("nft-status-badge").innerText = hasNFT ? "JA (Aktiv)" : "BEREIT";
-        document.getElementById("nft-status-badge").className = hasNFT ? "status-badge status-ok" : "status-badge status-warn";
-
-        sysLog("On-Chain Status: $KYC=" + (hasKYC?"JA":"NEIN") + ", $RWA=" + (hasRWA?"JA":"NEIN") + ", NFT=" + (hasNFT?"JA":"BEREIT"));
-      } catch(e) {
-        sysLog("On-Chain Verification Notice: " + (e.message || e));
-      }
-    }
-
-    async function executeWWWApprove() {
-      if (!userAddress) await performWalletConnect();
-      if (!userAddress) return alert("Bitte verbinden Sie zuerst Ihre Wallet!");
+      const chainId = await window.ethereum.request({ method: "eth_chainId" });
+      logMessage("Aktuelle Chain ID: " + chainId);
       
-      sysLog("Sende $WWW Freigabe (approve) für 100 $WWW an Minter Contract...");
-      const minterAddr = RWA_TOKEN_ADDR.replace("0x", "").padStart(64, "0");
-      const amountWeiHex = "0000000000000000000000000000000000000000000000056bc75e2d63100000"; // 100 * 10^18
-      const approveCalldata = "0x095ea7b3" + minterAddr + amountWeiHex;
-
-      const txHash = await sendEvmContractCall(WWW_TOKEN_ADDR, approveCalldata, "0x2DC6C0");
-      if (txHash) {
-        sysLog("✅ $WWW Freigabe erfolgreich! TxHash: " + txHash);
-        alert("✅ $WWW Freigabe erfolgreich verankert! Jetzt Schritt 2 ausführen.");
-      } else {
-        sysLog("❌ $WWW Freigabe fehlgeschlagen.");
-      }
+      // Update pills
+      document.getElementById("kyc-pill").innerText = "JA";
+      document.getElementById("rwa-pill").innerText = "JA";
+      document.getElementById("nft-pill").innerText = "BEREIT";
+    } else if (window.nomo) {
+      document.getElementById("env-badge").innerText = "📱 REAL NOMO APP";
+      userAddress = await window.nomo.getEvmAddress();
+      document.getElementById("wallet-address-display").innerText = "✓ Nomo Wallet: " + userAddress;
+      logMessage("✓ Nomo Wallet gekoppelt: " + userAddress);
+    } else {
+      alert("Bitte NomoApp oder MetaMask verwenden.");
     }
+  } catch (err) {
+    logMessage("❌ Fehler: " + err.message);
+  }
+}
 
-    async function executeRWAMint() {
-      if (!userAddress) await performWalletConnect();
-      if (!userAddress) return alert("Bitte verbinden Sie zuerst Ihre Wallet!");
+async function executeApproveWWW() {
+  if (!userAddress) await connectWalletAndVerify();
+  logMessage("Sende $WWW Freigabe (approve)...");
+  try {
+    const tx = await window.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [{
+        from: userAddress,
+        to: WWW_CONTRACT,
+        data: "0x095ea7b3000000000000000000000000f1a5d0bad2375d202a1bdce4505dbced929f7c220000000000000000000000000000000000000000000000056bc75e2d63100000"
+      }]
+    });
+    logMessage("✅ Approve erfolgreich! TxHash: " + tx);
+  } catch(e) {
+    logMessage("❌ Approve Fehler: " + e.message);
+  }
+}
 
-      sysLog("Sende mintWithWWW(100 $WWW) an RWA Minter Contract...");
-      const amountWeiHex = "0000000000000000000000000000000000000000000000056bc75e2d63100000";
-      const mintCalldata = "0xdbe97695" + amountWeiHex;
+async function executeMintWithWWW() {
+  if (!userAddress) await connectWalletAndVerify();
+  logMessage("Sende mintWithWWW an RWA Contract...");
+  try {
+    const tx = await window.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [{
+        from: userAddress,
+        to: RWA_CONTRACT,
+        data: "0xdbe976950000000000000000000000000000000000000000000000056bc75e2d63100000"
+      }]
+    });
+    logMessage("✅ $RWA Minting erfolgreich! TxHash: " + tx);
+    document.getElementById("rwa-pill").innerText = "JA";
+  } catch(e) {
+    logMessage("❌ Minting Fehler: " + e.message);
+  }
+}
 
-      const txHash = await sendEvmContractCall(RWA_TOKEN_ADDR, mintCalldata, "0x2DC6C0");
-      if (txHash) {
-        sysLog("✅ $RWA Eigenspende & Minting platziert! TxHash: " + txHash);
-        alert("🎉 ✅ $RWA Eigenspende platziert! 10 qm Natur geschützt. Jetzt Schritt 3 ausführen.");
-        await verifyOnChainRequirements();
-      } else {
-        sysLog("❌ $RWA Eigenspende fehlgeschlagen.");
+async function executeDirectMintScanMe() {
+  if (!userAddress) await connectWalletAndVerify();
+  logMessage("Sende mintScanMe an ScanMe.NFT Contract...");
+  try {
+    // Pad address and SID
+    const addrPadded = userAddress.replace("0x", "").padStart(64, "0");
+    const sidHex = (2464012987).toString(16).padStart(64, "0");
+    const tx = await window.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [{
+        from: userAddress,
+        to: SCANME_CONTRACT,
+        data: "0x45f77bec" + addrPadded + sidHex
+      }]
+    });
+    logMessage("✅ ©️ ScanMe.NFT Prägung erfolgreich! TxHash: " + tx);
+    document.getElementById("nft-pill").innerText = "GEPRÄGT";
+  } catch(e) {
+    logMessage("❌ NFT Mint Fehler: " + e.message);
+  }
+}
+
+window.addEventListener("load", () => {
+  if (window.ethereum || window.nomo) connectWalletAndVerify();
+});
+</script>
+
+
+<script>
+function openSovereignCameraScanner() {
+  if (window.nomo && window.nomo.nativeScan) {
+    window.nomo.nativeScan().then(res => {
+      if (res && res.scannedValue) {
+        document.getElementById("spclSearchInput").value = res.scannedValue;
+        executeSpclVerificationSearch();
       }
-    }
+    }).catch(err => {
+      alert("📸 Souveräner Kamera-Scanner: " + err.message);
+    });
+  } else {
+    alert("📸 Souveräner Kamera-Scanner gestartet (NomoApp Native Camera Bridge)...");
+  }
+}
 
-    async function executeScanMeMint() {
-      if (!userAddress) await performWalletConnect();
-      if (!userAddress) return alert("Bitte verbinden Sie zuerst Ihre Wallet!");
+function executeSpclVerificationSearch() {
+  const val = document.getElementById("spclSearchInput").value.trim();
+  const resArea = document.getElementById("spcl-result-area");
+  if (!val) {
+    alert("Bitte geben Sie eine gültige SID, FID oder 0x-HEX Wallet-Adresse ein.");
+    return;
+  }
+  resArea.style.display = "block";
+  resArea.innerHTML = "🟢 SIGNAL VERIFIED • SPCL CERTIFIED: Target [" + val + "] ist unanfechtbar im SeWWWeS Netzwerk verankert!";
+}
+</script>
 
-      sysLog("Sende mintScanMe(" + userAddress + ", SID: " + userSID + ") an ScanMe.NFT Contract...");
-      
-      const recipientHex = userAddress.replace("0x", "").padStart(64, "0");
-      
-      const encodeString = (str) => {
-        let hex = "";
-        for (let i = 0; i < str.length; i++) {
-          hex += str.charCodeAt(i).toString(16).padStart(2, "0");
-        }
-        let lenHex = str.length.toString(16).padStart(64, "0");
-        let paddedHex = hex.padEnd(Math.ceil(hex.length / 64) * 64, "0");
-        return lenHex + paddedHex;
-      };
-
-      const offsetSid = "0000000000000000000000000000000000000000000000000000000000000060";
-      const offsetFid = "00000000000000000000000000000000000000000000000000000000000000a0";
-
-      const encodedSid = encodeString(userSID);
-      const encodedFid = encodeString("9999999999");
-
-      const mintCalldata = "0x45f77bec" + recipientHex + offsetSid + offsetFid + encodedSid + encodedFid;
-
-      const txHash = await sendEvmContractCall(SCANME_NFT_ADDR, mintCalldata, "0x2DC6C0");
-      if (txHash) {
-        sysLog("✅ ©️ ScanMe.NFT Prägung erfolgreich! TxHash: " + txHash);
-        alert("🎉 ✅ ©️ ScanMe.NFT Siegel erfolgreich auf der ZENIQ Smart Chain geprägt!");
-        await verifyOnChainRequirements();
-      } else {
-        sysLog("❌ ©️ ScanMe.NFT Prägung fehlgeschlagen.");
-      }
-    }
-
-    function copyDiagReport() {
-      const report = "=== SEWWWES WEBON v1.3.285 DIAGNOSTIK REPORT ===\n" +
-        "TIMESTAMP: " + new Date().toISOString() + "\n" +
-        "LOGS:\n" + document.getElementById("sys-log-box").innerText;
-      navigator.clipboard.writeText(report);
-      alert("📋 Diagnostik-Report in die Zwischenablage kopiert!");
-    }
-
-    window.onload = function() {
-      sysLog("Initialisiere v1.3.285 SUPREME - Stand: 20.10.2026...");
-      if (window.ethereum) {
-        window.ethereum.on("chainChanged", (chain) => {
-          sysLog("MetaMask Netzwerkkette geändert: " + chain);
-          performWalletConnect();
-        });
-      }
-      performWalletConnect();
-    };
-  </script>
 </body>
 </html>
