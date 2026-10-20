@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SeWWWeS.NET 🛡️ Minter Satellit v1.0.98 SUPREME</title>
+  <title>SeWWWeS.NET 🛡️ Minter Satellit v1.3.285 SUPREME - Stand: 20.10.2026</title>
   <style>
     :root {
       --gold: #D4AF37;
@@ -208,7 +208,7 @@
 
   <!-- 🏛️ SEWWWES.NET UNIVERSAL DACH HEADER -->
   <div class="roof-header">
-    <span class="version-stamp">v1.0.98 SUPREME</span>
+    <span class="version-stamp">v1.3.285 SUPREME - Stand: 20.10.2026</span>
     <h1>SeWWWeS.NET 🛡️ Minter Satellit</h1>
     <p>©️ ScanMe.NFT Direct Mint & $RWA Quadriga-Norm • SmartEarthFamily</p>
   </div>
@@ -283,7 +283,7 @@
   <!-- DIAGNOSTIK & LOGS -->
   <div class="card">
     <div class="card-title">📋 DIAGNOSTIK-PROTOKOLL</div>
-    <div class="log-box" id="sys-log-box">[LOG] System v1.0.98 SUPREME bereit...</div>
+    <div class="log-box" id="sys-log-box">[LOG] System v1.3.285 SUPREME - Stand: 20.10.2026 bereit...</div>
     <button class="btn" style="background:#222; color:#FFF; font-size:0.72rem; padding:8px;" onclick="copyDiagReport()">📋 DIAGNOSTIK-REPORT KOPIEREN</button>
   </div>
 
@@ -650,7 +650,7 @@
     }
 
     function copyDiagReport() {
-      const report = "=== SEWWWES WEBON v1.0.98 DIAGNOSTIK REPORT ===\n" +
+      const report = "=== SEWWWES WEBON v1.3.285 DIAGNOSTIK REPORT ===\n" +
         "TIMESTAMP: " + new Date().toISOString() + "\n" +
         "LOGS:\n" + document.getElementById("sys-log-box").innerText;
       navigator.clipboard.writeText(report);
@@ -658,7 +658,7 @@
     }
 
     window.onload = function() {
-      sysLog("Initialisiere v1.0.98 SUPREME...");
+      sysLog("Initialisiere v1.3.285 SUPREME - Stand: 20.10.2026...");
       if (window.ethereum) {
         window.ethereum.on("chainChanged", (chain) => {
           sysLog("MetaMask Netzwerkkette geändert: " + chain);
