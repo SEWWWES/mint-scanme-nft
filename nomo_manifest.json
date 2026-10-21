@@ -7,16 +7,17 @@
   "webon_name": "ScanMe.NFT Express Minter",
   "webonName": "ScanMe.NFT Express Minter",
   "webOn_name": "ScanMe.NFT Express Minter",
-  "webon_version": "1.0.91",
-  "webonVersion": "1.0.91",
-  "webon_description": "SeWWWeS.NET ScanMe.NFT Express Minter & $RWA Phalanx v1.0.91 SUPREME - Souver\u00e4nes Digital-Siegel & RWA Mutterboden Sch\u00f6pfung (100:10:1:0.1 Norm) auf ZENIQ Smart Chain (38341) mit NomoApp & MetaMask Dual Engine.",
+  "webon_version": "1.0.92",
+  "webonVersion": "1.0.92",
+  "webon_description": "ScanMe.NFT Express Minter & RWA Phalanx v1.0.92 SUPREME \u2013 Souver\u00e4nes Digital-Siegel & RWA Mutterboden Sch\u00f6pfung (100:10:1:0.1 Norm) auf ZENIQ Smart Chain (38341) mit NomoApp & MetaMask Bridge.",
   "tar_gz_url": "https://sewwwes.net/scanme/nomo.tar.gz",
-  "webon_icon": "assets/icons/icon_scanme_minter.png",
-  "webonIcon": "assets/icons/icon_scanme_minter.png",
-  "webon_card": "assets/icons/icon_scanme_minter.png",
+  "webon_icon": "assets/images/webon-icon-sewwwes-mint.png",
+  "webonIcon": "assets/images/webon-icon-sewwwes-mint.png",
+  "webon_card": "assets/images/webon-icon-sewwwes-mint.png",
   "icons": [
+    "assets/images/webon-icon-sewwwes-mint.png",
+    "webon-icon-sewwwes-mint.png",
     "assets/icons/icon_scanme_minter.png",
-    "assets/images/sewwwes_mint_webon_icon.png",
     "sewwwes_mint_webon_icon.png"
   ],
   "min_nomo_version": "0.9.0",
@@ -24,8 +25,6 @@
     "CAMERA",
     "CLIPBOARD",
     "MESSENGER",
-    "MIC",
-    "CAM",
     "DEVICE_INFO",
     "SEND_ASSETS",
     "SIGN_EVM_TRANSACTION",
@@ -33,6 +32,9 @@
     "DEVICE_FINGERPRINT",
     "ADD_CUSTOM_TOKEN",
     "GET_EVM_ADDRESS",
-    "SIGN_AUTH_MESSAGE"
+    "SIGN_AUTH_MESSAGE",
+    "NOMO_GET_EVM_ADDRESS",
+    "NOMO_SIGN_AUTH_MESSAGE",
+    "NOMO_SEND_ASSETS"
   ]
 }
