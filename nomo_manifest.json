@@ -1,32 +1,13 @@
 {
-  "nomo_manifest_version": "1.2.0",
-  "manifestVersion": "1.2.0",
+  "nomo_manifest_version": "1.1.0",
   "webon_id": "net.sewwwes.scanme.minter",
-  "webonId": "net.sewwwes.scanme.minter",
-  "webOn_id": "net.sewwwes.scanme.minter",
   "webon_name": "\u00a9\ufe0f MINT.SeWWWeS.NET",
-  "webonName": "\u00a9\ufe0f MINT.SeWWWeS.NET",
-  "webOn_name": "\u00a9\ufe0f MINT.SeWWWeS.NET",
-  "webon_version": "1.0.94",
-  "webonVersion": "1.0.94",
-  "webon_description": "ScanMe.NFT Express Minter & $RWA Soil Token Station v1.0.94 SUPREME",
+  "webon_version": "1.0.99",
+  "webon_url": "https://scanme.minter.sewwwes.net",
   "webon_icon": "assets/images/webon-icon-sewwwes-mint.png",
-  "webonIcon": "assets/images/webon-icon-sewwwes-mint.png",
-  "webon_card": "assets/images/webon-icon-sewwwes-mint.png",
-  "icons": [
-    "assets/images/webon-icon-sewwwes-mint.png",
-    "webon-icon-sewwwes-mint.png",
-    "assets/icons/icon_scanme_minter.png",
-    "sewwwes_mint_webon_icon.png"
-  ],
   "permissions": [
-    "CAMERA",
-    "MESSENGER",
-    "GET_EVM_ADDRESS",
-    "SIGN_EVM_TRANSACTION",
-    "SEND_ASSETS",
-    "SIGN_AUTH_MESSAGE",
-    "CLIPBOARD",
-    "ADD_CUSTOM_TOKEN"
+    "nomo.permission.CAMERA",
+    "nomo.permission.SIGN_EVATION_TRANSACTION",
+    "nomo.permission.GET_INSTALLED_WEBONS"
   ]
 }

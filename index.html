@@ -11,7 +11,7 @@
   ========================================================================
 -->
 
-<title>©️ MINT.SeWWWeS.NET v1.0.94 SUPREME | SeWWWeS.NET</title>
+<title>©️ MINT.SeWWWeS.NET v1.0.97 SUPREME | SeWWWeS.NET</title>
 
 <style>
 /* 🎨 UNIVERSALE SEWWWEES.NET FARB- & DESIGN-VARIABLEN */
@@ -537,49 +537,56 @@ function getWalletAddressFromSid(sidOrAddr) {
 })();
 </script>
 
+
+
 <script>
-// 🛡️ 4S NOMO REVEAL & ENVIRONMENT DETECTOR ENGINE v1.7.4 SUPREME
+// 🛡️ 4S NOMO REVEAL & ENVIRONMENT DETECTOR ENGINE (v1.8.0 SUPREME)
 (function() {
+  function logDiagnostics(msg) {
+    const box = document.getElementById("diagConsoleBox");
+    if (box) {
+      const time = new Date().toLocaleTimeString();
+      box.innerText += "\n[" + time + "] " + msg;
+      box.scrollTop = box.scrollHeight;
+    }
+  }
+  window.logDiagnostics = logDiagnostics;
+  window.sysLog = logDiagnostics;
+
+  window.copyDiagnosticsLog = function() {
+    const box = document.getElementById("diagConsoleBox");
+    if (!box) return;
+    navigator.clipboard.writeText(box.innerText).then(() => {
+      alert("📋 Diagnostik-Protokoll erfolgreich in die Zwischenablage kopiert!");
+    }).catch(err => {
+      alert("Fehler beim Kopieren: " + err.message);
+    });
+  };
+
+  window.clearDiagnosticsLog = function() {
+    const box = document.getElementById("diagConsoleBox");
+    if (box) {
+      box.innerText = "[SYSTEM INIT] SeWWWeS.NET System Gateway gestartet.";
+    }
+  };
+
   function apply4SNomoRevealMode() {
-    const isNomoApp = (window.nomo || (navigator.userAgent && navigator.userAgent.toLowerCase().includes('nomo')));
+    const isNomoApp = (window.isRealNomoApp ? window.isRealNomoApp() : (window.nomo || (navigator.userAgent && navigator.userAgent.toLowerCase().includes("nomo"))));
     
-    const topBanner = document.getElementById('top-wallet-connect-banner');
-    const btnConnect = document.getElementById('btnMetaMaskConnectTop');
-    const statusText = document.getElementById('wallet-connect-status-text');
-    const pcRevealContainer = document.getElementById('pc-nomo-reveal-matrix-container');
+    const pcRevealContainer = document.getElementById("pc-nomo-reveal-matrix-container");
+    const nomoIndicator = document.getElementById("nomo-wallet-status-indicator");
+    const metamaskContainer = document.getElementById("metamask-connect-container");
 
     if (isNomoApp) {
-      if (pcRevealContainer) pcRevealContainer.style.display = 'none';
-      if (topBanner) {
-        topBanner.style.background = 'rgba(0,25,10,0.98)';
-        topBanner.style.borderBottom = '2px solid #00FF41';
-        topBanner.style.boxShadow = '0 4px 30px rgba(0,255,65,0.5)';
-      }
-      if (btnConnect) {
-        btnConnect.style.background = 'linear-gradient(135deg, #00FF41, #00BFFF)';
-        btnConnect.style.color = '#000';
-        btnConnect.innerHTML = '📱 NOMOAPP WALLET (VOLLAUTOMATISCH)';
-      }
-      if (statusText) {
-        statusText.style.color = '#00FF41';
-        statusText.innerHTML = '🟢 Native NomoApp Wallet Umgebung Aktiv';
-      }
+      if (pcRevealContainer) pcRevealContainer.style.display = "none";
+      if (nomoIndicator) nomoIndicator.style.display = "block";
+      if (metamaskContainer) metamaskContainer.style.display = "none";
+      logDiagnostics("📱 NOMOAPP NATIVE CONTAINER ERKANNT -> PC Reveal geschlossen, 0.3s Auto-Connect aktiv.");
     } else {
-      if (pcRevealContainer) pcRevealContainer.style.display = 'block';
-      if (topBanner) {
-        topBanner.style.background = 'rgba(15,12,5,0.98)';
-        topBanner.style.borderBottom = '2px solid #D4AF37';
-        topBanner.style.boxShadow = '0 4px 30px rgba(212,175,55,0.6)';
-      }
-      if (btnConnect) {
-        btnConnect.style.background = 'linear-gradient(135deg, #FFD700, #D4AF37, #B8860B)';
-        btnConnect.style.color = '#000';
-        btnConnect.innerHTML = '🦊 METAMASK VERBINDEN (DESKTOP PC FALLBACK)';
-      }
-      if (statusText) {
-        statusText.style.color = '#FFD700';
-        statusText.innerHTML = '💻 Standalone Browser Mode (Tippen für MetaMask oder QRs scannen)';
-      }
+      if (pcRevealContainer) pcRevealContainer.style.display = "block";
+      if (nomoIndicator) nomoIndicator.style.display = "none";
+      if (metamaskContainer) metamaskContainer.style.display = "flex";
+      logDiagnostics("💻 STANDALONE PC BROWSER ERKANNT -> 🛡️ 4S Nomo Reveal Matrix gestartet!");
     }
   }
 
@@ -587,84 +594,73 @@ function getWalletAddressFromSid(sidOrAddr) {
   setTimeout(apply4SNomoRevealMode, 100);
   setTimeout(apply4SNomoRevealMode, 500);
   setTimeout(apply4SNomoRevealMode, 1500);
+  setTimeout(apply4SNomoRevealMode, 4000);
 })();
 </script>
-
 </head>
 
-<script>
-// 🛡️ 4S NOMO REVEAL & ENVIRONMENT DETECTOR ENGINE v1.7.4 SUPREME
-(function() {
-  function apply4SNomoRevealMode() {
-    const isNomoApp = (window.nomo || (navigator.userAgent && navigator.userAgent.toLowerCase().includes('nomo')));
-    
-    const topBanner = document.getElementById('top-wallet-connect-banner');
-    const btnConnect = document.getElementById('btnMetaMaskConnectTop');
-    const statusText = document.getElementById('wallet-connect-status-text');
-    const pcRevealContainer = document.getElementById('pc-nomo-reveal-matrix-container');
 
-    if (isNomoApp) {
-      if (pcRevealContainer) pcRevealContainer.style.display = 'none';
-      if (topBanner) {
-        topBanner.style.background = 'rgba(0,25,10,0.98)';
-        topBanner.style.borderBottom = '2px solid #00FF41';
-        topBanner.style.boxShadow = '0 4px 30px rgba(0,255,65,0.5)';
-      }
-      if (btnConnect) {
-        btnConnect.style.background = 'linear-gradient(135deg, #00FF41, #00BFFF)';
-        btnConnect.style.color = '#000';
-        btnConnect.innerHTML = '📱 NOMOAPP WALLET (VOLLAUTOMATISCH)';
-      }
-      if (statusText) {
-        statusText.style.color = '#00FF41';
-        statusText.innerHTML = '🟢 Native NomoApp Wallet Umgebung Aktiv';
-      }
-    } else {
-      if (pcRevealContainer) pcRevealContainer.style.display = 'block';
-      if (topBanner) {
-        topBanner.style.background = 'rgba(15,12,5,0.98)';
-        topBanner.style.borderBottom = '2px solid #D4AF37';
-        topBanner.style.boxShadow = '0 4px 30px rgba(212,175,55,0.6)';
-      }
-      if (btnConnect) {
-        btnConnect.style.background = 'linear-gradient(135deg, #FFD700, #D4AF37, #B8860B)';
-        btnConnect.style.color = '#000';
-        btnConnect.innerHTML = '🦊 METAMASK VERBINDEN (DESKTOP PC FALLBACK)';
-      }
-      if (statusText) {
-        statusText.style.color = '#FFD700';
-        statusText.innerHTML = '💻 Standalone Browser Mode (Tippen für MetaMask oder QRs scannen)';
-      }
-    }
-  }
-
-  window.addEventListener('DOMContentLoaded', apply4SNomoRevealMode);
-  setTimeout(apply4SNomoRevealMode, 100);
-  setTimeout(apply4SNomoRevealMode, 500);
-  setTimeout(apply4SNomoRevealMode, 1500);
-})();
-</script>
 
 </head>
 <body>
 
-<!-- 🦊 HIGH-VISIBILITY GOLDEN WALLET CONNECT BANNER v1.7.4 SUPREME -->
-<div id="top-wallet-connect-banner" style="position: sticky; top: 0; z-index: 99999; background: rgba(5,5,5,0.98); backdrop-filter: blur(10px); border-bottom: 2px solid #D4AF37; padding: 14px 10px; text-align: center; box-shadow: 0 4px 30px rgba(212,175,55,0.6);">
-  <button id="btnMetaMaskConnectTop" onclick="connectWeb3WalletAction()" style="background: linear-gradient(135deg, #FFD700, #D4AF37, #B8860B); color: #000; border: 2px solid #FFF; padding: 14px 28px; border-radius: 30px; font-weight: 950; font-size: 1.0rem; cursor: pointer; box-shadow: 0 0 25px rgba(212,175,55,0.9); text-transform: uppercase; letter-spacing: 1px; display: inline-block;">
-    🦊 WALLET VERBINDEN (METAMASK / WEB3)
-  </button>
-  <div id="wallet-connect-status-text" style="color: #4ADE80; font-size: 0.85rem; font-weight: bold; margin-top: 8px;">⚡ Status: Nicht verbunden (Tippen zum Verbinden)</div>
+<!-- 🔍 1. SeWWWeS.NET DACH-HEADER TELEMETRIE-BAR -->
+<!-- 🛡️ 4S NOMO REVEAL & 4 MYQR.NFT MATRIX CONTAINER (POPS UP ON PC BROWSER) -->
+<div id="pc-nomo-reveal-matrix-container" style="width:100%; max-width:820px; background:rgba(12,15,25,0.98); border:2.5px solid #D4AF37; border-radius:24px; padding:20px; margin:15px auto; box-shadow:0 0 40px rgba(212,175,55,0.4); text-align:center; display:none;">
+  <div style="color:#D4AF37; font-size:1.1rem; font-weight:950; text-transform:uppercase; margin-bottom:8px; letter-spacing:1px;">🛡️ 4S NOMO REVEAL & DEVICE DETECTOR (PC BROWSER)</div>
+  <div style="color:#DDD; font-size:0.85rem; line-height:1.4; margin-bottom:18px; background:rgba(212,175,55,0.1); padding:10px; border-radius:12px; border:1px solid rgba(212,175,55,0.3);">
+    Sie nutzen diese Anwendung aktuell außerhalb der NomoApp (am PC / Standalone Browser).<br>
+    <strong>Der sicherste, dezentrale Weg ist der Direktzugriff innerhalb der NomoApp Wallet!</strong><br>
+    Nutzen Sie die folgenden Schnellzugriffe oder verbinden Sie Ihre MetaMask Wallet:
+  </div>
+
+  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:15px; margin-top:15px;">
+    <div style="background:rgba(0,0,0,0.8); border:1.5px solid #00BFFF; border-radius:18px; padding:14px; text-align:center; box-shadow:0 0 15px rgba(0,191,255,0.2);">
+      <div style="font-size:2.2rem; margin-bottom:6px;">📱</div>
+      <div style="color:#D4AF37; font-size:0.85rem; font-weight:900; margin-bottom:6px;">1. NOMOAPP LADEN</div>
+      <a href="https://nomo.app" target="_blank" style="display:inline-block; background:linear-gradient(135deg, #00BFFF, #0088cc); color:#000; font-weight:950; font-size:0.75rem; padding:8px 14px; border-radius:12px; text-decoration:none; text-transform:uppercase;">DOWNLOAD NOMO</a>
+    </div>
+
+    <div style="background:rgba(0,0,0,0.8); border:1.5px solid #00BFFF; border-radius:18px; padding:14px; text-align:center; box-shadow:0 0 15px rgba(0,191,255,0.2);">
+      <div style="font-size:2.2rem; margin-bottom:6px;">👤</div>
+      <div style="color:#D4AF37; font-size:0.85rem; font-weight:900; margin-bottom:6px;">2. MENTOR DIRK</div>
+      <a href="https://sewwwes.net" target="_blank" style="display:inline-block; background:linear-gradient(135deg, #00BFFF, #0088cc); color:#000; font-weight:950; font-size:0.75rem; padding:8px 14px; border-radius:12px; text-decoration:none; text-transform:uppercase;">MYQR.NFT CODE</a>
+    </div>
+
+    <div style="background:rgba(0,0,0,0.8); border:1.5px solid #00BFFF; border-radius:18px; padding:14px; text-align:center; box-shadow:0 0 15px rgba(0,191,255,0.2);">
+      <div style="font-size:2.2rem; margin-bottom:6px;">🌐</div>
+      <div style="color:#D4AF37; font-size:0.85rem; font-weight:900; margin-bottom:6px;">3. MASTER WEBON</div>
+      <a href="https://sewwwes.net" target="_blank" style="display:inline-block; background:linear-gradient(135deg, #00BFFF, #0088cc); color:#000; font-weight:950; font-size:0.75rem; padding:8px 14px; border-radius:12px; text-decoration:none; text-transform:uppercase;">OPEN SEWWWES.NET</a>
+    </div>
+
+    <div style="background:rgba(0,0,0,0.8); border:1.5px solid #00BFFF; border-radius:18px; padding:14px; text-align:center; box-shadow:0 0 15px rgba(0,191,255,0.2);">
+      <div style="font-size:2.2rem; margin-bottom:6px;">📞</div>
+      <div style="color:#D4AF37; font-size:0.85rem; font-weight:900; margin-bottom:6px;">4. CALL WEBON</div>
+      <a href="https://call.sewwwes.net" target="_blank" style="display:inline-block; background:linear-gradient(135deg, #00BFFF, #0088cc); color:#000; font-weight:950; font-size:0.75rem; padding:8px 14px; border-radius:12px; text-decoration:none; text-transform:uppercase;">OPEN CALL</a>
+    </div>
+  </div>
 </div>
 
-
-
-<!-- 🔍 1. SeWWWeS.NET DACH-HEADER TELEMETRIE-BAR -->
 <div class="spcl-top-roof-banner">
-  <div class="spcl-top-roof-line1">SeWWWeS.NET 🔍 SPCL | SCANME.NFT EXPRESS MINTER v1.0.94 SUPREME</div>
+  <div class="spcl-top-roof-line1">SeWWWeS.NET 🔍 SPCL | SCANME.NFT EXPRESS MINTER v1.0.97 SUPREME</div>
   <div class="spcl-top-roof-line2">powered by SmartEarthFamily (SeWWWeS.Net NomoApp WebOn Version SmartEarthPhone P2P Call Gateway v1.7.4 SUPREME)</div>
 </div>
 
 <!-- 🛡️ 2. SeWWWeS.NET SPCL-SCANNER HAUPTRAHMEN -->
+
+<!-- 🔑 2. STELLE: DEZENTER UNIVERSELLER SOVEREIGN WALLET CONNECT RIEGEL -->
+<div class="spcl-wallet-connect-bar" style="width:100%; max-width:820px; margin:0 auto 16px auto; background:rgba(12,16,28,0.92); border:1.5px solid #D4AF37; border-radius:16px; padding:10px 16px; text-align:center; box-shadow:0 0 18px rgba(212,175,55,0.25);">
+  <div id="nomo-wallet-status-indicator" style="display:none; color:#00FF66; font-family:'Roboto Mono',monospace; font-size:0.82rem; font-weight:900; letter-spacing:1px;">
+    🟢 NOMO SOVEREIGN WALLET ACTIVE | AUTOMATICALLY CONNECTED (0.3s)
+  </div>
+  <div id="metamask-connect-container" style="display:flex; justify-content:center; align-items:center; gap:10px; flex-wrap:wrap;">
+    <button id="btn-wallet-connect-gold" onclick="triggerUniversalWalletConnect()" style="background:linear-gradient(135deg, #D4AF37, #FFD700, #AA7C11); color:#000; font-family:'Roboto Mono',monospace; font-size:0.85rem; font-weight:950; text-transform:uppercase; border:none; border-radius:12px; padding:10px 22px; cursor:pointer; box-shadow:0 0 15px rgba(212,175,55,0.5); transition:all 0.3s ease;">
+      🔑 SOVEREIGN WALLET CONNECT (NOMO / METAMASK)
+    </button>
+  </div>
+</div>
+
+
 <div class="spcl-master-frame">
   <div class="spcl-brand-header-row">
     <span class="spcl-brand-tag">©️ ScanMe.NFT</span>
@@ -1079,15 +1075,21 @@ async function mintScanMeNftAction() {
   </div>
 
   <!-- SEKTION 4: SEWWWES.NET DIAGNOSTIK & TELEMETRIE LOG -->
-  <div class="card-box">
-    <div class="card-title">📊 SEWWWES.NET DIAGNOSTIK & TELEMETRIE PROTOKOLL</div>
-    <div class="diag-console" id="diagConsoleBox">[SYSTEM INIT] SeWWWeS.NET P2P Call Gateway v1.7.4 SUPREME gestartet.
-[SYSTEM DIAGNOSTICS] Prüfe NomoApp Native Bridge...</div>
-    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-      <button class="btn-diag-copy" onclick="copyDiagnosticsLog()">📋 DIAGNOSTIK-PROTOKOLL KOPIEREN</button>
-      <button class="btn-diag-copy" style="background:rgba(255,255,255,0.1); color:#FFF; border:1px solid #666;" onclick="clearDiagnosticsLog()">🧹 LOGS LÖSCHEN</button>
-    </div>
+  <!-- 📊 SEWWWES.NET DIAGNOSTIK & TELEMETRIE PROTOKOLL (UNIVERSELLE STANDARDS-SEKTION AN UNTERSTER STELLE) -->
+<div id="sewwwes-diagnostics-system-console" style="background:rgba(10,12,20,0.98); border:2px solid var(--sewwwes-skyblue); border-radius:20px; padding:20px; margin:25px auto 15px auto; max-width:820px; box-shadow:0 0 25px rgba(0,191,255,0.25); text-align:left;">
+  <div style="color:var(--sewwwes-skyblue); font-weight:950; font-size:1.0rem; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">
+    📊 SEWWWES.NET LIVE SYSTEM DIAGNOSTIK & TELEMETRIE PROTOKOLL
   </div>
+  <div style="color:#aaa; font-size:0.75rem; margin-bottom:12px;">
+    Automatisches Echtzeit-Prüfprotokoll aller NomoApp Native Bridges, Web3 RPC Schnittstellen & P2P Relays
+  </div>
+  <div class="diag-console" id="diagConsoleBox" style="background:#000; color:#00FF66; font-family:'Roboto Mono', monospace; font-size:0.78rem; padding:14px; border-radius:12px; border:1px solid rgba(0,255,102,0.3); height:140px; overflow-y:auto; white-space:pre-wrap; word-break:break-all; margin-bottom:12px;">[SYSTEM INIT] SeWWWeS.NET System Gateway gestartet.
+[SYSTEM DIAGNOSTICS] Prüfe NomoApp Native Bridge...</div>
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <button class="btn-diag-copy" style="background:linear-gradient(135deg, #00BFFF, #0088cc); color:#000; font-weight:950; font-size:0.8rem; padding:10px 18px; border-radius:12px; border:none; cursor:pointer;" onclick="copyDiagnosticsLog()">📋 DIAGNOSTIK-PROTOKOLL KOPIEREN</button>
+    <button class="btn-diag-copy" style="background:rgba(255,255,255,0.1); color:#FFF; border:1px solid #666; font-weight:800; font-size:0.8rem; padding:10px 18px; border-radius:12px; cursor:pointer;" onclick="clearDiagnosticsLog()">🧹 LOGS LÖSCHEN</button>
+  </div>
+</div>
 
 
 <!-- 🎙️ WEBRTC P2P AUDIO ENGINE MODAL & CONTROLS (v1.7.4 SUPREME) -->
@@ -1979,5 +1981,25 @@ window.addEventListener("DOMContentLoaded", function() {
 });
 
 </script>
+
+<script>
+function triggerUniversalWalletConnect() {
+  if (typeof userTriggerConnectWallet === "function") {
+    userTriggerConnectWallet();
+  } else if (typeof connectWeb3WalletAction === "function") {
+    connectWeb3WalletAction();
+  } else if (window.ethereum) {
+    window.ethereum.request({ method: "eth_requestAccounts" }).then(accs => {
+      if (accs && accs.length > 0) {
+        alert("🟢 Wallet verbunden: " + accs[0]);
+        if (typeof runLiveWalletInventoryCheck === "function") runLiveWalletInventoryCheck(accs[0]);
+      }
+    }).catch(e => alert("Wallet Connect Error: " + e.message));
+  } else {
+    alert("🔑 Sovereign Wallet Connect: Bitte nutzen Sie die NomoApp oder installieren Sie MetaMask im Browser.");
+  }
+}
+</script>
+
 </body>
 </html>
